@@ -1,0 +1,9 @@
+# Build results
+bin/
+obj/
+
+# JetBrains IDE configuration
+.idea
+
+# Backup files
+*.bak
