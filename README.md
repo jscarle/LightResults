@@ -1,10 +1,13 @@
-# LightResults
+# LightResults - An operation Result Pattern library for .NET
 
 LightResults is an extremely light and modern .NET library that provides a simple and flexible
 implementation of the Result Pattern. The Result Pattern is a way of representing the outcome
 of an operation, whether it's successful or has encountered an error, in a more explicit and
 structured manner. This project is heavily inspired by [Michael Altmann](https://github.com/altmann)'s
 excellent work with [FluentResults](https://github.com/altmann/FluentResults).
+
+[![nuget](https://img.shields.io/nuget/v/LightResults)](https://www.nuget.org/packages/LightResults/)
+[![main](https://github.com/jscarle/LightResults/actions/workflows/main.yml/badge.svg)](https://github.com/jscarle/LightResults/actions/workflows/main.yml)
 
 ## References
 

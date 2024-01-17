@@ -12,7 +12,8 @@
         <Description>An extremely light and modern Result Pattern library.</Description>
         <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
         <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/jscarle/LightResults/blob/main/LICENSE</PackageLicenseUrl>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Result Results FluentResults</PackageTags>
@@ -24,10 +25,24 @@
         <AnalysisLevel>latest-All</AnalysisLevel>
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
         <NoWarn>CA1000;CA1716;CA2225;</NoWarn>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+        <None Include="..\LICENSE.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
     </ItemGroup>
 
 </Project>
