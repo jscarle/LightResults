@@ -2,6 +2,9 @@
 bin/
 obj/
 
+# Visual Studio files
+.vs
+
 # JetBrains IDE configuration
 .idea
 
