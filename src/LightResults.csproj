@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;netstandard2.0;net6.0;net7.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>LightResults</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Version>8.0.0</Version>
+        <Title>LightResults</Title>
+        <Authors>Jean-Sebastien Carle</Authors>
+        <Description>An extremely light and modern Result Pattern library.</Description>
+        <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
+        <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/jscarle/LightResults/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Result Results FluentResults</PackageTags>
+        <AssemblyVersion>8.0.0.0</AssemblyVersion>
+        <FileVersion>8.0.0.0</FileVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AnalysisLevel>latest-All</AnalysisLevel>
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+        <NoWarn>CA1000;CA1716;CA2225;</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    </ItemGroup>
+
+</Project>
