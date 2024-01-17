@@ -1,4 +1,4 @@
-# LightResults - An operation Result Pattern library for .NET
+# LightResults - Operation Result Patterns for .NET
 
 LightResults is an extremely light and modern .NET library that provides a simple and flexible
 implementation of the Result Pattern. The Result Pattern is a way of representing the outcome
