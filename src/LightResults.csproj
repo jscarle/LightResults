@@ -6,19 +6,20 @@
         <Nullable>enable</Nullable>
         <RootNamespace>LightResults</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <Version>8.0.0</Version>
+        <Version>8.0.1</Version>
         <Title>LightResults</Title>
         <Authors>Jean-Sebastien Carle</Authors>
         <Description>An extremely light and modern Result Pattern library.</Description>
         <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
+        <PackageId>LightResults</PackageId>
         <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Result Results FluentResults</PackageTags>
-        <AssemblyVersion>8.0.0.0</AssemblyVersion>
-        <FileVersion>8.0.0.0</FileVersion>
+        <AssemblyVersion>8.0.1.0</AssemblyVersion>
+        <FileVersion>8.0.1.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -30,9 +31,9 @@
     </PropertyGroup>
 
     <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
         <None Include="..\LICENSE.md">

@@ -50,13 +50,7 @@ public abstract class ResultBase : IResult
         _errors = errors.ToImmutableList();
     }
 
-    /// <summary>
-    /// Checks if the result contains an error of the specific type.
-    /// </summary>
-    /// <typeparam name="TError">The type of error to check for.</typeparam>
-    /// <returns>
-    /// <c>true</c> if an error of the specified type is present; otherwise, <c>false</c>.
-    /// </returns>
+    /// <inheritdoc />
     public bool HasError<TError>()
         where TError : IError
     {
