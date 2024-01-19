@@ -4,7 +4,7 @@ namespace LightResults;
 
 /// <summary>Represents a result.</summary>
 public sealed class Result : ResultBase
-#if NET8_0_OR_GREATER
+#if NET7_0_OR_GREATER
     , IActionableResult<Result>
 #endif
 {
@@ -109,9 +109,11 @@ public sealed class Result : ResultBase
 
 /// <summary>Represents a result.</summary>
 /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-public sealed class Result<TValue> : ResultBase, IResult<TValue>
-#if NET8_0_OR_GREATER
+public sealed class Result<TValue> : ResultBase
+#if NET7_0_OR_GREATER
     , IActionableResult<TValue, Result<TValue>>
+#else
+    , IResult<TValue>
 #endif
 {
     /// <summary>Gets the value of the result, throwing an exception if the result is failed.</summary>
