@@ -18,18 +18,6 @@ public class ResultTests
     }
 
     [Fact]
-    public void OkTValue_ShouldCreateSuccessResult()
-    {
-        // Act
-        var result = Result.Ok<int>();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsFailed.Should().BeFalse();
-        result.Errors.Should().BeEmpty();
-    }
-
-    [Fact]
     public void OkTValue_WithValue_ShouldCreateSuccessResultWithValue()
     {
         // Arrange

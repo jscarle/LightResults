@@ -2,9 +2,7 @@
 
 namespace LightResults.Common;
 
-/// <summary>
-/// Base class for implementing the <see cref="IResult" /> interface.
-/// </summary>
+/// <summary>Base class for implementing the <see cref="IResult" /> interface.</summary>
 public abstract class ResultBase : IResult
 {
     /// <inheritdoc />
@@ -18,44 +16,34 @@ public abstract class ResultBase : IResult
 
     private readonly ImmutableList<IError> _errors;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ResultBase" /> class.
-    /// </summary>
+    /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class.</summary>
     protected ResultBase()
     {
         _errors = ImmutableList<IError>.Empty;
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ResultBase" /> class with the specified error message.
-    /// </summary>
+    /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified error message.</summary>
     protected ResultBase(string errorMessage)
     {
         _errors = ImmutableList.Create<IError>(new Error(errorMessage));
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ResultBase" /> class with the specified error.
-    /// </summary>
+    /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified error.</summary>
     protected ResultBase(IError error)
     {
         _errors = ImmutableList.Create(error);
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ResultBase" /> class with the specified errors.
-    /// </summary>
+    /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified errors.</summary>
     protected ResultBase(IEnumerable<IError> errors)
     {
         _errors = errors.ToImmutableList();
     }
 
     /// <inheritdoc />
-    public bool HasError<TError>()
-        where TError : IError
+    public bool HasError<TError>() where TError : IError
     {
-        return Errors.OfType<TError>()
-            .Any();
+        return Errors.OfType<TError>().Any();
     }
 
     /// <inheritdoc />

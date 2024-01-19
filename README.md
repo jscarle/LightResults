@@ -21,7 +21,7 @@ This library has no dependencies.
 
 - :white_check_mark: Lightweight. Only contains what's necessary to implement the Result Pattern.
 - :white_check_mark: Extensible. Simple interfaces and base classes make it easy to adapt.
-- :white_check_mark: Immutable. Results and errors are immutable and cannot be changed after being created. 
+- :white_check_mark: Immutable. Results and errors are immutable and cannot be changed after being created.
 - :white_check_mark: Thread-safe. The Error list and Metadata dictionary use Immutable classes for thread-safety.
 - :white_check_mark: Modern. Built against the latest version of .NET using the most recent best practices.
 - :white_check_mark: Native. Written, compiled, and tested against the latest versions of .NET.
@@ -30,6 +30,7 @@ This library has no dependencies.
 ## Getting Started
 
 LightResults consists of only three classes `Result`, `Result<TValue>`, and `Error`.
+
 - The `Result` class represents a generic result indicating success or failure.
 - The `Result<TValue>` class represents a result with a value.
 - The `Error` class represents an error with a message and associated metadata.
@@ -221,6 +222,7 @@ public Result GetPerson(int id)
 ```
 
 ## Static abstract members in interfaces
+
 ### .NET 6.0 (C# 11.0) or higher only!
 
 Thanks to the [static abstract members in interfaces](https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/static-abstract-interface-methods)

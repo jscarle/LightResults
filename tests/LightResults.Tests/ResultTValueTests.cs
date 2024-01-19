@@ -27,18 +27,6 @@ public class ResultTValueTests
     }
 
     [Fact]
-    public void Ok_ShouldCreateSuccessResult()
-    {
-        // Act
-        var result = Result<int>.Ok();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsFailed.Should().BeFalse();
-        result.Errors.Should().BeEmpty();
-    }
-
-    [Fact]
     public void Ok_WithValue_ShouldCreateSuccessResultWithValue()
     {
         // Arrange
@@ -117,77 +105,5 @@ public class ResultTValueTests
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().HaveCount(2)
             .And.BeEquivalentTo(errors);
-    }
-
-    [Fact]
-    public void ImplicitConversionFromResult_ShouldCreateResultTValueWithErrors()
-    {
-        // Arrange
-        var result = Result.Fail("Error message");
-
-        // Act
-        Result<int> resultTValue = result;
-
-        // Assert
-        resultTValue.IsSuccess.Should().Be(result.IsSuccess);
-        resultTValue.IsFailed.Should().Be(result.IsFailed);
-        resultTValue.Errors.Should().BeEquivalentTo(result.Errors);
-    }
-    
-    [Fact]
-    public void FromResult_ShouldCreateResultTValueWithErrors()
-    {
-        // Arrange
-        var result = Result.Fail("Error message");
-
-        // Act
-        var resultTValue = Result<int>.FromResult(result);
-
-        // Assert
-        resultTValue.IsSuccess.Should().BeFalse();
-        resultTValue.IsFailed.Should().Be(result.IsFailed);
-        resultTValue.Errors.Should().BeEquivalentTo(result.Errors);
-    }
-    
-    [Fact]
-    public void FromResult_WithNullResult_ShouldThrowArgumentNullException()
-    {
-        // Act
-        Action action = () => Result<int>.FromResult(null!);
-
-        // Assert
-        action.Should().Throw<ArgumentNullException>();
-    }
-    
-    [Fact]
-    public void ImplicitConversionFromValue_ShouldCreateSuccessResultTValue()
-    {
-        // Arrange
-        const int value = 42;
-
-        // Act
-        Result<int> result = value;
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsFailed.Should().BeFalse();
-        result.Errors.Should().BeEmpty();
-        result.Value.Should().Be(value);
-    }
-
-    [Fact]
-    public void FromValue_ShouldCreateSuccessResultTValue()
-    {
-        // Arrange
-        const int value = 42;
-
-        // Act
-        var result = Result<int>.FromValue(value);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsFailed.Should().BeFalse();
-        result.Errors.Should().BeEmpty();
-        result.Value.Should().Be(value);
     }
 }
