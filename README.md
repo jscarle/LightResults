@@ -223,10 +223,10 @@ public Result GetPerson(int id)
 
 ## Static abstract members in interfaces
 
-### .NET 6.0 (C# 11.0) or higher only!
+### .NET 7.0 (C# 11.0) or higher only!
 
 Thanks to the [static abstract members in interfaces](https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/static-abstract-interface-methods)
-introduced in .NET 6.0 (C# 11.0), it is possible to use generics to obtain access to the methods
+introduced in .NET 7.0 (C# 11.0), it is possible to use generics to obtain access to the methods
 of the generic variant of the result. As such the error factory can be enhanced to take advantage of that.
 
 ```csharp
