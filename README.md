@@ -57,7 +57,7 @@ var failedResultWithMessage = Result.Fail("Operation failed!");
 
 ### Checking the state of a result
 
-There are two properties for results, IsSuccess and IsFailed. Both are mutually exclusive.
+There are two properties for results, `IsSuccess` and `IsFailed`. Both are mutually exclusive.
 
 ```csharp
 if (result.IsSuccess)
@@ -87,35 +87,20 @@ if (result.IsSuccess)
 }
 ```
 
-### Implicit conversions
-
-There are implicit conversions from a result to a value result.
-
-```csharp
-var result = Result.Fail("Operation failed!");
-Result<int> valueResult = result;
-```
-
-As well as from a value to a value result.
-
-```csharp
-var value = 42;
-Result<int> result = value;
-```
-
 ### Creating errors
 
 Errors can be created with or without a message.
 
 ```csharp
 var errorWithoutMessage = new Error();
+
 var errorWithMessage = new Error("Something went wrong!");
 ```
 
 With metadata.
 
 ```csharp
-var errorWithMetadata = new Error(("Key", "Value"));
+var errorWithMetadataTuple = new Error(("Key", "Value"));
 
 var metadata = new Dictionary<string, object> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error(metadata);
@@ -124,7 +109,7 @@ var errorWithMetadataDictionary = new Error(metadata);
 Or with a message and metadata.
 
 ```csharp
-var errorWithMetadata = new Error("Something went wrong!", ("Key", "Value"));
+var errorWithMetadataTuple = new Error("Something went wrong!", ("Key", "Value"));
 
 var metadata = new Dictionary<string, object> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
@@ -148,7 +133,7 @@ var notFoundError = new NotFoundError();
 var notFoundResult = Result.Fail(notFoundError);
 ```
 
-Then the result can be checked against that particular error type.
+Then the result can be checked against that error type.
 
 ```csharp
 if (result.IsFailed && result.HasError<NotFound>())
@@ -157,7 +142,7 @@ if (result.IsFailed && result.HasError<NotFound>())
 }
 ```
 
-This can be exceptionally useful when combined with metadata to handle exceptions.
+This can be especially useful when combined with metadata to handle exceptions.
 
 ```csharp
 public sealed class UnhandledExceptionError : Error
@@ -169,7 +154,7 @@ public sealed class UnhandledExceptionError : Error
 }
 ```
 
-That allows us to still use try catch blocks in our code, but return from them with results instead of exceptions.
+Which allows us to continue using try-catch blocks in our code but return from them with a result instead of throwing an exception.
 
 ```csharp
 public Result DoSomeWork()
@@ -188,7 +173,7 @@ public Result DoSomeWork()
 }
 ```
 
-We can further simplify creating error by created an error factory.
+We can further simplify creating errors by creating an error factory.
 
 ```csharp
 public static AppError
@@ -207,7 +192,7 @@ public static AppError
 }
 ```
 
-Which really simplifies implementing the result pattern in a clear and verbose way.
+Which clearly and explicitly describes the results.
 
 ```csharp
 public Result GetPerson(int id)
