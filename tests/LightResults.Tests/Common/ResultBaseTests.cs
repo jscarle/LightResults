@@ -19,22 +19,6 @@ public class ResultBaseTests
     }
 
     [Fact]
-    public void ConstructorWithErrorMessage_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-
-        // Act
-        var result = new TestResult(errorMessage);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Message.Should().Be(errorMessage);
-    }
-
-    [Fact]
     public void ConstructorWithErrorObject_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
@@ -46,8 +30,7 @@ public class ResultBaseTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Should().BeEquivalentTo(error);
+        result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
     }
 
     [Fact]
@@ -66,8 +49,7 @@ public class ResultBaseTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().HaveCount(2)
-            .And.BeEquivalentTo(errors);
+        result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }
 
     [Fact]
@@ -108,18 +90,11 @@ public class ResultBaseTests
         {
         }
 
-        public TestResult(string errorMessage)
-            : base(errorMessage)
+        public TestResult(IError error) : base(error)
         {
         }
 
-        public TestResult(IError error)
-            : base(error)
-        {
-        }
-
-        public TestResult(IEnumerable<IError> errors)
-            : base(errors)
+        public TestResult(IEnumerable<IError> errors) : base(errors)
         {
         }
     }

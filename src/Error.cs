@@ -1,5 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿#if NET8_0_OR_GREATER
+using System.Collections.Frozen;
 
+#else
+using System.Collections.Immutable;
+
+#endif
 namespace LightResults;
 
 /// <summary>Represents an error with a message and associated metadata.</summary>
@@ -11,7 +16,11 @@ public class Error : IError
     /// <inheritdoc />
     public IReadOnlyDictionary<string, object> Metadata => _metadata;
 
+#if NET8_0_OR_GREATER
+    private readonly FrozenDictionary<string, object> _metadata;
+#else
     private readonly ImmutableDictionary<string, object> _metadata;
+#endif
 
     /// <summary>Initializes a new instance of the <see cref="Error" /> class.</summary>
     public Error() : this("")
@@ -23,7 +32,11 @@ public class Error : IError
     public Error(string message)
     {
         Message = message;
+#if NET8_0_OR_GREATER
+        _metadata = FrozenDictionary<string, object>.Empty;
+#else
         _metadata = ImmutableDictionary<string, object>.Empty;
+#endif
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
@@ -44,9 +57,14 @@ public class Error : IError
     public Error(string message, (string Key, object Value) metadata)
     {
         Message = message;
+#if NET8_0_OR_GREATER
+        var dictionary = new Dictionary<string, object> { { metadata.Key, metadata.Value } };
+        _metadata = dictionary.ToFrozenDictionary();
+#else
         var builder = ImmutableDictionary.CreateBuilder<string, object>();
         builder.Add(metadata.Key, metadata.Value);
         _metadata = builder.ToImmutable();
+#endif
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified error message and metadata.</summary>
@@ -55,7 +73,11 @@ public class Error : IError
     public Error(string message, IDictionary<string, object> metadata)
     {
         Message = message;
+#if NET8_0_OR_GREATER
+        _metadata = metadata.ToFrozenDictionary();
+#else
         _metadata = metadata.ToImmutableDictionary();
+#endif
     }
 
     /// <inheritdoc />

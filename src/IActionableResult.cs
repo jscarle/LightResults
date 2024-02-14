@@ -17,6 +17,18 @@ public interface IActionableResult<out TResult> : IResult where TResult : IActio
     /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error message.</returns>
     static abstract TResult Fail(string errorMessage);
 
+    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
+    /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error message and metadata.</returns>
+    static abstract TResult Fail(string errorMessage, (string Key, object Value) metadata);
+
+    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
+    /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error message and metadata.</returns>
+    static abstract TResult Fail(string errorMessage, IDictionary<string, object> metadata);
+
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error.</returns>
@@ -44,6 +56,18 @@ public interface IActionableResult<TValue, out TResult> : IResult<TValue> where 
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error message.</returns>
     static abstract TResult Fail(string errorMessage);
+
+    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
+    /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error message and metadata.</returns>
+    static abstract TResult Fail(string errorMessage, (string Key, object Value) metadata);
+
+    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
+    /// <returns>A new instance of <see cref="TResult" /> representing a failed result with the specified error message and metadata.</returns>
+    static abstract TResult Fail(string errorMessage, IDictionary<string, object> metadata);
 
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>

@@ -42,8 +42,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Message.Should().Be("");
+        result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
     }
 
     [Fact]
@@ -55,8 +54,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Message.Should().Be("");
+        result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
     }
 
     [Fact]
@@ -71,8 +69,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Message.Should().Be(errorMessage);
+        result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
     }
 
     [Fact]
@@ -87,8 +84,79 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Message.Should().Be(errorMessage);
+        result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
+    }
+
+    [Fact]
+    public void Fail_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        (string Key, object Value) metadata = ("Key", 0);
+
+        // Act
+        var result = Result.Fail(errorMessage, metadata);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.IsFailed.Should().BeTrue();
+        var error = result.Errors.Should().ContainSingle().Which;
+        error.Message.Should().Be(errorMessage);
+        error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+    }
+
+    [Fact]
+    public void FailTValue_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        (string Key, object Value) metadata = ("Key", 0);
+
+        // Act
+        var result = Result.Fail<object>(errorMessage, metadata);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.IsFailed.Should().BeTrue();
+        var error = result.Errors.Should().ContainSingle().Which;
+        error.Message.Should().Be(errorMessage);
+        error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+    }
+
+    [Fact]
+    public void Fail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+
+        // Act
+        var result = Result.Fail(errorMessage, metadata);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.IsFailed.Should().BeTrue();
+        var error = result.Errors.Should().ContainSingle().Which;
+        error.Message.Should().Be(errorMessage);
+        error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+    }
+
+    [Fact]
+    public void FailTValue_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+
+        // Act
+        var result = Result.Fail<object>(errorMessage, metadata);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.IsFailed.Should().BeTrue();
+        var error = result.Errors.Should().ContainSingle().Which;
+        error.Message.Should().Be(errorMessage);
+        error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
     }
 
     [Fact]
@@ -103,8 +171,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Should().BeEquivalentTo(error);
+        result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
     }
 
     [Fact]
@@ -119,8 +186,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().ContainSingle()
-            .Which.Should().BeEquivalentTo(error);
+        result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
     }
 
     [Fact]
@@ -139,8 +205,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().HaveCount(2)
-            .And.BeEquivalentTo(errors);
+        result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }
 
     [Fact]
@@ -159,8 +224,7 @@ public class ResultTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().HaveCount(2)
-            .And.BeEquivalentTo(errors);
+        result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }
 
     [Fact]

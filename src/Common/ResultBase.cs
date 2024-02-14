@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 
 namespace LightResults.Common;
 
@@ -6,13 +7,13 @@ namespace LightResults.Common;
 public abstract class ResultBase : IResult
 {
     /// <inheritdoc />
-    public bool IsSuccess => !IsFailed;
+    public bool IsSuccess => _errors.Count == 0;
 
     /// <inheritdoc />
-    public bool IsFailed => Errors.Any();
+    public bool IsFailed => _errors.Count != 0;
 
     /// <inheritdoc />
-    public IReadOnlyList<IError> Errors => _errors;
+    public IReadOnlyCollection<IError> Errors => _errors;
 
     private readonly ImmutableList<IError> _errors;
 
@@ -20,12 +21,6 @@ public abstract class ResultBase : IResult
     protected ResultBase()
     {
         _errors = ImmutableList<IError>.Empty;
-    }
-
-    /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified error message.</summary>
-    protected ResultBase(string errorMessage)
-    {
-        _errors = ImmutableList.Create<IError>(new Error(errorMessage));
     }
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified error.</summary>
@@ -49,6 +44,12 @@ public abstract class ResultBase : IResult
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{GetType().Name} {{ IsSuccess = {IsSuccess} }}";
+        var builder = new StringBuilder();
+        builder.Append(GetType().Name);
+        builder.Append(" { ");
+        builder.Append("IsSuccess = ");
+        builder.Append(IsSuccess);
+        builder.Append(" }");
+        return builder.ToString();
     }
 }

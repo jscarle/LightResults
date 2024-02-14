@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>LightResults</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <Version>8.0.3</Version>
+        <Version>8.0.4</Version>
         <Title>LightResults</Title>
         <Authors>Jean-Sebastien Carle</Authors>
         <Description>An extremely light and modern Result Pattern library.</Description>
@@ -15,11 +15,12 @@
         <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>Icon.png</PackageIcon>
         <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Result Results FluentResults</PackageTags>
-        <AssemblyVersion>8.0.3.0</AssemblyVersion>
-        <FileVersion>8.0.3.0</FileVersion>
+        <AssemblyVersion>8.0.4.0</AssemblyVersion>
+        <FileVersion>8.0.4.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -28,19 +29,27 @@
         <NoWarn>CA1000;CA1716;CA2225;</NoWarn>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
     </PropertyGroup>
+
+    <ItemGroup>
+    </ItemGroup>
 
     <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
         <None Include="..\LICENSE.md">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
         <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\Icon.png">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
