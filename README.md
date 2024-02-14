@@ -1,3 +1,5 @@
+[![Banner](https://raw.githubusercontent.com/jscarle/LightResults/main/Banner.png)](https://github.com/jscarle/LightResults)
+
 # LightResults - Operation Result Patterns for .NET
 
 LightResults is an extremely light and modern .NET library that provides a simple and flexible
@@ -26,6 +28,7 @@ This library has no dependencies.
 - :white_check_mark: Modern. Built against the latest version of .NET using the most recent best practices.
 - :white_check_mark: Native. Written, compiled, and tested against the latest versions of .NET.
 - :white_check_mark: Compatible. Available for dozens of versions of .NET as a [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
+- :white_check_mark: Trimmable. Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 
 ## Getting Started
 
@@ -53,6 +56,8 @@ Failed results can be created using the `Fail` method.
 var failedResult = Result.Fail();
 
 var failedResultWithMessage = Result.Fail("Operation failed!");
+
+var failedResultWithMessageAndMetadata = Result.Fail("Operation failed!", ("Exception", ex));
 ```
 
 ### Checking the state of a result
