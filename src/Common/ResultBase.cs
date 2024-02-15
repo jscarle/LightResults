@@ -13,7 +13,7 @@ public abstract class ResultBase : IResult
     public bool IsFailed => _errors.Count != 0;
 
     /// <inheritdoc />
-    public IReadOnlyCollection<IError> Errors => _errors;
+    public IReadOnlyList<IError> Errors => _errors;
 
     private readonly ImmutableList<IError> _errors;
 
@@ -49,6 +49,15 @@ public abstract class ResultBase : IResult
         builder.Append(" { ");
         builder.Append("IsSuccess = ");
         builder.Append(IsSuccess);
+
+        if (IsFailed && Errors[0].Message.Length > 0)
+        {
+            builder.Append(", Error = ");
+            builder.Append('"');
+            builder.Append(Errors[0].Message);
+            builder.Append('"');
+        }
+
         builder.Append(" }");
         return builder.ToString();
     }

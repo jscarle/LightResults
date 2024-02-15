@@ -139,192 +139,208 @@ public class ResultTValueTests
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = True")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForBoolean(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = True", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForBoolean(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<bool>.Ok(true) : Result<bool>.Fail();
+        var result = success ? Result<bool>.Ok(true) : Result<bool>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForSByte(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForSByte(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<sbyte>.Ok(0) : Result<sbyte>.Fail();
+        var result = success ? Result<sbyte>.Ok(1) : Result<sbyte>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForByte(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForByte(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<byte>.Ok(0) : Result<byte>.Fail();
+        var result = success ? Result<byte>.Ok(1) : Result<byte>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForInt16(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt16(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<short>.Ok(0) : Result<short>.Fail();
+        var result = success ? Result<short>.Ok(1) : Result<short>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForUInt16(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt16(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<ushort>.Ok(0) : Result<ushort>.Fail();
+        var result = success ? Result<ushort>.Ok(1) : Result<ushort>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForInt32(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt32(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<int>.Ok(0) : Result<int>.Fail();
+        var result = success ? Result<int>.Ok(1) : Result<int>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForUInt32(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt32(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<uint>.Ok(0) : Result<uint>.Fail();
+        var result = success ? Result<uint>.Ok(1) : Result<uint>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForInt64(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt64(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<long>.Ok(0) : Result<long>.Fail();
+        var result = success ? Result<long>.Ok(1) : Result<long>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForUInt64(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt64(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<ulong>.Ok(0) : Result<ulong>.Fail();
+        var result = success ? Result<ulong>.Ok(1) : Result<ulong>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForDecimal(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDecimal(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<decimal>.Ok(0) : Result<decimal>.Fail();
+        var result = success ? Result<decimal>.Ok(1.1m) : Result<decimal>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForFloat(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForFloat(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<float>.Ok(0) : Result<float>.Fail();
+        var result = success ? Result<float>.Ok(1.1f) : Result<float>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForDouble(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDouble(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<double>.Ok(0) : Result<double>.Fail();
+        var result = success ? Result<double>.Ok(1.1d) : Result<double>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 'c'")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForChar(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 'c'", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForChar(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result.Ok('c') : Result<char>.Fail();
+        var result = success ? Result.Ok('c') : Result<char>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = \"StringValue\"")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForString(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = \"StringValue\"", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForString(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result.Ok("StringValue") : Result<string>.Fail();
+        var result = success ? Result.Ok("StringValue") : Result<string>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForObject(bool success, string expected)
+    [InlineData(true, "IsSuccess = True", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForObject(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result.Ok(new object()) : Result<object>.Fail();
+        var result = success ? Result.Ok(new object()) : Result<object>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForNullableValueTypes(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForNullableValueTypes(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<int?>.Ok(0) : Result<int?>.Fail();
+        var result = success ? Result<int?>.Ok(1) : Result<int?>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
@@ -332,24 +348,26 @@ public class ResultTValueTests
 
 #if NET7_0_OR_GREATER
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForInt128(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt128(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<Int128>.Ok(0) : Result<Int128>.Fail();
+        var result = success ? Result<Int128>.Ok(1) : Result<Int128>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 0")]
-    [InlineData(false, "IsSuccess = False")]
-    public void ToString_ShouldReturnProperRepresentationForUInt128(bool success, string expected)
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt128(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<UInt128>.Ok(0) : Result<UInt128>.Fail();
+        var result = success ? Result<UInt128>.Ok(1) : Result<UInt128>.Fail(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");

@@ -228,7 +228,7 @@ public class ResultTests
     }
 
     [Fact]
-    public void ToString_ShouldReturnStringRepresentation()
+    public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
     {
         // Arrange
         var result = Result.Ok();
@@ -236,4 +236,18 @@ public class ResultTests
         // Act & Assert
         result.ToString().Should().Be("Result { IsSuccess = True }");
     }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("An unknown error occured!")]
+    public void ToString_WhenFailed_ShouldReturnStringRepresentation(string errorMessage)
+    {
+        // Arrange
+        var result = Result.Fail(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
+    }
 }
+
+

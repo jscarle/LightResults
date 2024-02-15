@@ -258,6 +258,7 @@ public sealed class Result<TValue> : ResultBase
         builder.Append(" { ");
         builder.Append("IsSuccess = ");
         builder.Append(IsSuccess);
+
         if (IsSuccess)
         {
             if (Value is bool || Value is sbyte || Value is byte || Value is short || Value is ushort || Value is int || Value is uint || Value is long || Value is ulong ||
@@ -285,6 +286,14 @@ public sealed class Result<TValue> : ResultBase
                 builder.Append(Value);
                 builder.Append('"');
             }
+        }
+
+        if (IsFailed && Errors[0].Message.Length > 0)
+        {
+            builder.Append(", Error = ");
+            builder.Append('"');
+            builder.Append(Errors[0].Message);
+            builder.Append('"');
         }
 
         builder.Append(" }");

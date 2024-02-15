@@ -73,13 +73,25 @@ public class ResultBaseTests
     }
 
     [Fact]
-    public void ToString_ShouldReturnProperRepresentation()
+    public void ToString_WhenSuccess_ShouldReturnProperRepresentation()
     {
         // Arrange
         var result = new TestResult();
 
         // Act & Assert
         result.ToString().Should().Be("TestResult { IsSuccess = True }");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("An unknown error occured!")]
+    public void ToString_WhenFailed_ShouldReturnProperRepresentation(string errorMessage)
+    {
+        // Arrange
+        var result = new TestResult(new Error(errorMessage));
+
+        // Act & Assert
+        result.ToString().Should().Be(errorMessage.Length > 0 ? $"TestResult {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "TestResult { IsSuccess = False }");
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
