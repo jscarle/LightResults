@@ -7,32 +7,32 @@ namespace LightResults.Common;
 public abstract class ResultBase : IResult
 {
     /// <inheritdoc />
-    public bool IsSuccess => _errors.Count == 0;
+    public bool IsSuccess => _errors.Length == 0;
 
     /// <inheritdoc />
-    public bool IsFailed => _errors.Count != 0;
+    public bool IsFailed => _errors.Length != 0;
 
     /// <inheritdoc />
     public IReadOnlyList<IError> Errors => _errors;
 
-    private readonly ImmutableList<IError> _errors;
+    private readonly ImmutableArray<IError> _errors;
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class.</summary>
     protected ResultBase()
     {
-        _errors = ImmutableList<IError>.Empty;
+        _errors = ImmutableArray<IError>.Empty;
     }
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified error.</summary>
     protected ResultBase(IError error)
     {
-        _errors = ImmutableList.Create(error);
+        _errors = ImmutableArray.Create(error);
     }
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified errors.</summary>
     protected ResultBase(IEnumerable<IError> errors)
     {
-        _errors = errors.ToImmutableList();
+        _errors = errors.ToImmutableArray();
     }
 
     /// <inheritdoc />
