@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;netstandard2.0;net6.0;net7.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>LightResults</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Version>8.0.6</Version>
+        <Title>LightResults</Title>
+        <Authors>Jean-Sebastien Carle</Authors>
+        <Description>An extremely light and modern Result Pattern library.</Description>
+        <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
+        <PackageId>LightResults</PackageId>
+        <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>Icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>result results pattern error handling</PackageTags>
+        <AssemblyVersion>8.0.6.0</AssemblyVersion>
+        <FileVersion>8.0.6.0</FileVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AnalysisLevel>latest-All</AnalysisLevel>
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+        <NoWarn>CA1000;CA1716;CA2225;</NoWarn>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+        <Optimize>true</Optimize>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="LightResults.Tests"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+        <None Include="..\..\LICENSE.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\Icon.png">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+
+</Project>
