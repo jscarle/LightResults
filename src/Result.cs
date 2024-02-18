@@ -9,6 +9,9 @@ public sealed class Result : ResultBase
     , IActionableResult<Result>
 #endif
 {
+    private static readonly Result OkResult = new();
+    private static readonly Result FailResult = new(Error.Empty);
+    
     private Result()
     {
     }
@@ -25,7 +28,7 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result" /> representing a success result with the specified value.</returns>
     public static Result Ok()
     {
-        return new Result();
+        return OkResult;
     }
 
     /// <summary>Creates a success result with the specified value.</summary>
@@ -41,7 +44,7 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result" /> representing a failed result.</returns>
     public static Result Fail()
     {
-        return new Result(new Error());
+        return FailResult;
     }
 
     /// <summary>Creates a failed result with the given error message.</summary>
@@ -151,6 +154,8 @@ public sealed class Result<TValue> : ResultBase
     , IResult<TValue>
 #endif
 {
+    private static readonly Result<TValue> FailResult = new(Error.Empty);
+
     /// <summary>Gets the value of the result, throwing an exception if the result is failed.</summary>
     /// <exception cref="InvalidOperationException">Thrown when attempting to get or set the value of a failed result.</exception>
     public TValue Value
@@ -205,7 +210,7 @@ public sealed class Result<TValue> : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result.</returns>
     public static Result<TValue> Fail()
     {
-        return new Result<TValue>(new Error());
+        return FailResult;
     }
 
     /// <summary>Creates a failed result with the given error message.</summary>

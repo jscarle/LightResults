@@ -38,7 +38,14 @@ public abstract class ResultBase : IResult
     /// <inheritdoc />
     public bool HasError<TError>() where TError : IError
     {
-        return Errors.OfType<TError>().Any();
+        // Do not convert to LINQ, this creates unnecessary heap allocations.
+        // Foreach is the most efficient way to loop. It is the fastest and does not allocate.
+        // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var error in _errors)
+            if (error is TError)
+                return true;
+
+        return false;
     }
 
     /// <inheritdoc />

@@ -18,7 +18,7 @@
         <PackageIcon>Icon.png</PackageIcon>
         <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>Result Results FluentResults</PackageTags>
+        <PackageTags>result results pattern error handling</PackageTags>
         <AssemblyVersion>8.0.5.0</AssemblyVersion>
         <FileVersion>8.0.5.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -30,6 +30,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+        <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>

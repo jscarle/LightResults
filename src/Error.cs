@@ -10,6 +10,8 @@ namespace LightResults;
 /// <summary>Represents an error with a message and associated metadata.</summary>
 public class Error : IError
 {
+    internal static Error Empty { get; } = new();
+    
     /// <inheritdoc />
     public string Message { get; }
 
