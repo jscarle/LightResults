@@ -85,7 +85,7 @@
       "_appTitle": "LightResults",
       "_appLogoPath": "images/Logo.png",
       "_appFaviconPath": "images/Icon.png",
-      "_appFooter": "Developed and maintained by Jean-Sebastien Carle — <a href=\"https://jscarle.dev\">jscarle.dev</a>",
+      "_appFooter": "Developed and maintained by Jean-Sebastien Carle — <a href=\"https://jscarle.dev\">jscarle.dev</a><script async defer src=\"https://buttons.github.io/buttons.js\"></script><script async src=\"https://www.googletagmanager.com/gtag/js?id=G-ERKQEFDJYX\"></script>\r\n<script>\r\n  window.dataLayer = window.dataLayer || [];\r\n  function gtag(){dataLayer.push(arguments);}\r\n  gtag('js', new Date());\r\n\r\n  gtag('config', 'G-ERKQEFDJYX');\r\n</script>",
       "_enableSearch": true
     }
   }

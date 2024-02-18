@@ -11,3 +11,10 @@ obj/
 
 # Backup files
 *.bak
+
+# Docs
+docfx/_site/**
+docfx/netstandard2.0/**
+docfx/net6.0/**
+docfx/net7.0/**
+docfx/net8.0/**
