@@ -21,6 +21,14 @@ public class Benchmarks
     }
 
     [Benchmark]
+    public void Current_ResultBaseIndexer()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = FailedResult.Errors[0];
+    }
+
+    /*
+    [Benchmark]
     public void Current_ResultOk()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
@@ -97,4 +105,5 @@ public class Benchmarks
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = new Error(ErrorMessage);
     }
+*/
 }
