@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Text;
+﻿using System.Text;
 
 namespace LightResults.Common;
 
@@ -15,30 +14,41 @@ public abstract class ResultBase : IResult
     /// <inheritdoc />
     public IReadOnlyList<IError> Errors => _errors;
 
-    private readonly ImmutableList<IError> _errors;
+    private readonly ErrorArray _errors;
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class.</summary>
     protected ResultBase()
     {
-        _errors = ImmutableList<IError>.Empty;
+        _errors = ErrorArray.Empty;
     }
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified error.</summary>
     protected ResultBase(IError error)
     {
-        _errors = ImmutableList.Create(error);
+        _errors = new ErrorArray(error);
     }
 
     /// <summary>Initializes a new instance of the <see cref="ResultBase" /> class with the specified errors.</summary>
     protected ResultBase(IEnumerable<IError> errors)
     {
-        _errors = errors.ToImmutableList();
+        _errors = new ErrorArray(errors);
     }
 
     /// <inheritdoc />
     public bool HasError<TError>() where TError : IError
     {
-        return Errors.OfType<TError>().Any();
+        // Do not convert to LINQ, this creates unnecessary heap allocations.
+        // For is the most efficient way to loop. It is the fastest and does not allocate.
+        // ReSharper disable once ForCanBeConvertedToForeach
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        for (var index = 0; index < _errors.Count; index++)
+        {
+            var error = _errors[index];
+            if (error is TError)
+                return true;
+        }
+
+        return false;
     }
 
     /// <inheritdoc />
