@@ -5,13 +5,13 @@ namespace LightResults.CurrentBenchmarks;
 [MemoryDiagnoser]
 public class Benchmarks
 {
-    [Params(100_000)]
-    public int Iterations { get; set; }
-
     private const int ResultValue = 0;
     private const string ErrorMessage = "An unknown error occured.";
     private static readonly Error Error = new(ErrorMessage);
     private static readonly Result FailedResult = Result.Fail(Error);
+    
+    [Params(100_000)]
+    public int Iterations { get; set; }
 
     [Benchmark]
     public void Current_ResultBaseIndexer()

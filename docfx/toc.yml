@@ -1,0 +1,10 @@
+- name: Docs
+  href: docs/
+- name: .NET Standard 2.0
+  href: netstandard2.0/
+- name: .NET 6.0
+  href: net6.0/
+- name: .NET 7.0
+  href: net7.0/
+- name: .NET 8.0
+  href: net8.0/
