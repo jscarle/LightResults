@@ -105,7 +105,8 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
     public static Result<TValue> Fail<TValue>(string errorMessage)
     {
-        return Result<TValue>.Fail(errorMessage);
+        var error = new Error(errorMessage);
+        return Result<TValue>.Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -115,7 +116,8 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message and metadata.</returns>
     public static Result<TValue> Fail<TValue>(string errorMessage, (string Key, object Value) metadata)
     {
-        return Result<TValue>.Fail(errorMessage, metadata);
+        var error = new Error(errorMessage, metadata);
+        return Result<TValue>.Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -125,7 +127,8 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message and metadata.</returns>
     public static Result<TValue> Fail<TValue>(string errorMessage, IDictionary<string, object> metadata)
     {
-        return Result<TValue>.Fail(errorMessage, metadata);
+        var error = new Error(errorMessage, metadata);
+        return Result<TValue>.Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error.</summary>

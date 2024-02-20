@@ -13,160 +13,19 @@ public class Benchmarks
     [Params(100_000)]
     public int Iterations { get; set; }
 
+    // ReSharper disable RedundantTypeArgumentsOfMethod
     private const int ResultValue = 0;
     private const string ErrorMessage = "An unknown error occured.";
-    private static readonly Error ErrorWithMessage = new(ErrorMessage);
+    private static readonly Error ErrorWithErrorMessage = new(ErrorMessage);
     private static readonly Result ResultOk = Result.Ok();
     private static readonly Result ResultFail = Result.Fail();
-    private static readonly Result ResultFailWithMessage = Result.Fail(ErrorWithMessage);
+    private static readonly Result ResultFailWithErrorMessage = Result.Fail(ErrorWithErrorMessage);
     private static readonly Result<int> ResultTValueOk = Result<int>.Ok(ResultValue);
     private static readonly Result<int> ResultTValueFail = Result<int>.Fail();
-    private static readonly Result<int> ResultTValueFailWithMessage = Result<int>.Fail(ErrorWithMessage);
+    private static readonly Result<int> ResultTValueFailWithErrorMessage = Result<int>.Fail(ErrorWithErrorMessage);
     private static readonly CustomResult CustomResultOk = CustomResult.Ok();
     private static readonly CustomResult CustomResultFail = CustomResult.Fail();
-    private static readonly CustomResult CustomResultFailWithMessage = CustomResult.Fail(ErrorWithMessage);
-
-    [Benchmark]
-    public void Develop_ResultBaseIndexer()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithMessage.Errors[0];
-    }
-
-    [Benchmark]
-    public void Develop_ResultBaseHasError()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithMessage.HasError<Error>();
-    }
-
-    [Benchmark]
-    public void Develop_ResultOkToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultOk.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultFailToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFail.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultFailWithMessageToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithMessage.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultTValueOkToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultTValueOk.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultTValueFailToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultTValueFail.ToString();
-    }
-
-
-    [Benchmark]
-    public void Develop_ResultTValueFailWithMessageToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultTValueFailWithMessage.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_CustomResultOkToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = CustomResultOk.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_CustomResultFailToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = CustomResultFail.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_CustomResultFailWithMessageToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = CustomResultFailWithMessage.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultOk()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Ok();
-    }
-
-    [Benchmark]
-    public void Develop_ResultFail()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail();
-    }
-
-    [Benchmark]
-    public void Develop_ResultFailWithError()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail(ErrorWithMessage);
-    }
-
-    [Benchmark]
-    public void Develop_ResultTValueOk()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Ok(ResultValue);
-    }
-
-    [Benchmark]
-    public void Develop_ResultTValueFail()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Fail();
-    }
-
-    [Benchmark]
-    public void Develop_ResultTValueFailWithError()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Fail(ErrorWithMessage);
-    }
-
-    [Benchmark]
-    public void Develop_ResultOkTValue()
-    {
-        // ReSharper disable once RedundantTypeArgumentsOfMethod
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Ok<int>(ResultValue);
-    }
-
-    [Benchmark]
-    public void Develop_ResultFailTValue()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail<int>();
-    }
-
-    [Benchmark]
-    public void Develop_ResultFailWithErrorTValue()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail<int>(ErrorWithMessage);
-    }
+    private static readonly CustomResult CustomResultFailWithErrorMessage = CustomResult.Fail(ErrorWithErrorMessage);
 
     [Benchmark]
     public void Develop_NewError()
@@ -176,10 +35,150 @@ public class Benchmarks
     }
 
     [Benchmark]
-    public void Develop_NewErrorWithString()
+    public void Develop_NewError_WithErrorMessage()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = new Error(ErrorMessage);
+    }
+
+    [Benchmark]
+    public void Develop_ResultBase_Indexer()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.Errors[0];
+    }
+
+    [Benchmark]
+    public void Develop_ResultBase_HasError()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.HasError<Error>();
+    }
+
+    [Benchmark]
+    public void Develop_ResultBase_Ok_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = CustomResultOk.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_ResultBase_Fail_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = CustomResultFail.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_ResultBase_Fail_WithErrorMessage_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = CustomResultFailWithErrorMessage.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Ok()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Ok();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Ok_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultOk.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_OkTValue()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Ok<int>(ResultValue);
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Fail();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFail.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_FailTValue()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Fail<int>();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Fail(ErrorWithErrorMessage);
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail_WithErrorMessage_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_FailTValue_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Fail<int>(ErrorWithErrorMessage);
+    }
+
+    [Benchmark]
+    public void Develop_ResultTValue_Ok()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result<int>.Ok(ResultValue);
+    }
+
+    [Benchmark]
+    public void Develop_ResultTValue_Ok_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultTValueOk.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_ResultTValue_Fail()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result<int>.Fail();
+    }
+
+    [Benchmark]
+    public void Develop_ResultTValue_Fail_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultTValueFail.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_ResultTValue_Fail_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result<int>.Fail(ErrorWithErrorMessage);
+    }
+
+    [Benchmark]
+    public void Develop_ResultTValue_Fail_WithErrorMessage_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultTValueFailWithErrorMessage.ToString();
     }
 
     private sealed class CustomResult : ResultBase
