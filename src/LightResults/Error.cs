@@ -11,7 +11,7 @@ namespace LightResults;
 public class Error : IError
 {
     internal static Error Empty { get; } = new();
-    
+
     /// <inheritdoc />
     public string Message { get; }
 
@@ -41,15 +41,10 @@ public class Error : IError
 #endif
     }
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
-    /// <param name="metadata">The metadata associated with the error.</param>
-    public Error((string Key, object Value) metadata) : this("", metadata)
-    {
-    }
 
     /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(IDictionary<string, object> metadata) : this("", metadata)
+    public Error((string Key, object Value) metadata) : this("", metadata)
     {
     }
 
@@ -67,6 +62,12 @@ public class Error : IError
         builder.Add(metadata.Key, metadata.Value);
         _metadata = builder.ToImmutable();
 #endif
+    }
+
+    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
+    /// <param name="metadata">The metadata associated with the error.</param>
+    public Error(IDictionary<string, object> metadata) : this("", metadata)
+    {
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified error message and metadata.</summary>
