@@ -72,7 +72,10 @@
     ],
     "resource": [
       {
-        "files": "images/**"
+        "files": [
+          "images/**",
+          "**/googlec98a83d0d9926e87.html"
+        ]
       }
     ],
     "output": "_site",
