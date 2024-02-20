@@ -47,14 +47,17 @@
         <None Include="..\..\LICENSE.md">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
+            <Visible>False</Visible>
         </None>
         <None Include="..\..\README.md">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
+            <Visible>False</Visible>
         </None>
         <None Include="..\..\Icon.png">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
+            <Visible>False</Visible>
         </None>
     </ItemGroup>
 

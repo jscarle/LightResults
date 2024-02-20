@@ -5,19 +5,13 @@ namespace LightResults.Common;
 
 internal sealed class ErrorArray : IReadOnlyList<IError>
 {
+    public int Count => _errors.Length;
+
+    public IError this[int index] => _errors[index];
     public static readonly ErrorArray Empty = new();
 
     private readonly ImmutableArray<IError> _errors;
 
-    public int Count => _errors.Length;
-
-    public IError this[int index] => _errors[index];
-
-    private ErrorArray()
-    {
-        _errors = ImmutableArray<IError>.Empty;
-    }
-    
     public ErrorArray(IError error)
     {
         _errors = ImmutableArray.Create(error);
@@ -26,6 +20,11 @@ internal sealed class ErrorArray : IReadOnlyList<IError>
     public ErrorArray(IEnumerable<IError> errors)
     {
         _errors = errors.ToImmutableArray();
+    }
+
+    private ErrorArray()
+    {
+        _errors = ImmutableArray<IError>.Empty;
     }
 
     public IEnumerator<IError> GetEnumerator()
