@@ -99,8 +99,8 @@ BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.3155/23H2/2023Update/SunValley3
 | Method                                                    |         Mean | Ratio | Allocated | Alloc Ratio |
 |-----------------------------------------------------------|-------------:|------:|----------:|------------:|
 | LightResults: `Result<T>.Fail(errorMessage).ToString()`   |  2,751.83 μs |  1.00 |  23.65 MB |        1.00 |
-| ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`  |    190.36 μs |  0.07 |         - |        0.00 |
 | FluentResults: `Result<T>.Error(errorMessage).ToString()` | 26,479.94 μs |  9.62 | 115.97 MB |        4.90 |
+| ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`  |    190.36 μs |  0.07 |         - |        0.00 |
 
 ### Determining if a result contains a specific error
 | Method                                                                                |         Mean |  Ratio | Allocated | Alloc Ratio |
