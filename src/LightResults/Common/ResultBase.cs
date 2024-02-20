@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace LightResults.Common;
+﻿namespace LightResults.Common;
 
 /// <summary>Base class for implementing the <see cref="IResult" /> interface.</summary>
 public abstract class ResultBase : IResult
@@ -54,21 +52,46 @@ public abstract class ResultBase : IResult
     /// <inheritdoc />
     public override string ToString()
     {
-        var builder = new StringBuilder();
-        builder.Append(GetType().Name);
-        builder.Append(" { ");
-        builder.Append("IsSuccess = ");
-        builder.Append(IsSuccess);
+        var typeName = GetType().Name;
+        if (IsSuccess)
+            return GetResultString(typeName, "True", "");
 
-        if (IsFailed && Errors[0].Message.Length > 0)
-        {
-            builder.Append(", Error = ");
-            builder.Append('"');
-            builder.Append(Errors[0].Message);
-            builder.Append('"');
-        }
+        var errorString = GetErrorString();
+        return GetResultString(typeName, "False", errorString);
+    }
 
-        builder.Append(" }");
-        return builder.ToString();
+    internal static string GetResultString(string typeName, string successString, string informationString)
+    {
+        const string preResultStr = " { IsSuccess = ";
+        const string postResultStr = " }";
+#if NET6_0_OR_GREATER
+        var stringLength = typeName.Length + preResultStr.Length + successString.Length + informationString.Length + postResultStr.Length;
+
+        var str = string.Create(stringLength, (typeName, successString, informationString), (span, state) => { span.TryWrite($"{state.typeName}{preResultStr}{state.successString}{state.informationString}{postResultStr}", out _); });
+
+        return str;
+#else
+        return $"{typeName}{preResultStr}{successString}{informationString}{postResultStr}";
+#endif
+    }
+
+    internal string GetErrorString()
+    {
+        if (IsSuccess || Errors[0].Message.Length <= 0)
+            return "";
+
+        var errorMessage = Errors[0].Message;
+
+        const string preErrorStr = ", Error = \"";
+        const string postErrorStr = "\"";
+#if NET6_0_OR_GREATER
+        var stringLength = preErrorStr.Length + errorMessage.Length + postErrorStr.Length;
+
+        var str = string.Create(stringLength, errorMessage, (span, state) => { span.TryWrite($"{preErrorStr}{state}{postErrorStr}", out _); });
+
+        return str;
+#else
+        return $"{preErrorStr}{errorMessage}{postErrorStr}";
+#endif
     }
 }

@@ -1,4 +1,3 @@
-using System.Text;
 using LightResults.Common;
 
 namespace LightResults;
@@ -10,8 +9,8 @@ public sealed class Result : ResultBase
 #endif
 {
     private static readonly Result OkResult = new();
-    private static readonly Result FailResult = new(Error.Empty);
-    
+    private static readonly Result FailedResult = new(Error.Empty);
+
     private Result()
     {
     }
@@ -44,7 +43,7 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result" /> representing a failed result.</returns>
     public static Result Fail()
     {
-        return FailResult;
+        return FailedResult;
     }
 
     /// <summary>Creates a failed result with the given error message.</summary>
@@ -52,7 +51,8 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error message.</returns>
     public static Result Fail(string errorMessage)
     {
-        return new Result(new Error(errorMessage));
+        var error = new Error(errorMessage);
+        return Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -61,7 +61,8 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error message and metadata.</returns>
     public static Result Fail(string errorMessage, (string Key, object Value) metadata)
     {
-        return new Result(new Error(errorMessage, metadata));
+        var error = new Error(errorMessage, metadata);
+        return Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -70,7 +71,8 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error message and metadata.</returns>
     public static Result Fail(string errorMessage, IDictionary<string, object> metadata)
     {
-        return new Result(new Error(errorMessage, metadata));
+        var error = new Error(errorMessage, metadata);
+        return Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error.</summary>
@@ -143,6 +145,19 @@ public sealed class Result : ResultBase
     {
         return Result<TValue>.Fail(errors);
     }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        if (IsSuccess)
+            return $"{nameof(Result)} {{ IsSuccess = True }}";
+
+        if (Errors[0].Message.Length == 0)
+            return $"{nameof(Result)} {{ IsSuccess = False }}";
+
+        var errorString = GetErrorString();
+        return GetResultString(nameof(Result), "False", errorString);
+    }
 }
 
 /// <summary>Represents a result.</summary>
@@ -154,7 +169,7 @@ public sealed class Result<TValue> : ResultBase
     , IResult<TValue>
 #endif
 {
-    private static readonly Result<TValue> FailResult = new(Error.Empty);
+    private static readonly Result<TValue> FailedResult = new(Error.Empty);
 
     /// <summary>Gets the value of the result, throwing an exception if the result is failed.</summary>
     /// <exception cref="InvalidOperationException">Thrown when attempting to get or set the value of a failed result.</exception>
@@ -210,7 +225,7 @@ public sealed class Result<TValue> : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result.</returns>
     public static Result<TValue> Fail()
     {
-        return FailResult;
+        return FailedResult;
     }
 
     /// <summary>Creates a failed result with the given error message.</summary>
@@ -218,7 +233,8 @@ public sealed class Result<TValue> : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
     public static Result<TValue> Fail(string errorMessage)
     {
-        return new Result<TValue>(new Error(errorMessage));
+        var error = new Error(errorMessage);
+        return Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -227,7 +243,8 @@ public sealed class Result<TValue> : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
     public static Result<TValue> Fail(string errorMessage, (string Key, object Value) metadata)
     {
-        return new Result<TValue>(new Error(errorMessage, metadata));
+        var error = new Error(errorMessage, metadata);
+        return Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -236,7 +253,8 @@ public sealed class Result<TValue> : ResultBase
     /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
     public static Result<TValue> Fail(string errorMessage, IDictionary<string, object> metadata)
     {
-        return new Result<TValue>(new Error(errorMessage, metadata));
+        var error = new Error(errorMessage, metadata);
+        return Fail(error);
     }
 
     /// <summary>Creates a failed result with the given error.</summary>
@@ -258,50 +276,73 @@ public sealed class Result<TValue> : ResultBase
     /// <inheritdoc />
     public override string ToString()
     {
-        var builder = new StringBuilder();
-        builder.Append(nameof(Result));
-        builder.Append(" { ");
-        builder.Append("IsSuccess = ");
-        builder.Append(IsSuccess);
-
         if (IsSuccess)
         {
-            if (Value is bool || Value is sbyte || Value is byte || Value is short || Value is ushort || Value is int || Value is uint || Value is long || Value is ulong ||
+            var valueString = GetValueString();
+            return GetResultString(nameof(Result), "True", valueString);
+        }
+
+        if (Errors[0].Message.Length == 0)
+            return $"{nameof(Result)} {{ IsSuccess = False }}";
+
+        var errorString = GetErrorString();
+        return GetResultString(nameof(Result), "False", errorString);
+    }
+
+    private string GetValueString()
+    {
+        if (IsFailed)
+            return "";
+
+        var valueString = Value?.ToString() ?? "";
+
+        const string preValueStr = ", Value = ";
+        const string charStr = "'";
+        const string stringStr = "\"";
+
+        if (Value is bool || Value is sbyte || Value is byte || Value is short || Value is ushort || Value is int || Value is uint || Value is long || Value is ulong ||
 #if NET7_0_OR_GREATER
-                Value is Int128 || Value is UInt128 ||
+            Value is Int128 || Value is UInt128 ||
 #endif
-                Value is decimal || Value is float || Value is double)
-            {
-                builder.Append(", Value = ");
-                builder.Append(Value);
-            }
-
-            if (Value is char)
-            {
-                builder.Append(", Value = ");
-                builder.Append('\'');
-                builder.Append(Value);
-                builder.Append('\'');
-            }
-
-            if (Value is string)
-            {
-                builder.Append(", Value = ");
-                builder.Append('"');
-                builder.Append(Value);
-                builder.Append('"');
-            }
-        }
-
-        if (IsFailed && Errors[0].Message.Length > 0)
+            Value is decimal || Value is float || Value is double)
         {
-            builder.Append(", Error = ");
-            builder.Append('"');
-            builder.Append(Errors[0].Message);
-            builder.Append('"');
+#if NET6_0_OR_GREATER
+            var stringLength = preValueStr.Length + valueString.Length;
+
+            var str = string.Create(stringLength, valueString, (span, state) => { span.TryWrite($"{preValueStr}{state}", out _); });
+
+            return str;
+#else
+            return $"{preValueStr}{valueString}";
+#endif
         }
 
-        builder.Append(" }");
-        return builder.ToString();
+        if (Value is char)
+        {
+#if NET6_0_OR_GREATER
+            var stringLength = preValueStr.Length + charStr.Length + valueString.Length + charStr.Length;
+
+            var str = string.Create(stringLength, valueString, (span, state) => { span.TryWrite($"{preValueStr}{charStr}{state}{charStr}", out _); });
+
+            return str;
+#else
+            return $"{preValueStr}{charStr}{valueString}{charStr}";
+#endif
+        }
+
+        if (Value is string)
+        {
+#if NET6_0_OR_GREATER
+            var stringLength = preValueStr.Length + stringStr.Length + valueString.Length + stringStr.Length;
+
+            var str = string.Create(stringLength, valueString, (span, state) => { span.TryWrite($"{preValueStr}{stringStr}{state}{stringStr}", out _); });
+
+            return str;
+#else
+            return $"{preValueStr}{stringStr}{valueString}{stringStr}";
+#endif
+        }
+
+        return "";
     }
 }
