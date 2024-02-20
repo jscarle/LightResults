@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>LightResults</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <Version>8.0.6</Version>
+        <Version>8.0.7</Version>
         <Title>LightResults</Title>
         <Authors>Jean-Sebastien Carle</Authors>
         <Description>An extremely light and modern Result Pattern library.</Description>
@@ -19,8 +19,8 @@
         <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>result results pattern fluentresults error handling</PackageTags>
-        <AssemblyVersion>8.0.6.0</AssemblyVersion>
-        <FileVersion>8.0.6.0</FileVersion>
+        <AssemblyVersion>8.0.7.0</AssemblyVersion>
+        <FileVersion>8.0.7.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
