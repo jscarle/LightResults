@@ -1,5 +1,5 @@
 #if NET7_0_OR_GREATER
-namespace LightResults;
+namespace LightResults.Common;
 
 /// <summary>Defines an actionable result.</summary>
 public interface IActionableResult<out TResult> : IResult where TResult : IActionableResult<TResult>
