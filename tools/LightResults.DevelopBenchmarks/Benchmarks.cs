@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Jobs;
-using LightResults.Common;
 
 namespace LightResults.DevelopBenchmarks;
 
@@ -11,11 +10,11 @@ namespace LightResults.DevelopBenchmarks;
 public class Benchmarks
 {
     [Params(100_000)]
-    public int Iterations { get; set; }
+    public int Iterations { get; set; } // ReSharper disable RedundantTypeArgumentsOfMethod
 
-    // ReSharper disable RedundantTypeArgumentsOfMethod
     private const int ResultValue = 0;
     private const string ErrorMessage = "An unknown error occured.";
+    private static readonly Error EmptyError = new();
     private static readonly Error ErrorWithErrorMessage = new(ErrorMessage);
     private static readonly Result ResultOk = Result.Ok();
     private static readonly Result ResultFail = Result.Fail();
@@ -23,58 +22,6 @@ public class Benchmarks
     private static readonly Result<int> ResultTValueOk = Result<int>.Ok(ResultValue);
     private static readonly Result<int> ResultTValueFail = Result<int>.Fail();
     private static readonly Result<int> ResultTValueFailWithErrorMessage = Result<int>.Fail(ErrorWithErrorMessage);
-    private static readonly CustomResult CustomResultOk = CustomResult.Ok();
-    private static readonly CustomResult CustomResultFail = CustomResult.Fail();
-    private static readonly CustomResult CustomResultFailWithErrorMessage = CustomResult.Fail(ErrorWithErrorMessage);
-
-    [Benchmark]
-    public void Develop_NewError()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = new Error();
-    }
-
-    [Benchmark]
-    public void Develop_NewError_WithErrorMessage()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = new Error(ErrorMessage);
-    }
-
-    [Benchmark]
-    public void Develop_ResultBase_Indexer()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithErrorMessage.Errors[0];
-    }
-
-    [Benchmark]
-    public void Develop_ResultBase_HasError()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithErrorMessage.HasError<Error>();
-    }
-
-    [Benchmark]
-    public void Develop_ResultBase_Ok_ToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = CustomResultOk.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultBase_Fail_ToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = CustomResultFail.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_ResultBase_Fail_WithErrorMessage_ToString()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = CustomResultFailWithErrorMessage.ToString();
-    }
 
     [Benchmark]
     public void Develop_Result_Ok()
@@ -88,13 +35,6 @@ public class Benchmarks
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = ResultOk.ToString();
-    }
-
-    [Benchmark]
-    public void Develop_Result_OkTValue()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Ok<int>(ResultValue);
     }
 
     [Benchmark]
@@ -112,13 +52,6 @@ public class Benchmarks
     }
 
     [Benchmark]
-    public void Develop_Result_FailTValue()
-    {
-        for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail<int>();
-    }
-
-    [Benchmark]
     public void Develop_Result_Fail_WithErrorMessage()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
@@ -133,10 +66,17 @@ public class Benchmarks
     }
 
     [Benchmark]
-    public void Develop_Result_FailTValue_WithErrorMessage()
+    public void Develop_Result_HasError()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail<int>(ErrorWithErrorMessage);
+            _ = ResultFailWithErrorMessage.HasError<Error>();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Error()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.Error;
     }
 
     [Benchmark]
@@ -181,29 +121,31 @@ public class Benchmarks
             _ = ResultTValueFailWithErrorMessage.ToString();
     }
 
-    private sealed class CustomResult : ResultBase
+    [Benchmark]
+    public void Develop_Error_New()
     {
-        private CustomResult()
-        {
-        }
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = new Error();
+    }
 
-        private CustomResult(IError error) : base(error)
-        {
-        }
+    [Benchmark]
+    public void Develop_Error_New_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = EmptyError.ToString();
+    }
 
-        public static CustomResult Ok()
-        {
-            return new CustomResult();
-        }
+    [Benchmark]
+    public void Develop_Error_New_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = new Error(ErrorMessage);
+    }
 
-        public static CustomResult Fail()
-        {
-            return new CustomResult(new Error());
-        }
-
-        public static CustomResult Fail(IError error)
-        {
-            return new CustomResult(error);
-        }
+    [Benchmark]
+    public void Develop_Error_New_WithErrorMessage_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ErrorWithErrorMessage.ToString();
     }
 }

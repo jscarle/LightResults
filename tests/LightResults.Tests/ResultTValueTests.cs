@@ -138,6 +138,34 @@ public class ResultTValueTests
         result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }
 
+    [Fact]
+    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+
+        // Act
+        var result = Result<int>.Fail(errors);
+
+        // Assert
+        result.Error.Should().Be(firstError);
+    }
+
+    [Fact]
+    public void Error_WhenResultIsSuccess_ShouldThrowException()
+    {
+        // Arrange
+        var result = Result<int>.Ok(42);
+
+        // Act & Assert
+        result.Invoking(r => _ = r.Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
+    }
+
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = True", "")]
     [InlineData(false, "IsSuccess = False", "")]

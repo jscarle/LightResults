@@ -228,6 +228,34 @@ public class ResultTests
     }
 
     [Fact]
+    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+
+        // Act
+        var result = Result.Fail(errors);
+
+        // Assert
+        result.Error.Should().Be(firstError);
+    }
+
+    [Fact]
+    public void Error_WhenResultIsSuccess_ShouldThrowException()
+    {
+        // Arrange
+        var result = Result.Ok();
+
+        // Act & Assert
+        result.Invoking(r => _ = r.Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
+    }
+
+    [Fact]
     public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
     {
         // Arrange
@@ -249,5 +277,3 @@ public class ResultTests
         result.ToString().Should().Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
     }
 }
-
-
