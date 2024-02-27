@@ -41,9 +41,8 @@ if (result.IsSuccess)
 if (result.IsFailed)
 {
     // The result is failed therefore IsSuccess will be false.
-    var firstError = result.Errors.First();
-    if (firstError.Message.Length > 0)
-        Console.WriteLine(firstError.Message);
+    if (result.Error.Message.Length > 0)
+        Console.WriteLine(result.Error.Message);
     else
         Console.WriteLine("An unknown error occured!");
 }
