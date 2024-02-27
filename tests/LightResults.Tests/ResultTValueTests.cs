@@ -139,6 +139,26 @@ public class ResultTValueTests
     }
 
     [Fact]
+    public void HasError_WithMatchingErrorType_ShouldReturnTrue()
+    {
+        // Arrange
+        var result = Result<int>.Fail(new ValidationError("Validation error"));
+
+        // Act & Assert
+        result.HasError<ValidationError>().Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasError_WithNonMatchingErrorType_ShouldReturnFalse()
+    {
+        // Arrange
+        var result = Result<int>.Fail(new Error("Generic error"));
+
+        // Act & Assert
+        result.HasError<ValidationError>().Should().BeFalse();
+    }
+    
+    [Fact]
     public void Error_WhenResultIsFailed_ShouldReturnFirstError()
     {
         // Arrange
@@ -401,4 +421,6 @@ public class ResultTValueTests
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 #endif
+    
+    private class ValidationError(string errorMessage) : Error(errorMessage);
 }

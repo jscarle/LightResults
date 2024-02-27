@@ -75,9 +75,6 @@ internal static class StringHelper
 
     public static string GetResultErrorString(ImmutableArray<IError> errors)
     {
-        if (errors[0].Message.Length <= 0)
-            return "";
-
         var errorMessage = errors[0].Message;
 
         const string preErrorStr = ", Error = \"";

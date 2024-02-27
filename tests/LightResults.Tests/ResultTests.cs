@@ -226,7 +226,27 @@ public class ResultTests
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }
+    
+    [Fact]
+    public void HasError_WithMatchingErrorType_ShouldReturnTrue()
+    {
+        // Arrange
+        var result = Result.Fail(new ValidationError("Validation error"));
 
+        // Act & Assert
+        result.HasError<ValidationError>().Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasError_WithNonMatchingErrorType_ShouldReturnFalse()
+    {
+        // Arrange
+        var result = Result.Fail(new Error("Generic error"));
+
+        // Act & Assert
+        result.HasError<ValidationError>().Should().BeFalse();
+    }
+    
     [Fact]
     public void Error_WhenResultIsFailed_ShouldReturnFirstError()
     {
@@ -276,4 +296,6 @@ public class ResultTests
         // Act & Assert
         result.ToString().Should().Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
     }
+    
+    private class ValidationError(string errorMessage) : Error(errorMessage);
 }

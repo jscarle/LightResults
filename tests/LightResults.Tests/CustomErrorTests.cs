@@ -111,31 +111,32 @@ public class CustomErrorTests
         // Act & Assert
         error.ToString().Should().Be(errorMessage.Length > 0 ? $"CustomError {{ Message = \"{errorMessage}\" }}" : "CustomError");
     }
-}
+    
 
-internal sealed class CustomError : Error
-{
-    public CustomError()
+    private sealed class CustomError : Error
     {
-    }
+        public CustomError()
+        {
+        }
 
-    public CustomError(string errorMessage) : base(errorMessage)
-    {
-    }
+        public CustomError(string errorMessage) : base(errorMessage)
+        {
+        }
 
-    public CustomError(string errorMessage, (string Key, object Value) metadata) : base(errorMessage, metadata)
-    {
-    }
+        public CustomError(string errorMessage, (string Key, object Value) metadata) : base(errorMessage, metadata)
+        {
+        }
 
-    public CustomError((string Key, object Value) metadata) : base("", metadata)
-    {
-    }
+        public CustomError((string Key, object Value) metadata) : base("", metadata)
+        {
+        }
 
-    public CustomError(string errorMessage, IDictionary<string, object> metadata) : base(errorMessage, metadata)
-    {
-    }
+        public CustomError(string errorMessage, IDictionary<string, object> metadata) : base(errorMessage, metadata)
+        {
+        }
 
-    public CustomError(IDictionary<string, object> metadata) : base("", metadata)
-    {
+        public CustomError(IDictionary<string, object> metadata) : base("", metadata)
+        {
+        }
     }
 }
