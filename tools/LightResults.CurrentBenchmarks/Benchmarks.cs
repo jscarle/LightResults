@@ -76,7 +76,7 @@ public class Benchmarks
     public void Current_Result_ErrorsIndexer()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithErrorMessage.Errors[0];
+            _ = ResultFailWithErrorMessage.Error;
     }
 
     [Benchmark]
