@@ -3,13 +3,13 @@ using Xunit;
 
 namespace LightResults.Tests;
 
-public class ErrorTests
+public class CustomErrorTests
 {
     [Fact]
-    public void DefaultConstructor_ShouldCreateEmptyError()
+    public void DefaultConstructor_ShouldCreateEmptyCustomError()
     {
         // Arrange
-        var error = new Error();
+        var error = new CustomError();
 
         // Act & Assert
         error.Message.Should().BeEmpty();
@@ -23,7 +23,7 @@ public class ErrorTests
         const string errorMessage = "Sample error message";
 
         // Act
-        var error = new Error(errorMessage);
+        var error = new CustomError(errorMessage);
 
         // Assert
         error.Message.Should().Be(errorMessage);
@@ -37,7 +37,7 @@ public class ErrorTests
         var metadata = (Key: "Key", Value: "Value");
 
         // Act
-        var error = new Error(metadata);
+        var error = new CustomError(metadata);
 
         // Assert
         error.Message.Should().BeEmpty();
@@ -57,7 +57,7 @@ public class ErrorTests
         };
 
         // Act
-        var error = new Error(metadata);
+        var error = new CustomError(metadata);
 
         // Assert
         error.Message.Should().BeEmpty();
@@ -72,7 +72,7 @@ public class ErrorTests
         var metadata = (Key: "Key", Value: "Value");
 
         // Act
-        var error = new Error(errorMessage, metadata);
+        var error = new CustomError(errorMessage, metadata);
 
         // Assert
         error.Message.Should().Be(errorMessage);
@@ -93,7 +93,7 @@ public class ErrorTests
         };
 
         // Act
-        var error = new Error(errorMessage, metadata);
+        var error = new CustomError(errorMessage, metadata);
 
         // Assert
         error.Message.Should().Be(errorMessage);
@@ -106,9 +106,36 @@ public class ErrorTests
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
-        var error = new Error(errorMessage);
+        var error = new CustomError(errorMessage);
 
         // Act & Assert
-        error.ToString().Should().Be(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
+        error.ToString().Should().Be(errorMessage.Length > 0 ? $"CustomError {{ Message = \"{errorMessage}\" }}" : "CustomError");
+    }
+}
+
+internal sealed class CustomError : Error
+{
+    public CustomError()
+    {
+    }
+
+    public CustomError(string errorMessage) : base(errorMessage)
+    {
+    }
+
+    public CustomError(string errorMessage, (string Key, object Value) metadata) : base(errorMessage, metadata)
+    {
+    }
+
+    public CustomError((string Key, object Value) metadata) : base("", metadata)
+    {
+    }
+
+    public CustomError(string errorMessage, IDictionary<string, object> metadata) : base(errorMessage, metadata)
+    {
+    }
+
+    public CustomError(IDictionary<string, object> metadata) : base("", metadata)
+    {
     }
 }

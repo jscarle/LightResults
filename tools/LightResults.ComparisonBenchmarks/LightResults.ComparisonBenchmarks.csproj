@@ -14,6 +14,7 @@
         <PackageReference Include="Ardalis.Result" Version="7.2.0"/>
         <PackageReference Include="BenchmarkDotNet" Version="0.13.12"/>
         <PackageReference Include="FluentResults" Version="3.15.2"/>
+        <PackageReference Include="Rascal" Version="1.1.0" />
     </ItemGroup>
 
     <ItemGroup>

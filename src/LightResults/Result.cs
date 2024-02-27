@@ -1,26 +1,54 @@
+using System.Collections.Immutable;
 using LightResults.Common;
 
 namespace LightResults;
 
 /// <summary>Represents a result.</summary>
-public sealed class Result : ResultBase
+public sealed class Result :
 #if NET7_0_OR_GREATER
-    , IActionableResult<Result>
+    IActionableResult<Result>
+#else
+    IResult
 #endif
 {
+    /// <inheritdoc />
+    public bool IsSuccess => _errors.Length == 0;
+
+    /// <inheritdoc />
+    public bool IsFailed => _errors.Length != 0;
+
+    /// <inheritdoc />
+    public IReadOnlyCollection<IError> Errors => _errors;
+
+    /// <inheritdoc />
+    public IError Error
+    {
+        get
+        {
+            if (IsSuccess)
+                throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
+
+            return _errors[0];
+        }
+    }
+
     private static readonly Result OkResult = new();
-    private static readonly Result FailedResult = new(Error.Empty);
+    private static readonly Result FailedResult = new(LightResults.Error.Empty);
+    private readonly ImmutableArray<IError> _errors;
 
     private Result()
     {
+        _errors = ImmutableArray<IError>.Empty;
     }
 
-    private Result(IError error) : base(error)
+    private Result(IError error)
     {
+        _errors = ImmutableArray.Create(error);
     }
 
-    private Result(IEnumerable<IError> errors) : base(errors)
+    private Result(IEnumerable<IError> errors)
     {
+        _errors = errors.ToImmutableArray();
     }
 
     /// <summary>Creates a success result.</summary>
@@ -150,202 +178,32 @@ public sealed class Result : ResultBase
     }
 
     /// <inheritdoc />
-    public override string ToString()
+    public bool HasError<TError>() where TError : IError
     {
-        if (IsSuccess)
-            return $"{nameof(Result)} {{ IsSuccess = True }}";
-
-        if (Errors[0].Message.Length == 0)
-            return $"{nameof(Result)} {{ IsSuccess = False }}";
-
-        var errorString = GetErrorString();
-        return GetResultString(nameof(Result), "False", errorString);
-    }
-}
-
-/// <summary>Represents a result.</summary>
-/// <typeparam name="TValue">The type of the value in the result.</typeparam>
-public sealed class Result<TValue> : ResultBase
-#if NET7_0_OR_GREATER
-    , IActionableResult<TValue, Result<TValue>>
-#else
-    , IResult<TValue>
-#endif
-{
-    private static readonly Result<TValue> FailedResult = new(Error.Empty);
-
-    /// <summary>Gets the value of the result, throwing an exception if the result is failed.</summary>
-    /// <exception cref="InvalidOperationException">Thrown when attempting to get or set the value of a failed result.</exception>
-    public TValue Value
-    {
-        get
+        // Do not convert to LINQ, this creates unnecessary heap allocations.
+        // For is the most efficient way to loop. It is the fastest and does not allocate.
+        // ReSharper disable once ForCanBeConvertedToForeach
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        for (var index = 0; index < _errors.Length; index++)
         {
-            if (IsFailed)
-                throw new InvalidOperationException("Result is failed. Value is not set.");
-
-            return _valueOrDefault!;
+            var error = _errors[index];
+            if (error is TError)
+                return true;
         }
-        private
-#if NET6_0_OR_GREATER
-        init
-#else
-        set
-#endif
-            => _valueOrDefault = value;
-    }
 
-    private
-#if NET6_0_OR_GREATER
-        readonly
-#endif
-        TValue? _valueOrDefault;
-
-    private Result()
-    {
-    }
-
-    private Result(IError error) : base(error)
-    {
-    }
-
-    private Result(IEnumerable<IError> errors) : base(errors)
-    {
-    }
-
-    /// <summary>Creates a success result with the specified value.</summary>
-    /// <param name="value">The value to include in the result.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a success result with the specified value.</returns>
-    public static Result<TValue> Ok(TValue value)
-    {
-        var result = new Result<TValue>
-        {
-            Value = value
-        };
-        return result;
-    }
-
-    /// <summary>Creates a failed result.</summary>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result.</returns>
-    public static Result<TValue> Fail()
-    {
-        return FailedResult;
-    }
-
-    /// <summary>Creates a failed result with the given error message.</summary>
-    /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
-    public static Result<TValue> Fail(string errorMessage)
-    {
-        var error = new Error(errorMessage);
-        return Fail(error);
-    }
-
-    /// <summary>Creates a failed result with the given error message and metadata.</summary>
-    /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <param name="metadata">The metadata associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
-    public static Result<TValue> Fail(string errorMessage, (string Key, object Value) metadata)
-    {
-        var error = new Error(errorMessage, metadata);
-        return Fail(error);
-    }
-
-    /// <summary>Creates a failed result with the given error message and metadata.</summary>
-    /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <param name="metadata">The metadata associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
-    public static Result<TValue> Fail(string errorMessage, IDictionary<string, object> metadata)
-    {
-        var error = new Error(errorMessage, metadata);
-        return Fail(error);
-    }
-
-    /// <summary>Creates a failed result with the given error.</summary>
-    /// <param name="error">The error associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error.</returns>
-    public static Result<TValue> Fail(IError error)
-    {
-        return new Result<TValue>(error);
-    }
-
-    /// <summary>Creates a failed result with the given errors.</summary>
-    /// <param name="errors">A collection of errors associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified errors.</returns>
-    public static Result<TValue> Fail(IEnumerable<IError> errors)
-    {
-        return new Result<TValue>(errors);
+        return false;
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
         if (IsSuccess)
-        {
-            var valueString = GetValueString();
-            return GetResultString(nameof(Result), "True", valueString);
-        }
+            return $"{nameof(Result)} {{ IsSuccess = True }}";
 
-        if (Errors[0].Message.Length == 0)
+        if (_errors[0].Message.Length == 0)
             return $"{nameof(Result)} {{ IsSuccess = False }}";
 
-        var errorString = GetErrorString();
-        return GetResultString(nameof(Result), "False", errorString);
-    }
-
-    private string GetValueString()
-    {
-        if (IsFailed)
-            return "";
-
-        var valueString = Value?.ToString() ?? "";
-
-        const string preValueStr = ", Value = ";
-        const string charStr = "'";
-        const string stringStr = "\"";
-
-        if (Value is bool || Value is sbyte || Value is byte || Value is short || Value is ushort || Value is int || Value is uint || Value is long || Value is ulong ||
-#if NET7_0_OR_GREATER
-            Value is Int128 || Value is UInt128 ||
-#endif
-            Value is decimal || Value is float || Value is double)
-        {
-#if NET6_0_OR_GREATER
-            var stringLength = preValueStr.Length + valueString.Length;
-
-            var str = string.Create(stringLength, valueString, (span, state) => { span.TryWrite($"{preValueStr}{state}", out _); });
-
-            return str;
-#else
-            return $"{preValueStr}{valueString}";
-#endif
-        }
-
-        if (Value is char)
-        {
-#if NET6_0_OR_GREATER
-            var stringLength = preValueStr.Length + charStr.Length + valueString.Length + charStr.Length;
-
-            var str = string.Create(stringLength, valueString, (span, state) => { span.TryWrite($"{preValueStr}{charStr}{state}{charStr}", out _); });
-
-            return str;
-#else
-            return $"{preValueStr}{charStr}{valueString}{charStr}";
-#endif
-        }
-
-        if (Value is string)
-        {
-#if NET6_0_OR_GREATER
-            var stringLength = preValueStr.Length + stringStr.Length + valueString.Length + stringStr.Length;
-
-            var str = string.Create(stringLength, valueString, (span, state) => { span.TryWrite($"{preValueStr}{stringStr}{state}{stringStr}", out _); });
-
-            return str;
-#else
-            return $"{preValueStr}{stringStr}{valueString}{stringStr}";
-#endif
-        }
-
-        return "";
+        var errorString = StringHelper.GetResultErrorString(_errors);
+        return StringHelper.GetResultString(nameof(Result), "False", errorString);
     }
 }

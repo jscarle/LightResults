@@ -3,8 +3,9 @@ using System.Collections.Frozen;
 
 #else
 using System.Collections.Immutable;
-
 #endif
+using LightResults.Common;
+
 namespace LightResults;
 
 /// <summary>Represents an error with a message and associated metadata.</summary>
@@ -86,9 +87,6 @@ public class Error : IError
     /// <inheritdoc />
     public override string ToString()
     {
-        if (Message.Length > 0)
-            return Message;
-
-        return base.ToString() ?? "";
+        return StringHelper.GetErrorString(this);
     }
 }
