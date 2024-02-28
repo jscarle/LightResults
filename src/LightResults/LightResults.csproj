@@ -26,7 +26,6 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <AnalysisLevel>latest-All</AnalysisLevel>
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-        <NoWarn>CA1000;CA1716;CA2225;</NoWarn>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>

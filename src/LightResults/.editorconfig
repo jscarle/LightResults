@@ -1,0 +1,8 @@
+[*.cs]
+# CA1000: Do not declare static members on generic types
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1000
+dotnet_diagnostic.CA1000.severity = none
+
+# CA1716: Identifiers should not match keywords
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/CA1716
+dotnet_diagnostic.CA1716.severity = none
