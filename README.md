@@ -32,6 +32,10 @@ This library has no dependencies.
 - 🪚 Trimmable — Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 - 🚀 Performant — Heavily optimized and [benchmarked](https://jscarle.github.io/LightResults/docs/performance.html) to aim for the highest possible performance.
 
+## Extensions
+
+Several [extensions are available](https://github.com/jscarle/LightResults.Extensions) to simplify implementation that use LightResults.
+
 ## Documentation
 
 Make sure to [read the docs](https://jscarle.github.io/LightResults/) for the full API.
