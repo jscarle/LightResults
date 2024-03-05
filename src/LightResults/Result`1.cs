@@ -6,7 +6,7 @@ namespace LightResults;
 // ReSharper disable StaticMemberInGenericType
 /// <summary>Represents a result.</summary>
 /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-public sealed class Result<TValue> :
+public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 #if NET7_0_OR_GREATER
     IActionableResult<TValue, Result<TValue>>
 #else
@@ -14,13 +14,29 @@ public sealed class Result<TValue> :
 #endif
 {
     /// <inheritdoc />
-    public bool IsSuccess => _errors.Length == 0;
+    public bool IsSuccess
+    {
+        get
+        {
+            if (_errors is null)
+                return true;
+            return _errors.Value.Length == 0;
+        }
+    }
 
     /// <inheritdoc />
-    public bool IsFailed => _errors.Length != 0;
+    public bool IsFailed
+    {
+        get
+        {
+            if (_errors is null)
+                return false;
+            return _errors.Value.Length != 0;
+        }
+    }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<IError> Errors => _errors;
+    public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;
 
     /// <inheritdoc />
     public IError Error
@@ -30,7 +46,7 @@ public sealed class Result<TValue> :
             if (IsSuccess)
                 throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
 
-            return _errors[0];
+            return _errors!.Value[0];
         }
     }
 
@@ -48,10 +64,11 @@ public sealed class Result<TValue> :
     }
 
     private static readonly Result<TValue> FailedResult = new(LightResults.Error.Empty);
-    private readonly ImmutableArray<IError> _errors;
+    private readonly ImmutableArray<IError>? _errors;
     private readonly TValue? _valueOrDefault;
 
-    private Result()
+    /// <summary>Initializes a new instance of the <see cref="Result{TValue}" /> struct.</summary>
+    public Result()
     {
         _errors = ImmutableArray<IError>.Empty;
     }
@@ -133,13 +150,16 @@ public sealed class Result<TValue> :
     /// <inheritdoc />
     public bool HasError<TError>() where TError : IError
     {
+        if (_errors is null)
+            return false;
+        
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
         // ReSharper disable once ForCanBeConvertedToForeach
         // ReSharper disable once LoopCanBeConvertedToQuery
-        for (var index = 0; index < _errors.Length; index++)
+        for (var index = 0; index < _errors!.Value.Length; index++)
         {
-            var error = _errors[index];
+            var error = _errors!.Value[index];
             if (error is TError)
                 return true;
         }
@@ -156,10 +176,52 @@ public sealed class Result<TValue> :
             return StringHelper.GetResultString(nameof(Result), "True", valueString);
         }
 
-        if (_errors[0].Message.Length == 0)
+        if (_errors!.Value[0].Message.Length == 0)
             return $"{nameof(Result)} {{ IsSuccess = False }}";
 
-        var errorString = StringHelper.GetResultErrorString(_errors);
+        var errorString = StringHelper.GetResultErrorString(_errors!.Value);
         return StringHelper.GetResultString(nameof(Result), "False", errorString);
+    }
+
+    /// <summary>Determines whether two <see cref="Result{TValue}" /> instances are equal.</summary>
+    /// <param name="other">The <see cref="Result{TValue}" /> instance to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result{TValue}" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    public bool Equals(Result<TValue> other)
+    {
+        return Nullable.Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
+    }
+
+
+    /// <summary>Determines whether the specified object is equal to this instance.</summary>
+    /// <param name="obj">The object to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
+    public override bool Equals(object? obj)
+    {
+        return obj is Result<TValue> other && Equals(other);
+    }
+
+    /// <summary>Returns the hash code for this instance.</summary>
+    /// <returns>A 32-bit signed integer hash code.</returns>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_errors, _valueOrDefault);
+    }
+
+    /// <summary>Determines whether two <see cref="Result{TValue}" /> instances are equal.</summary>
+    /// <param name="left">The first <see cref="Result{TValue}" /> instance to compare.</param>
+    /// <param name="right">The second <see cref="Result{TValue}" /> instance to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result{TValue}" /> instances are equal; otherwise, <c>false</c>.</returns>
+    public static bool operator ==(Result<TValue> left, Result<TValue> right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>Determines whether two <see cref="Result{TValue}" /> instances are not equal.</summary>
+    /// <param name="left">The first <see cref="Result{TValue}" /> instance to compare.</param>
+    /// <param name="right">The second <see cref="Result{TValue}" /> instance to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result{TValue}" /> instances are not equal; otherwise, <c>false</c>.</returns>
+    public static bool operator !=(Result<TValue> left, Result<TValue> right)
+    {
+        return !left.Equals(right);
     }
 }

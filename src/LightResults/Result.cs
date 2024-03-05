@@ -4,7 +4,7 @@ using LightResults.Common;
 namespace LightResults;
 
 /// <summary>Represents a result.</summary>
-public sealed class Result :
+public readonly struct Result : IEquatable<Result>,
 #if NET7_0_OR_GREATER
     IActionableResult<Result>
 #else
@@ -12,13 +12,29 @@ public sealed class Result :
 #endif
 {
     /// <inheritdoc />
-    public bool IsSuccess => _errors.Length == 0;
+    public bool IsSuccess
+    {
+        get
+        {
+            if (_errors is null)
+                return true;
+            return _errors.Value.Length == 0;
+        }
+    }
 
     /// <inheritdoc />
-    public bool IsFailed => _errors.Length != 0;
+    public bool IsFailed
+    {
+        get
+        {
+            if (_errors is null)
+                return false;
+            return _errors.Value.Length != 0;
+        }
+    }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<IError> Errors => _errors;
+    public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;
 
     /// <inheritdoc />
     public IError Error
@@ -28,15 +44,16 @@ public sealed class Result :
             if (IsSuccess)
                 throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
 
-            return _errors[0];
+            return _errors!.Value[0];
         }
     }
 
     private static readonly Result OkResult = new();
     private static readonly Result FailedResult = new(LightResults.Error.Empty);
-    private readonly ImmutableArray<IError> _errors;
+    private readonly ImmutableArray<IError>? _errors;
 
-    private Result()
+    /// <summary>Initializes a new instance of the <see cref="Result" /> struct.</summary>
+    public Result()
     {
         _errors = ImmutableArray<IError>.Empty;
     }
@@ -180,13 +197,16 @@ public sealed class Result :
     /// <inheritdoc />
     public bool HasError<TError>() where TError : IError
     {
+        if (_errors is null)
+            return false;
+        
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
         // ReSharper disable once ForCanBeConvertedToForeach
         // ReSharper disable once LoopCanBeConvertedToQuery
-        for (var index = 0; index < _errors.Length; index++)
+        for (var index = 0; index < _errors!.Value.Length; index++)
         {
-            var error = _errors[index];
+            var error = _errors!.Value[index];
             if (error is TError)
                 return true;
         }
@@ -200,10 +220,51 @@ public sealed class Result :
         if (IsSuccess)
             return $"{nameof(Result)} {{ IsSuccess = True }}";
 
-        if (_errors[0].Message.Length == 0)
+        if (_errors!.Value[0].Message.Length == 0)
             return $"{nameof(Result)} {{ IsSuccess = False }}";
 
-        var errorString = StringHelper.GetResultErrorString(_errors);
+        var errorString = StringHelper.GetResultErrorString(_errors!.Value);
         return StringHelper.GetResultString(nameof(Result), "False", errorString);
+    }
+
+    /// <summary>Determines whether two <see cref="Result" /> instances are equal.</summary>
+    /// <param name="other">The <see cref="Result" /> instance to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    public bool Equals(Result other)
+    {
+        return Nullable.Equals(_errors, other._errors);
+    }
+
+    /// <summary>Determines whether the specified object is equal to this instance.</summary>
+    /// <param name="obj">The object to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
+    public override bool Equals(object? obj)
+    {
+        return obj is Result other && Equals(other);
+    }
+
+    /// <summary>Returns the hash code for this instance.</summary>
+    /// <returns>A 32-bit signed integer hash code.</returns>
+    public override int GetHashCode()
+    {
+        return _errors.GetHashCode();
+    }
+
+    /// <summary>Determines whether two <see cref="Result" /> instances are equal.</summary>
+    /// <param name="left">The first <see cref="Result" /> instance to compare.</param>
+    /// <param name="right">The second <see cref="Result" /> instance to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result" /> instances are equal; otherwise, <c>false</c>.</returns>
+    public static bool operator ==(Result left, Result right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>Determines whether two <see cref="Result" /> instances are not equal.</summary>
+    /// <param name="left">The first <see cref="Result" /> instance to compare.</param>
+    /// <param name="right">The second <see cref="Result" /> instance to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result" /> instances are not equal; otherwise, <c>false</c>.</returns>
+    public static bool operator !=(Result left, Result right)
+    {
+        return !left.Equals(right);
     }
 }

@@ -7,7 +7,7 @@ namespace LightResults.ComparisonBenchmarks;
 
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net80)]
-[HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.RatioSD, Column.Gen0, Column.Gen1, Column.Gen2)]
+[HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.Median, Column.RatioSD, Column.Gen0, Column.Gen1, Column.Gen2)]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [CategoriesColumn]
 public partial class Benchmarks

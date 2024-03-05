@@ -6,7 +6,7 @@ namespace LightResults.DevelopBenchmarks;
 
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net80)]
-[HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.Gen0, Column.Gen1, Column.Gen2)]
+[HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.Median, Column.Gen0, Column.Gen1, Column.Gen2)]
 public class Benchmarks
 {
     [Params(100_000)]

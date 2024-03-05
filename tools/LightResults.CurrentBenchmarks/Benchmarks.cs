@@ -6,7 +6,7 @@ namespace LightResults.CurrentBenchmarks;
 
 [MemoryDiagnoser]
 [SimpleJob(RuntimeMoniker.Net80)]
-[HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.Gen0, Column.Gen1, Column.Gen2)]
+[HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.Median, Column.Gen0, Column.Gen1, Column.Gen2)]
 public class Benchmarks
 {
     [Params(100_000)]
@@ -73,7 +73,7 @@ public class Benchmarks
     }
 
     [Benchmark]
-    public void Current_Result_ErrorsIndexer()
+    public void Current_Result_Error()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = ResultFailWithErrorMessage.Error;
