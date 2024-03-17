@@ -157,7 +157,7 @@ public class ResultTValueTests
         // Act & Assert
         result.HasError<ValidationError>().Should().BeFalse();
     }
-    
+
     [Fact]
     public void Error_WhenResultIsFailed_ShouldReturnFirstError()
     {
@@ -420,7 +420,43 @@ public class ResultTValueTests
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
+
 #endif
-    
+    [Fact]
+    public void ImplicitOperator_ShouldCreateSuccessResultWithValue()
+    {
+        // Arrange
+        const int value = 42;
+
+        // Act
+        Result<int> result = value;
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.IsFailed.Should().BeFalse();
+        result.Errors.Should().BeEmpty();
+        result.Value.Should().Be(value);
+    }
+
+    [Fact]
+    public void ToResult_ShouldConvertResultToNonGenericResultWithSameErrors()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2")
+        };
+        var result = Result<int>.Fail(errors);
+
+        // Act
+        var nonGenericResult = result.ToResult();
+
+        // Assert
+        nonGenericResult.IsSuccess.Should().BeFalse();
+        nonGenericResult.IsFailed.Should().BeTrue();
+        nonGenericResult.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+    }
+
     private class ValidationError(string errorMessage) : Error(errorMessage);
 }

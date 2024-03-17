@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 
 namespace LightResults;
@@ -152,7 +153,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     {
         if (_errors is null)
             return false;
-        
+
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
         // ReSharper disable once ForCanBeConvertedToForeach
@@ -191,7 +192,6 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         return Nullable.Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
     }
 
-
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
@@ -223,5 +223,22 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     public static bool operator !=(Result<TValue> left, Result<TValue> right)
     {
         return !left.Equals(right);
+    }
+
+    /// <summary>Implicitly converts a value to a success <see cref="Result{TValue}" />.</summary>
+    /// <param name="value">The value to convert into a success result.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a success result with the specified value.</returns>
+    [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = $"{nameof(Ok)} is the named alternate.")]
+    public static implicit operator Result<TValue>(TValue value)
+    {
+        return Ok(value);
+    }
+
+    /// <summary>Converts the current <see cref="Result{TValue}" /> to a non-generic <see cref="Result" /> containing the same errors, if any.</summary>
+    /// <returns>A new instance of <see cref="Result" /> representing the current result's errors, if any, or a successful result otherwise.</returns>
+    /// <remarks>This method is useful for scenarios where a generic result needs to be converted into a non-generic result.</remarks>
+    public Result ToResult()
+    {
+        return Result.Fail(Errors);
     }
 }
