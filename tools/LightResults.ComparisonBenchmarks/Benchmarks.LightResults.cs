@@ -9,9 +9,9 @@ public partial class Benchmarks
     private static readonly Result LightResultsResultOk = Result.Ok();
     private static readonly Result LightResultsResultFail = Result.Fail();
     private static readonly Result LightResultsResultFailWithErrorMessage = Result.Fail(LightResultsErrorWithErrorMessage);
-    private static readonly Result<int> LightResultsResultTValueOk = Result<int>.Ok(ResultValue);
-    private static readonly Result<int> LightResultsResultTValueFail = Result<int>.Fail();
-    private static readonly Result<int> LightResultsResultTValueFailWithErrorMessage = Result<int>.Fail(LightResultsErrorWithErrorMessage);
+    private static readonly Result<int> LightResultsResultTValueOk = Result.Ok<int>(ResultValue);
+    private static readonly Result<int> LightResultsResultTValueFail = Result.Fail<int>();
+    private static readonly Result<int> LightResultsResultTValueFailWithErrorMessage = Result.Fail<int>(LightResultsErrorWithErrorMessage);
 
     [Benchmark(Baseline = true)]
     [BenchmarkCategory("Result.Ok()")]
@@ -34,7 +34,7 @@ public partial class Benchmarks
     public void LightResults_ResultTValue_Ok()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Ok(ResultValue);
+            _ = Result.Ok<int>(ResultValue);
     }
 
     [Benchmark(Baseline = true)]
@@ -66,7 +66,7 @@ public partial class Benchmarks
     public void LightResults_ResultTValue_Fail()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Fail();
+            _ = Result.Fail<int>();
     }
 
     [Benchmark(Baseline = true)]
@@ -98,7 +98,7 @@ public partial class Benchmarks
     public void LightResults_ResultTValue_Fail_WithErrorMessage()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Fail(LightResultsErrorWithErrorMessage);
+            _ = Result.Fail<int>(LightResultsErrorWithErrorMessage);
     }
 
     [Benchmark(Baseline = true)]
@@ -122,6 +122,6 @@ public partial class Benchmarks
     public void LightResults_Result_FirstError()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = LightResultsResultFailWithErrorMessage.Error;
+            _ = ((IResult)LightResultsResultFailWithErrorMessage).Error;
     }
 }

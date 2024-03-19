@@ -2,7 +2,8 @@
 namespace LightResults.Common;
 
 /// <summary>Defines an actionable result.</summary>
-public interface IActionableResult<out TResult> : IResult where TResult : IActionableResult<TResult>
+public interface IActionableResult<out TResult> : IResult
+    where TResult : IActionableResult<TResult>
 {
     /// <summary>Creates a success result.</summary>
     /// <returns>A new instance of <typeparamref name="TResult" /> representing a success result with the specified value.</returns>
@@ -41,7 +42,8 @@ public interface IActionableResult<out TResult> : IResult where TResult : IActio
 }
 
 /// <summary>Defines an actionable result.</summary>
-public interface IActionableResult<TValue, out TResult> : IResult<TValue> where TResult : IActionableResult<TValue, TResult>
+public interface IActionableResult<TValue, out TResult> : IResult<TValue>
+    where TResult : IActionableResult<TValue, TResult>
 {
     /// <summary>Creates a success result with the given value.</summary>
     /// <param name="value">The value to include in the result.</param>

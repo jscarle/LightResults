@@ -1,31 +1,26 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 
 namespace LightResults;
 
 /// <summary>Represents a result.</summary>
-public readonly struct Result : IEquatable<Result>,
+public readonly struct Result :
 #if NET7_0_OR_GREATER
-    IActionableResult<Result>
+    IActionableResult<Result>, IEquatable<Result>
 #else
-    IResult
+    IResult, IEquatable<Result>
 #endif
 {
-    /// <inheritdoc />
-    public bool IsSuccess => _errors is null or { Length: 0 };
-
-    /// <inheritdoc />
-    public bool IsFailed => _errors is not (null or { Length: 0 });
-
     /// <inheritdoc />
     public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;
 
     /// <inheritdoc />
-    public IError Error
+    IError IResult.Error
     {
         get
         {
-            if (IsSuccess)
+            if (IsSuccess())
                 throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
 
             return _errors!.Value[0];
@@ -33,7 +28,7 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     private static readonly Result OkResult = new();
-    private static readonly Result FailedResult = new(LightResults.Error.Empty);
+    private static readonly Result FailedResult = new(Error.Empty);
     private readonly ImmutableArray<IError>? _errors;
 
     /// <summary>Initializes a new instance of the <see cref="Result" /> struct.</summary>
@@ -50,6 +45,26 @@ public readonly struct Result : IEquatable<Result>,
     private Result(IEnumerable<IError> errors)
     {
         _errors = errors.ToImmutableArray();
+    }
+
+    /// <inheritdoc />
+    public bool IsSuccess()
+    {
+        return _errors is null or { Length: 0 };
+    }
+
+    /// <inheritdoc />
+    public bool IsFailed()
+    {
+        return _errors is { Length: > 0 };
+    }
+
+    /// <inheritdoc />
+    public bool IsFailed([MaybeNullWhen(false)] out IError error)
+    {
+        var isFailed = _errors is { Length: > 0 };
+        error = isFailed ? _errors!.Value[0] : null;
+        return isFailed;
     }
 
     /// <summary>Creates a success result.</summary>
@@ -183,7 +198,7 @@ public readonly struct Result : IEquatable<Result>,
     {
         if (_errors is null)
             return false;
-        
+
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
         // ReSharper disable once ForCanBeConvertedToForeach
@@ -201,7 +216,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <inheritdoc />
     public override string ToString()
     {
-        if (IsSuccess)
+        if (IsSuccess())
             return $"{nameof(Result)} {{ IsSuccess = True }}";
 
         if (_errors!.Value[0].Message.Length == 0)

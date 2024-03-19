@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>LightResults</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <Version>9.0.0-preview.3</Version>
+        <Version>9.0.0-preview.4</Version>
         <Title>LightResults</Title>
         <Authors>Jean-Sebastien Carle</Authors>
         <Description>An extremely light and modern Result Pattern library.</Description>
@@ -39,10 +39,10 @@
 
     <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
-        <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1"/>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
         <None Include="..\..\LICENSE.md">
             <Pack>True</Pack>

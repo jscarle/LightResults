@@ -19,9 +19,9 @@ public class Benchmarks
     private static readonly Result ResultOk = Result.Ok();
     private static readonly Result ResultFail = Result.Fail();
     private static readonly Result ResultFailWithErrorMessage = Result.Fail(ErrorWithErrorMessage);
-    private static readonly Result<int> ResultTValueOk = Result<int>.Ok(ResultValue);
-    private static readonly Result<int> ResultTValueFail = Result<int>.Fail();
-    private static readonly Result<int> ResultTValueFailWithErrorMessage = Result<int>.Fail(ErrorWithErrorMessage);
+    private static readonly Result<int> ResultTValueOk = Result.Ok<int>(ResultValue);
+    private static readonly Result<int> ResultTValueFail = Result.Fail<int>();
+    private static readonly Result<int> ResultTValueFailWithErrorMessage = Result.Fail<int>(ErrorWithErrorMessage);
 
     [Benchmark]
     public void Develop_Result_Ok()
@@ -76,14 +76,14 @@ public class Benchmarks
     public void Develop_Result_Error()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ResultFailWithErrorMessage.Error;
+            _ = ((IResult)ResultFailWithErrorMessage).Error;
     }
 
     [Benchmark]
     public void Develop_ResultTValue_Ok()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Ok(ResultValue);
+            _ = Result.Ok<int>(ResultValue);
     }
 
     [Benchmark]
@@ -97,7 +97,7 @@ public class Benchmarks
     public void Develop_ResultTValue_Fail()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Fail();
+            _ = Result.Fail<int>();
     }
 
     [Benchmark]
@@ -111,7 +111,7 @@ public class Benchmarks
     public void Develop_ResultTValue_Fail_WithErrorMessage()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result<int>.Fail(ErrorWithErrorMessage);
+            _ = Result.Fail<int>(ErrorWithErrorMessage);
     }
 
     [Benchmark]
