@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Data.SqlTypes;
 using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 
@@ -15,7 +16,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 #endif
 {
     /// <inheritdoc />
-    public bool IsSuccess
+    bool IResult.IsSuccess
     {
         get
         {
@@ -23,6 +24,15 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
                 return true;
             return _errors.Value.Length == 0;
         }
+    }
+
+    /// <inheritdoc />
+    public bool IsSuccess([MaybeNullWhen(false)] out TValue value)
+    {
+        value = _valueOrDefault!;
+        if (_errors is null)
+            return true;
+        return _errors.Value.Length == 0;
     }
 
     /// <inheritdoc />
@@ -44,24 +54,17 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     {
         get
         {
-            if (IsSuccess)
+            if (!IsFailed)
                 throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
 
             return _errors!.Value[0];
         }
     }
 
-    /// <inheritdoc />
-    public TValue Value
+    private TValue Value
     {
-        get
-        {
-            if (IsFailed)
-                throw new InvalidOperationException($"{nameof(Result)} is failed. {nameof(Value)} is not set.");
-
-            return _valueOrDefault!;
-        }
-        private init => _valueOrDefault = value;
+        get => _valueOrDefault!;
+        init => _valueOrDefault = value;
     }
 
     private static readonly Result<TValue> FailedResult = new(LightResults.Error.Empty);
@@ -171,9 +174,9 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <inheritdoc />
     public override string ToString()
     {
-        if (IsSuccess)
+        if (IsSuccess(out var value))
         {
-            var valueString = StringHelper.GetResultValueString(_valueOrDefault);
+            var valueString = StringHelper.GetResultValueString(value);
             return StringHelper.GetResultString(nameof(Result), "True", valueString);
         }
 

@@ -12,17 +12,8 @@ public class ResultTValueTests
         var result = Result<int>.Ok(42);
 
         // Act & Assert
-        result.Value.Should().Be(42);
-    }
-
-    [Fact]
-    public void Value_WhenResultIsFailed_ShouldThrowException()
-    {
-        // Arrange
-        var result = Result<int>.Fail("Error message");
-
-        // Act & Assert
-        result.Invoking(r => _ = r.Value).Should().Throw<InvalidOperationException>().WithMessage("Result is failed. Value is not set.");
+        result.IsSuccess(out var resultValue);
+        resultValue.Should().Be(42);
     }
 
     [Fact]
@@ -35,10 +26,10 @@ public class ResultTValueTests
         var result = Result<int>.Ok(value);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        result.IsSuccess(out var resultValue).Should().BeTrue();
         result.IsFailed.Should().BeFalse();
         result.Errors.Should().BeEmpty();
-        result.Value.Should().Be(value);
+        resultValue.Should().Be(value);
     }
 
     [Fact]
@@ -48,7 +39,7 @@ public class ResultTValueTests
         var result = Result<int>.Fail();
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
     }
@@ -63,7 +54,7 @@ public class ResultTValueTests
         var result = Result<int>.Fail(errorMessage);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
     }
@@ -79,7 +70,7 @@ public class ResultTValueTests
         var result = Result<object>.Fail(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         var error = result.Errors.Should().ContainSingle().Which;
         error.Message.Should().Be(errorMessage);
@@ -97,7 +88,7 @@ public class ResultTValueTests
         var result = Result<object>.Fail(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         var error = result.Errors.Should().ContainSingle().Which;
         error.Message.Should().Be(errorMessage);
@@ -114,7 +105,7 @@ public class ResultTValueTests
         var result = Result<int>.Fail(error);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
     }
@@ -133,7 +124,7 @@ public class ResultTValueTests
         var result = Result<int>.Fail(errors);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }
@@ -432,10 +423,10 @@ public class ResultTValueTests
         Result<int> result = value;
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        result.IsSuccess(out var resultValue).Should().BeTrue();
         result.IsFailed.Should().BeFalse();
         result.Errors.Should().BeEmpty();
-        result.Value.Should().Be(value);
+        resultValue.Should().Be(value);
     }
 
     [Fact]

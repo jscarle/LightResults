@@ -27,10 +27,10 @@ public class ResultTests
         var result = Result.Ok(value);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        result.IsSuccess(out var resultValue).Should().BeTrue();
         result.IsFailed.Should().BeFalse();
         result.Errors.Should().BeEmpty();
-        result.Value.Should().Be(value);
+        resultValue.Should().Be(value);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class ResultTests
         var result = Result.Fail<object>();
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
     }
@@ -82,7 +82,7 @@ public class ResultTests
         var result = Result.Fail<object>(errorMessage);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
     }
@@ -116,7 +116,7 @@ public class ResultTests
         var result = Result.Fail<object>(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         var error = result.Errors.Should().ContainSingle().Which;
         error.Message.Should().Be(errorMessage);
@@ -152,7 +152,7 @@ public class ResultTests
         var result = Result.Fail<object>(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         var error = result.Errors.Should().ContainSingle().Which;
         error.Message.Should().Be(errorMessage);
@@ -184,7 +184,7 @@ public class ResultTests
         var result = Result.Fail<object>(error);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
     }
@@ -222,7 +222,7 @@ public class ResultTests
         var result = Result.Fail<object>(errors);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
+        result.IsSuccess(out _).Should().BeFalse();
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
     }

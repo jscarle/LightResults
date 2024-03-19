@@ -1,13 +1,15 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace LightResults;
 
 /// <summary>Defines a result.</summary>
 public interface IResult
 {
-    /// <summary>Gets a value indicating whether the result was successful.</summary>
+    /// <summary>Gets whether the result was successful or not.</summary>
     /// <returns><c>true</c> if the result was successful; otherwise, <c>false</c>.</returns>
     bool IsSuccess { get; }
 
-    /// <summary>Gets a value indicating whether the result failed.</summary>
+    /// <summary>Gets whether the result failed or not.</summary>
     /// <returns><c>true</c> if the result failed; otherwise, <c>false</c>.</returns>
     bool IsFailed { get; }
 
@@ -27,10 +29,10 @@ public interface IResult
 }
 
 /// <summary>Defines a result with a value.</summary>
-public interface IResult<out TValue> : IResult
+public interface IResult<TValue> : IResult
 {
-    /// <summary>Gets the value of the result, throwing an exception if the result is failed.</summary>
-    /// <returns>The value of the result.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when attempting to get or set the value of a failed result.</exception>
-    public TValue Value { get; }
+    /// <summary>Gets whether the result was successful or not.</summary>
+    /// <param name="value">The value of the result.</param>
+    /// <returns><c>true</c> if the result was successful; otherwise, <c>false</c>.</returns>
+    new bool IsSuccess([MaybeNullWhen(false)] out TValue value);
 }
