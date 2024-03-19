@@ -15,35 +15,17 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 #endif
 {
     /// <inheritdoc />
-    bool IResult.IsSuccess
-    {
-        get
-        {
-            if (_errors is null)
-                return true;
-            return _errors.Value.Length == 0;
-        }
-    }
+    bool IResult.IsSuccess => _errors is null or { Length: 0 };
 
     /// <inheritdoc />
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value)
     {
         value = _valueOrDefault!;
-        if (_errors is null)
-            return true;
-        return _errors.Value.Length == 0;
+        return _errors is null or { Length: 0 };
     }
 
     /// <inheritdoc />
-    public bool IsFailed
-    {
-        get
-        {
-            if (_errors is null)
-                return false;
-            return _errors.Value.Length != 0;
-        }
-    }
+    public bool IsFailed => _errors is not (null or { Length: 0 });
 
     /// <inheritdoc />
     public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;

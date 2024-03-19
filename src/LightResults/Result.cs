@@ -12,26 +12,10 @@ public readonly struct Result : IEquatable<Result>,
 #endif
 {
     /// <inheritdoc />
-    public bool IsSuccess
-    {
-        get
-        {
-            if (_errors is null)
-                return true;
-            return _errors.Value.Length == 0;
-        }
-    }
+    public bool IsSuccess => _errors is null or { Length: 0 };
 
     /// <inheritdoc />
-    public bool IsFailed
-    {
-        get
-        {
-            if (_errors is null)
-                return false;
-            return _errors.Value.Length != 0;
-        }
-    }
+    public bool IsFailed => _errors is not (null or { Length: 0 });
 
     /// <inheritdoc />
     public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;
