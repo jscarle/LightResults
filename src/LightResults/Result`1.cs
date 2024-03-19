@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Data.SqlTypes;
 using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 
@@ -63,7 +62,6 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     private TValue Value
     {
-        get => _valueOrDefault!;
         init => _valueOrDefault = value;
     }
 
