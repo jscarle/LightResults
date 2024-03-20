@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>LightResults</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <Version>9.0.0-preview.6</Version>
+        <Version>9.0.0-preview.7</Version>
         <Title>LightResults</Title>
         <Authors>Jean-Sebastien Carle</Authors>
         <Description>An extremely light and modern Result Pattern library.</Description>
@@ -55,6 +55,7 @@
             <PackagePath>\</PackagePath>
             <Visible>False</Visible>
         </None>
+        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.0"/>
     </ItemGroup>
 
 </Project>
