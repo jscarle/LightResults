@@ -1,9 +1,7 @@
 ﻿#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-
-#else
-using System.Collections.Immutable;
 #endif
+using System.Collections.Immutable;
 using LightResults.Common;
 
 namespace LightResults;
@@ -11,7 +9,9 @@ namespace LightResults;
 /// <summary>Represents an error with a message and associated metadata.</summary>
 public class Error : IError
 {
-    internal static Error Empty { get; } = new();
+    internal static IError Empty { get; } = new Error();
+    internal static IReadOnlyCollection<IError> EmptyCollection { get; } = ImmutableArray<IError>.Empty;
+    internal static IReadOnlyCollection<IError> DefaultCollection { get; } = ImmutableArray.Create(Empty);
 
     /// <inheritdoc />
     public string Message { get; }
@@ -41,7 +41,6 @@ public class Error : IError
         _metadata = ImmutableDictionary<string, object>.Empty;
 #endif
     }
-
 
     /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
     /// <param name="metadata">The metadata associated with the error.</param>

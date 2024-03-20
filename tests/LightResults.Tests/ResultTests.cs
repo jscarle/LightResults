@@ -7,7 +7,7 @@ namespace LightResults.Tests;
 public class ResultTests
 {
     [Fact]
-    public void DefaultStruct_ShouldBeSuccessResult()
+    public void DefaultStruct_ShouldBeFailedResult()
     {
         // Arrange
         Result result = default;
@@ -15,13 +15,14 @@ public class ResultTests
         // Act & Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeTrue();
-            result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
-            result.Errors.Should().BeEmpty();
+            result.IsSuccess().Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out var failedError).Should().BeTrue();
+            failedError.Should().Be(Error.Empty);
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().Should().BeOfType<Error>();
+            result.HasError<Error>().Should().BeTrue();
             result.HasError<ValidationError>().Should().BeFalse();
-            result.Invoking(r => _ = ((IResult)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
         }
     }
 

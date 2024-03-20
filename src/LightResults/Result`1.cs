@@ -19,41 +19,42 @@ public readonly struct Result<TValue> :
     {
         get
         {
-            if (IsFailed())
-                throw new InvalidOperationException($"{nameof(Result)} is failed. {nameof(Value)} is not set.");
+            if (!_isSuccess)
+                throw new InvalidOperationException($"{nameof(Result)} is failed. {nameof(IResult<TValue>.Value)} is not set.");
 
             return _valueOrDefault!;
         }
     }
 
-    private TValue Value
-    {
-        init => _valueOrDefault = value;
-    }
-
     /// <inheritdoc />
-    public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;
+    public IReadOnlyCollection<IError> Errors => _errors ?? (_isSuccess ? Error.EmptyCollection : Error.DefaultCollection);
 
     /// <inheritdoc />
     IError IResult.Error
     {
         get
         {
-            if (IsSuccess())
+            if (_isSuccess)
                 throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
 
-            return _errors!.Value[0];
+            return _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
         }
     }
 
     private static readonly Result<TValue> FailedResult = new(Error.Empty);
+    private readonly bool _isSuccess = false;
     private readonly ImmutableArray<IError>? _errors;
     private readonly TValue? _valueOrDefault;
 
     /// <summary>Initializes a new instance of the <see cref="Result{TValue}" /> struct.</summary>
     public Result()
     {
-        _errors = ImmutableArray<IError>.Empty;
+    }
+
+    private Result(TValue value)
+    {
+        _isSuccess = true;
+        _valueOrDefault = value;
     }
 
     private Result(IError error)
@@ -69,28 +70,30 @@ public readonly struct Result<TValue> :
     /// <inheritdoc />
     public bool IsSuccess()
     {
-        return _errors is null or { Length: 0 };
+        return _isSuccess;
     }
 
     /// <inheritdoc />
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value)
     {
-        value = _valueOrDefault!;
-        return _errors is null or { Length: 0 };
+        value = _valueOrDefault;
+        return _isSuccess;
     }
 
     /// <inheritdoc />
     public bool IsFailed()
     {
-        return _errors is { Length: > 0 };
+        return !_isSuccess;
     }
 
     /// <inheritdoc />
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
-        var isFailed = _errors is { Length: > 0 };
-        error = isFailed ? _errors!.Value[0] : null;
-        return isFailed;
+        if (_isSuccess)
+            error = null;
+        else
+            error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        return !_isSuccess;
     }
 
 #if NET7_0_OR_GREATER
@@ -105,10 +108,7 @@ public readonly struct Result<TValue> :
 
     internal static Result<TValue> Ok(TValue value)
     {
-        var result = new Result<TValue>
-        {
-            Value = value
-        };
+        var result = new Result<TValue>(value);
         return result;
     }
 
@@ -210,16 +210,22 @@ public readonly struct Result<TValue> :
     public bool HasError<TError>()
         where TError : IError
     {
-        if (_errors is null)
+        if (_isSuccess)
+            return false;
+
+        if (_errors is null && typeof(TError) == typeof(Error))
+            return true;
+
+        if (_errors is null || _errors.Value.Length == 0)
             return false;
 
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
         // ReSharper disable once ForCanBeConvertedToForeach
         // ReSharper disable once LoopCanBeConvertedToQuery
-        for (var index = 0; index < _errors!.Value.Length; index++)
+        for (var index = 0; index < _errors.Value.Length; index++)
         {
-            var error = _errors!.Value[index];
+            var error = _errors.Value[index];
             if (error is TError)
                 return true;
         }
@@ -230,16 +236,16 @@ public readonly struct Result<TValue> :
     /// <inheritdoc />
     public override string ToString()
     {
-        if (IsSuccess(out var value))
+        if (_isSuccess)
         {
-            var valueString = StringHelper.GetResultValueString(value);
+            var valueString = StringHelper.GetResultValueString(_valueOrDefault);
             return StringHelper.GetResultString(nameof(Result), "True", valueString);
         }
 
-        if (_errors!.Value[0].Message.Length == 0)
+        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
             return $"{nameof(Result)} {{ IsSuccess = False }}";
 
-        var errorString = StringHelper.GetResultErrorString(_errors!.Value);
+        var errorString = StringHelper.GetResultErrorString(_errors.Value);
         return StringHelper.GetResultString(nameof(Result), "False", errorString);
     }
 

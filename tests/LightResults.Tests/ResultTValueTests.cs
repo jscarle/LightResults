@@ -10,7 +10,7 @@ namespace LightResults.Tests;
 public class ResultTValueTests
 {
     [Fact]
-    public void DefaultStruct_ShouldBeSuccessResultWithDefault()
+    public void DefaultStruct_ShouldBeFailedResultWithDefault()
     {
         // Arrange
         Result<int> result = default;
@@ -18,20 +18,21 @@ public class ResultTValueTests
         // Act & Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var successValue).Should().BeTrue();
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out var successValue).Should().BeFalse();
             successValue.Should().Be(default);
-            result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
-            result.Errors.Should().BeEmpty();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out var failedError).Should().BeTrue();
+            failedError.Should().Be(Error.Empty);
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().Should().BeOfType<Error>();
+            result.HasError<Error>().Should().BeTrue();
             result.HasError<ValidationError>().Should().BeFalse();
-            result.Invoking(r => _ = ((IResult)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
         }
     }
 
     [Fact]
-    public void DefaultStruct_ShouldBeSuccessResultWithNull()
+    public void DefaultStruct_ShouldBeFailedResultWithNull()
     {
         // Arrange
         Result<object> result = default;
@@ -39,15 +40,16 @@ public class ResultTValueTests
         // Act & Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var successValue).Should().BeTrue();
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out var successValue).Should().BeFalse();
             successValue.Should().Be(null);
-            result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
-            result.Errors.Should().BeEmpty();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out var failedError).Should().BeTrue();
+            failedError.Should().Be(Error.Empty);
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().Should().BeOfType<Error>();
+            result.HasError<Error>().Should().BeTrue();
             result.HasError<ValidationError>().Should().BeFalse();
-            result.Invoking(r => _ = ((IResult)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
         }
     }
 
@@ -304,158 +306,6 @@ public class ResultTValueTests
             result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
         }
     }
-
-#if NET7_0_OR_GREATER
-    [Fact]
-    public void InterfaceOk_WithValue_ShouldCreateSuccessResultWithValue()
-    {
-        // Arrange
-        const int value = 42;
-
-        // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Ok(value);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var successValue).Should().BeTrue();
-            successValue.Should().Be(value);
-            result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
-            result.Errors.Should().BeEmpty();
-            result.Value.Should().Be(value);
-        }
-    }
-
-    [Fact]
-    public void InterfaceFail_ShouldCreateFailedResultWithSingleError()
-    {
-        // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail();
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
-        }
-    }
-
-    [Fact]
-    public void InterfaceFail_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-
-        // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(errorMessage);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
-        }
-    }
-
-    [Fact]
-    public void InterfaceFail_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-        (string Key, object Value) metadata = ("Key", 0);
-
-        // Act
-        var result = (IActionableResult<object, Result<object>>)Result<object>.Fail(errorMessage, metadata);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
-            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
-        }
-    }
-
-    [Fact]
-    public void InterfaceFail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
-
-        // Act
-        var result = (IActionableResult<object, Result<object>>)Result<object>.Fail(errorMessage, metadata);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
-            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
-        }
-    }
-
-    [Fact]
-    public void InterfaceFail_WithErrorObject_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        var error = new Error("Sample error");
-
-        // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(error);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
-        }
-    }
-
-    [Fact]
-    public void InterfaceFail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
-    {
-        // Arrange
-        var errors = new List<IError>
-        {
-            new Error("Error 1"),
-            new Error("Error 2")
-        };
-
-        // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(errors);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
-        }
-    }
-#endif
 
     [Fact]
     public void HasError_WithMatchingErrorType_ShouldReturnTrue()
@@ -955,6 +805,158 @@ public class ResultTValueTests
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
+
+#if NET7_0_OR_GREATER
+    [Fact]
+    public void InterfaceOk_WithValue_ShouldCreateSuccessResultWithValue()
+    {
+        // Arrange
+        const int value = 42;
+
+        // Act
+        var result = (IActionableResult<int, Result<int>>)Result<int>.Ok(value);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeTrue();
+            result.IsSuccess(out var successValue).Should().BeTrue();
+            successValue.Should().Be(value);
+            result.IsFailed().Should().BeFalse();
+            result.IsFailed(out var successError).Should().BeFalse();
+            successError.Should().Be(null);
+            result.Errors.Should().BeEmpty();
+            result.Value.Should().Be(value);
+        }
+    }
+
+    [Fact]
+    public void InterfaceFail_ShouldCreateFailedResultWithSingleError()
+    {
+        // Act
+        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
+        }
+    }
+
+    [Fact]
+    public void InterfaceFail_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+
+        // Act
+        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(errorMessage);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
+        }
+    }
+
+    [Fact]
+    public void InterfaceFail_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        (string Key, object Value) metadata = ("Key", 0);
+
+        // Act
+        var result = (IActionableResult<object, Result<object>>)Result<object>.Fail(errorMessage, metadata);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            var error = result.Errors.Should().ContainSingle().Which;
+            error.Message.Should().Be(errorMessage);
+            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
+    public void InterfaceFail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+
+        // Act
+        var result = (IActionableResult<object, Result<object>>)Result<object>.Fail(errorMessage, metadata);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            var error = result.Errors.Should().ContainSingle().Which;
+            error.Message.Should().Be(errorMessage);
+            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
+    public void InterfaceFail_WithErrorObject_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        var error = new Error("Sample error");
+
+        // Act
+        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(error);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
+        }
+    }
+
+    [Fact]
+    public void InterfaceFail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2")
+        };
+
+        // Act
+        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(errors);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+        }
+    }
+#endif
 
 #if NET7_0_OR_GREATER
     [Theory]

@@ -13,28 +13,33 @@ public readonly struct Result :
 #endif
 {
     /// <inheritdoc />
-    public IReadOnlyCollection<IError> Errors => _errors ?? ImmutableArray<IError>.Empty;
+    public IReadOnlyCollection<IError> Errors => _errors ?? (_isSuccess ? Error.EmptyCollection : Error.DefaultCollection);
 
     /// <inheritdoc />
     IError IResult.Error
     {
         get
         {
-            if (IsSuccess())
+            if (_isSuccess)
                 throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
 
-            return _errors!.Value[0];
+            return _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
         }
     }
 
-    private static readonly Result OkResult = new();
+    private static readonly Result OkResult = new(true);
     private static readonly Result FailedResult = new(Error.Empty);
+    private readonly bool _isSuccess = false;
     private readonly ImmutableArray<IError>? _errors;
 
     /// <summary>Initializes a new instance of the <see cref="Result" /> struct.</summary>
     public Result()
     {
-        _errors = ImmutableArray<IError>.Empty;
+    }
+
+    private Result(bool isSuccess)
+    {
+        _isSuccess = isSuccess;
     }
 
     private Result(IError error)
@@ -50,21 +55,23 @@ public readonly struct Result :
     /// <inheritdoc />
     public bool IsSuccess()
     {
-        return _errors is null or { Length: 0 };
+        return _isSuccess;
     }
 
     /// <inheritdoc />
     public bool IsFailed()
     {
-        return _errors is { Length: > 0 };
+        return !_isSuccess;
     }
 
     /// <inheritdoc />
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
-        var isFailed = _errors is { Length: > 0 };
-        error = isFailed ? _errors!.Value[0] : null;
-        return isFailed;
+        if (_isSuccess)
+            error = null;
+        else
+            error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        return !_isSuccess;
     }
 
     /// <summary>Creates a success result.</summary>
@@ -194,18 +201,25 @@ public readonly struct Result :
     }
 
     /// <inheritdoc />
-    public bool HasError<TError>() where TError : IError
+    public bool HasError<TError>()
+        where TError : IError
     {
-        if (_errors is null)
+        if (_isSuccess)
+            return false;
+
+        if (_errors is null && typeof(TError) == typeof(Error))
+            return true;
+
+        if (_errors is null || _errors.Value.Length == 0)
             return false;
 
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
         // ReSharper disable once ForCanBeConvertedToForeach
         // ReSharper disable once LoopCanBeConvertedToQuery
-        for (var index = 0; index < _errors!.Value.Length; index++)
+        for (var index = 0; index < _errors.Value.Length; index++)
         {
-            var error = _errors!.Value[index];
+            var error = _errors.Value[index];
             if (error is TError)
                 return true;
         }
@@ -216,13 +230,13 @@ public readonly struct Result :
     /// <inheritdoc />
     public override string ToString()
     {
-        if (IsSuccess())
+        if (_isSuccess)
             return $"{nameof(Result)} {{ IsSuccess = True }}";
 
-        if (_errors!.Value[0].Message.Length == 0)
+        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
             return $"{nameof(Result)} {{ IsSuccess = False }}";
 
-        var errorString = StringHelper.GetResultErrorString(_errors!.Value);
+        var errorString = StringHelper.GetResultErrorString(_errors.Value);
         return StringHelper.GetResultString(nameof(Result), "False", errorString);
     }
 
