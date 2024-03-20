@@ -68,7 +68,7 @@ public readonly struct Result :
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
         if (_isSuccess)
-            error = null;
+            error = default;
         else
             error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
         return !_isSuccess;
@@ -227,17 +227,43 @@ public readonly struct Result :
         return false;
     }
 
-    /// <inheritdoc />
-    public override string ToString()
+    /// <summary>Matches the result and executes an action based on whether the result is successful or failed.</summary>
+    /// <param name="success">A action to execute if the result is successful.</param>
+    /// <param name="failure">A action to execute if the result is failed.</param>
+    public void Match(Action success, Action<IError> failure)
     {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(success);
+        ArgumentNullException.ThrowIfNull(failure);
+#else
+        if (success is null)
+            throw new ArgumentNullException(nameof(success));
+        if (failure is null)
+            throw new ArgumentNullException(nameof(failure));
+#endif
         if (_isSuccess)
-            return $"{nameof(Result)} {{ IsSuccess = True }}";
+            success();
+        else
+            failure(_errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty);
+    }
 
-        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
-            return $"{nameof(Result)} {{ IsSuccess = False }}";
-
-        var errorString = StringHelper.GetResultErrorString(_errors.Value);
-        return StringHelper.GetResultString(nameof(Result), "False", errorString);
+    /// <summary>Matches the result and executes a function based on whether the result is successful or failed.</summary>
+    /// <typeparam name="TResult">The type of the value to return.</typeparam>
+    /// <param name="success">A function to execute if the result is successful.</param>
+    /// <param name="failure">A function to execute if the result is failed.</param>
+    /// <returns>The value of the executed function.</returns>
+    public TResult Match<TResult>(Func<TResult> success, Func<IError, TResult> failure)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(success);
+        ArgumentNullException.ThrowIfNull(failure);
+#else
+        if (success is null)
+            throw new ArgumentNullException(nameof(success));
+        if (failure is null)
+            throw new ArgumentNullException(nameof(failure));
+#endif
+        return _isSuccess ? success() : failure(_errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty);
     }
 
     /// <summary>Determines whether two <see cref="Result" /> instances are equal.</summary>
@@ -279,5 +305,18 @@ public readonly struct Result :
     public static bool operator !=(Result left, Result right)
     {
         return !left.Equals(right);
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        if (_isSuccess)
+            return $"{nameof(Result)} {{ IsSuccess = True }}";
+
+        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
+            return $"{nameof(Result)} {{ IsSuccess = False }}";
+
+        var errorString = StringHelper.GetResultErrorString(_errors.Value);
+        return StringHelper.GetResultString(nameof(Result), "False", errorString);
     }
 }

@@ -81,6 +81,17 @@ public readonly struct Result<TValue> :
     }
 
     /// <inheritdoc />
+    public bool IsSuccess([MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(true)] out IError error)
+    {
+        value = _valueOrDefault;
+        if (_isSuccess)
+            error = default;
+        else
+            error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        return _isSuccess;
+    }
+
+    /// <inheritdoc />
     public bool IsFailed()
     {
         return !_isSuccess;
@@ -90,9 +101,26 @@ public readonly struct Result<TValue> :
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
         if (_isSuccess)
-            error = null;
+            error = default;
         else
             error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        return !_isSuccess;
+    }
+
+    /// <inheritdoc />
+    public bool IsFailed([MaybeNullWhen(false)] out IError error, [MaybeNullWhen(true)] out TValue value)
+    {
+        if (_isSuccess)
+        {
+            value = _valueOrDefault;
+            error = default;
+        }
+        else
+        {
+            value = default;
+            error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        }
+
         return !_isSuccess;
     }
 
@@ -233,20 +261,60 @@ public readonly struct Result<TValue> :
         return false;
     }
 
-    /// <inheritdoc />
-    public override string ToString()
+    /// <summary>Matches the result and executes an action based on whether the result is successful or failed.</summary>
+    /// <param name="success">A action to execute if the result is successful.</param>
+    /// <param name="failure">A action to execute if the result is failed.</param>
+    public void Match(Action<TValue> success, Action<IError> failure)
     {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(success);
+        ArgumentNullException.ThrowIfNull(failure);
+#else
+        if (success is null)
+            throw new ArgumentNullException(nameof(success));
+        if (failure is null)
+            throw new ArgumentNullException(nameof(failure));
+#endif
         if (_isSuccess)
-        {
-            var valueString = StringHelper.GetResultValueString(_valueOrDefault);
-            return StringHelper.GetResultString(nameof(Result), "True", valueString);
-        }
+            success(_valueOrDefault!);
+        else
+            failure(_errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty);
+    }
 
-        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
-            return $"{nameof(Result)} {{ IsSuccess = False }}";
+    /// <summary>Matches the result and executes a function based on whether the result is successful or failed.</summary>
+    /// <typeparam name="TResult">The type of the value to return.</typeparam>
+    /// <param name="success">A function to execute if the result is successful.</param>
+    /// <param name="failure">A function to execute if the result is failed.</param>
+    /// <returns>The value of the executed function.</returns>
+    public TResult Match<TResult>(Func<TValue, TResult> success, Func<IError, TResult> failure)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(success);
+        ArgumentNullException.ThrowIfNull(failure);
+#else
+        if (success is null)
+            throw new ArgumentNullException(nameof(success));
+        if (failure is null)
+            throw new ArgumentNullException(nameof(failure));
+#endif
+        return _isSuccess ? success(_valueOrDefault!) : failure(_errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty);
+    }
 
-        var errorString = StringHelper.GetResultErrorString(_errors.Value);
-        return StringHelper.GetResultString(nameof(Result), "False", errorString);
+    /// <summary>Implicitly converts a value to a success <see cref="Result{TValue}" />.</summary>
+    /// <param name="value">The value to convert into a success result.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a success result with the specified value.</returns>
+    [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = $"{nameof(Ok)} is the named alternate.")]
+    public static implicit operator Result<TValue>(TValue value)
+    {
+        return Ok(value);
+    }
+
+    /// <summary>Converts the current <see cref="Result{TValue}" /> to a non-generic <see cref="Result" /> containing the same errors, if any.</summary>
+    /// <returns>A new instance of <see cref="Result" /> representing the current result's errors, if any, or a successful result otherwise.</returns>
+    /// <remarks>This method is useful for scenarios where a generic result needs to be converted into a non-generic result.</remarks>
+    public Result ToResult()
+    {
+        return Result.Fail(Errors);
     }
 
     /// <summary>Determines whether two <see cref="Result{TValue}" /> instances are equal.</summary>
@@ -290,20 +358,19 @@ public readonly struct Result<TValue> :
         return !left.Equals(right);
     }
 
-    /// <summary>Implicitly converts a value to a success <see cref="Result{TValue}" />.</summary>
-    /// <param name="value">The value to convert into a success result.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a success result with the specified value.</returns>
-    [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = $"{nameof(Ok)} is the named alternate.")]
-    public static implicit operator Result<TValue>(TValue value)
+    /// <inheritdoc />
+    public override string ToString()
     {
-        return Ok(value);
-    }
+        if (_isSuccess)
+        {
+            var valueString = StringHelper.GetResultValueString(_valueOrDefault);
+            return StringHelper.GetResultString(nameof(Result), "True", valueString);
+        }
 
-    /// <summary>Converts the current <see cref="Result{TValue}" /> to a non-generic <see cref="Result" /> containing the same errors, if any.</summary>
-    /// <returns>A new instance of <see cref="Result" /> representing the current result's errors, if any, or a successful result otherwise.</returns>
-    /// <remarks>This method is useful for scenarios where a generic result needs to be converted into a non-generic result.</remarks>
-    public Result ToResult()
-    {
-        return Result.Fail(Errors);
+        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
+            return $"{nameof(Result)} {{ IsSuccess = False }}";
+
+        var errorString = StringHelper.GetResultErrorString(_errors.Value);
+        return StringHelper.GetResultString(nameof(Result), "False", errorString);
     }
 }

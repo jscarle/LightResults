@@ -3,7 +3,7 @@ using Xunit;
 
 namespace LightResults.Tests;
 
-public class ErrorTests
+public sealed class ErrorTests
 {
     [Fact]
     public void DefaultConstructor_ShouldCreateEmptyError()

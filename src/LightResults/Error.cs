@@ -9,7 +9,9 @@ namespace LightResults;
 /// <summary>Represents an error with a message and associated metadata.</summary>
 public class Error : IError
 {
-    internal static IError Empty { get; } = new Error();
+    /// <summary>Gets an empty error.</summary>
+    public static IError Empty { get; } = new Error();
+
     internal static IReadOnlyCollection<IError> EmptyCollection { get; } = ImmutableArray<IError>.Empty;
     internal static IReadOnlyCollection<IError> DefaultCollection { get; } = ImmutableArray.Create(Empty);
 

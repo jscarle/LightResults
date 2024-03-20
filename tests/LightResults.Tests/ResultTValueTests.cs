@@ -1,16 +1,18 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using LightResults.Common;
 using Xunit;
+#if NET7_0_OR_GREATER
+using LightResults.Common;
+#endif
 
 // ReSharper disable SuspiciousTypeConversion.Global
 
 namespace LightResults.Tests;
 
-public class ResultTValueTests
+public sealed class ResultTValueTests
 {
     [Fact]
-    public void DefaultStruct_ShouldBeFailedResultWithDefault()
+    public void DefaultStruct_ShouldBeFailedResultWithDefaultValue()
     {
         // Arrange
         Result<int> result = default;
@@ -19,20 +21,19 @@ public class ResultTValueTests
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out var successValue).Should().BeFalse();
-            successValue.Should().Be(default);
+            result.IsSuccess(out var resultValue).Should().BeFalse();
+            resultValue.Should().Be(default);
             result.IsFailed().Should().BeTrue();
-            result.IsFailed(out var failedError).Should().BeTrue();
-            failedError.Should().Be(Error.Empty);
-            result.Errors.Should().ContainSingle();
-            result.Errors.First().Should().BeOfType<Error>();
+            result.IsFailed(out var resultError).Should().BeTrue();
+            resultError.Should().Be(Error.Empty);
+            result.Errors.Should().ContainSingle().Which.Should().BeOfType<Error>();
             result.HasError<Error>().Should().BeTrue();
             result.HasError<ValidationError>().Should().BeFalse();
         }
     }
 
     [Fact]
-    public void DefaultStruct_ShouldBeFailedResultWithNull()
+    public void DefaultStruct_ShouldBeFailedResultWithNullValue()
     {
         // Arrange
         Result<object> result = default;
@@ -41,13 +42,12 @@ public class ResultTValueTests
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out var successValue).Should().BeFalse();
-            successValue.Should().Be(null);
+            result.IsSuccess(out var resultValue).Should().BeFalse();
+            resultValue.Should().Be(null);
             result.IsFailed().Should().BeTrue();
-            result.IsFailed(out var failedError).Should().BeTrue();
-            failedError.Should().Be(Error.Empty);
-            result.Errors.Should().ContainSingle();
-            result.Errors.First().Should().BeOfType<Error>();
+            result.IsFailed(out var resultError).Should().BeTrue();
+            resultError.Should().Be(Error.Empty);
+            result.Errors.Should().ContainSingle().Which.Should().BeOfType<Error>();
             result.HasError<Error>().Should().BeTrue();
             result.HasError<ValidationError>().Should().BeFalse();
         }
@@ -57,7 +57,7 @@ public class ResultTValueTests
     public void Value_WhenResultIsSuccess_ShouldReturnAssignedValue()
     {
         // Arrange
-        var result = Result<int>.Ok(42);
+        var result = Result.Ok(42);
 
         // Act & Assert
         ((IResult<int>)result).Value.Should().Be(42);
@@ -67,49 +67,175 @@ public class ResultTValueTests
     public void Value_WhenResultIsFailed_ShouldThrowException()
     {
         // Arrange
-        var result = Result<int>.Fail("Error message");
+        var result = Result.Fail<int>("Error message");
 
         // Act & Assert
         result.Invoking(r => _ = ((IResult<int>)r).Value).Should().Throw<InvalidOperationException>().WithMessage("Result is failed. Value is not set.");
     }
 
     [Fact]
+    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+
+        // Act
+        var result = Result.Fail<int>(errors);
+
+        // Assert
+        ((IResult<int>)result).Error.Should().Be(firstError);
+    }
+
+    [Fact]
+    public void Error_WhenResultIsSuccess_ShouldThrowException()
+    {
+        // Arrange
+        var result = Result.Ok(42);
+
+        // Act & Assert
+        result.Invoking(r => _ = ((IResult<int>)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
+    }
+
+    [Fact]
+    public void IsSuccess_WhenResultIsSuccess()
+    {
+        // Arrange
+        var result = Result.Ok(42);
+
+        // Act & Assert
+        result.IsSuccess().Should().BeTrue();
+    }
+
+    [Fact]
     public void IsSuccess_WhenResultIsSuccess_ShouldReturnAssignedValue()
     {
         // Arrange
-        var result = Result<int>.Ok(42);
+        var result = Result.Ok(42);
 
         // Act
-        result.IsSuccess(out var resultValue);
+        var isSuccess = result.IsSuccess(out var resultValue);
 
         // Assert
-        resultValue.Should().Be(42);
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeTrue();
+            resultValue.Should().Be(42);
+        }
+    }
+
+    [Fact]
+    public void IsSuccess_WhenResultIsSuccess_ShouldReturnAssignedValueAndNullError()
+    {
+        // Arrange
+        var result = Result.Ok(42);
+
+        // Act
+        var isSuccess = result.IsSuccess(out var resultValue, out var resultError);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeTrue();
+            resultValue.Should().Be(42);
+            resultError.Should().Be(null);
+        }
     }
 
     [Fact]
     public void IsSuccess_WhenResultIsFailed_ShouldReturnDefaultValue()
     {
         // Arrange
-        var result = Result<int>.Fail("Error message");
+        var result = Result.Fail<int>("Error message");
 
         // Act
-        result.IsSuccess(out var resultValue);
+        var isSuccess = result.IsSuccess(out var resultValue);
 
         // Assert
-        resultValue.Should().Be(default);
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeFalse();
+            resultValue.Should().Be(default);
+        }
     }
 
     [Fact]
-    public void IsSuccess_WhenResultIsFailed_ShouldReturnNull()
+    public void IsSuccess_WhenResultIsFailed_ShouldReturnNullValue()
     {
         // Arrange
-        var result = Result<object>.Fail("Error message");
+        var result = Result.Fail<object>("Error message");
 
         // Act
-        result.IsSuccess(out var resultValue);
+        var isSuccess = result.IsSuccess(out var resultValue);
 
         // Assert
-        resultValue.Should().Be(null);
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeFalse();
+            resultValue.Should().Be(null);
+        }
+    }
+
+    [Fact]
+    public void IsSuccess_WhenResultIsFailed_ShouldReturnDefaultValueAndFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+        var result = Result.Fail<int>(errors);
+
+        // Act
+        var isSuccess = result.IsSuccess(out var resultValue, out var resultError);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeFalse();
+            resultValue.Should().Be(default);
+            resultError.Should().Be(firstError);
+        }
+    }
+
+    [Fact]
+    public void IsSuccess_WhenResultIsFailed_ShouldReturnNullValueAndFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+        var result = Result.Fail<object>(errors);
+
+        // Act
+        var isSuccess = result.IsSuccess(out var resultValue, out var resultError);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeFalse();
+            resultValue.Should().Be(null);
+            resultError.Should().Be(firstError);
+        }
+    }
+
+    [Fact]
+    public void IsFailed_WhenResultIsFailed()
+    {
+        // Arrange
+        var result = Result.Fail<int>();
+
+        // Act & Assert
+        result.IsFailed().Should().BeTrue();
     }
 
     [Fact]
@@ -122,39 +248,100 @@ public class ResultTValueTests
             firstError,
             new Error("Error 2")
         };
-        var result = Result<int>.Fail(errors);
+        var result = Result.Fail<int>(errors);
 
         // Act
-        result.IsFailed(out var error);
+        var isFailed = result.IsFailed(out var resultError);
 
         // Assert
-        error.Should().Be(firstError);
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeTrue();
+            resultError.Should().Be(firstError);
+        }
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsSuccess_ShouldReturnDefaultValue()
+    public void IsFailed_WhenResultIsSuccess_ShouldReturnNullError()
     {
         // Arrange
-        var result = Result<int>.Ok(42);
+        var result = Result.Ok(42);
 
         // Act
-        result.IsFailed(out var error);
+        var isFailed = result.IsFailed(out var resultError);
 
         // Assert
-        error.Should().Be(default);
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeFalse();
+            resultError.Should().Be(null);
+        }
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsSuccess_ShouldReturnNull()
+    public void IsFailed_WhenResultIsFailed_ShouldReturnFirstErrorAndDefaultValue()
     {
         // Arrange
-        var result = Result<int>.Ok(42);
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+        var result = Result.Fail<int>(errors);
 
         // Act
-        result.IsFailed(out var error);
+        var isFailed = result.IsFailed(out var resultError, out var resultValue);
 
         // Assert
-        error.Should().Be(null);
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeTrue();
+            resultError.Should().Be(firstError);
+            resultValue.Should().Be(default);
+        }
+    }
+
+    [Fact]
+    public void IsFailed_WhenResultIsFailed_ShouldReturnFirstErrorAndNullValue()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+        var result = Result.Fail<object>(errors);
+
+        // Act
+        var isFailed = result.IsFailed(out var resultError, out var resultValue);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeTrue();
+            resultError.Should().Be(firstError);
+            resultValue.Should().Be(null);
+        }
+    }
+
+    [Fact]
+    public void IsFailed_WhenResultIsSuccess_ShouldReturnNullErrorAndAssignedValue()
+    {
+        // Arrange
+        var result = Result.Ok(42);
+
+        // Act
+        var isFailed = result.IsFailed(out var resultError, out var resultValue);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeFalse();
+            resultError.Should().Be(null);
+            resultValue.Should().Be(42);
+        }
     }
 
     [Fact]
@@ -164,17 +351,17 @@ public class ResultTValueTests
         const int value = 42;
 
         // Act
-        var result = Result<int>.Ok(value);
+        var result = Result.Ok(value);
 
         // Assert
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var successValue).Should().BeTrue();
-            successValue.Should().Be(value);
+            result.IsSuccess(out var resultValue).Should().BeTrue();
+            resultValue.Should().Be(value);
             result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
+            result.IsFailed(out var resultError).Should().BeFalse();
+            resultError.Should().Be(null);
             result.Errors.Should().BeEmpty();
             ((IResult<int>)result).Value.Should().Be(value);
         }
@@ -184,7 +371,7 @@ public class ResultTValueTests
     public void Fail_ShouldCreateFailedResultWithSingleError()
     {
         // Act
-        var result = Result<int>.Fail();
+        var result = Result.Fail<int>();
 
         // Assert
         using (new AssertionScope())
@@ -204,7 +391,7 @@ public class ResultTValueTests
         const string errorMessage = "Sample error message";
 
         // Act
-        var result = Result<int>.Fail(errorMessage);
+        var result = Result.Fail<int>(errorMessage);
 
         // Assert
         using (new AssertionScope())
@@ -225,7 +412,7 @@ public class ResultTValueTests
         (string Key, object Value) metadata = ("Key", 0);
 
         // Act
-        var result = Result<object>.Fail(errorMessage, metadata);
+        var result = Result.Fail<object>(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -248,7 +435,7 @@ public class ResultTValueTests
         IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
 
         // Act
-        var result = Result<object>.Fail(errorMessage, metadata);
+        var result = Result.Fail<object>(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -270,7 +457,7 @@ public class ResultTValueTests
         var error = new Error("Sample error");
 
         // Act
-        var result = Result<int>.Fail(error);
+        var result = Result.Fail<int>(error);
 
         // Assert
         using (new AssertionScope())
@@ -294,7 +481,7 @@ public class ResultTValueTests
         };
 
         // Act
-        var result = Result<int>.Fail(errors);
+        var result = Result.Fail<int>(errors);
 
         // Assert
         using (new AssertionScope())
@@ -311,7 +498,7 @@ public class ResultTValueTests
     public void HasError_WithMatchingErrorType_ShouldReturnTrue()
     {
         // Arrange
-        var result = Result<int>.Fail(new ValidationError("Validation error"));
+        var result = Result.Fail<int>(new ValidationError("Validation error"));
 
         // Act & Assert
         result.HasError<ValidationError>().Should().BeTrue();
@@ -321,7 +508,7 @@ public class ResultTValueTests
     public void HasError_WithNonMatchingErrorType_ShouldReturnFalse()
     {
         // Arrange
-        var result = Result<int>.Fail(new Error("Generic error"));
+        var result = Result.Fail<int>(new Error("Generic error"));
 
         // Act & Assert
         result.HasError<ValidationError>().Should().BeFalse();
@@ -331,246 +518,140 @@ public class ResultTValueTests
     public void HasError_WhenIsSuccess_ShouldReturnFalse()
     {
         // Arrange
-        var result = Result<int>.Ok(42);
+        var result = Result.Ok(42);
 
         // Act & Assert
         result.HasError<ValidationError>().Should().BeFalse();
     }
 
     [Fact]
-    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
+    public void Match_WithSuccessfulSource_ShouldInvokeSuccessAction()
     {
         // Arrange
-        var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var sourceResult = Result.Ok(42);
+        var successActionCalled = false;
+        var actionValue = 0;
+        var failureActionCalled = false;
+        IError actionError = null!;
 
         // Act
-        var result = Result<int>.Fail(errors);
+        sourceResult.Match(value =>
+        {
+            successActionCalled = true;
+            actionValue = value;
+        }, error =>
+        {
+            failureActionCalled = true;
+            actionError = error;
+        });
 
         // Assert
-        ((IResult<int>)result).Error.Should().Be(firstError);
+        using (new AssertionScope())
+        {
+            successActionCalled.Should().BeTrue();
+            failureActionCalled.Should().BeFalse();
+            actionValue.Should().Be(42);
+            actionError.Should().Be(null);
+        }
     }
 
     [Fact]
-    public void Error_WhenResultIsSuccess_ShouldThrowException()
+    public void Match_WithFailedSource_ShouldInvokeFailureAction()
     {
         // Arrange
-        var result = Result<int>.Ok(42);
+        var sourceResult = Result.Fail<int>();
+        var successActionCalled = false;
+        var actionValue = 0;
+        var failureActionCalled = false;
+        IError actionError = null!;
 
-        // Act & Assert
-        result.Invoking(r => _ = ((IResult<int>)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
+        // Act
+        sourceResult.Match(value =>
+        {
+            successActionCalled = true;
+            actionValue = value;
+        }, error =>
+        {
+            failureActionCalled = true;
+            actionError = error;
+        });
+
+        // Assert
+        using (new AssertionScope())
+        {
+            successActionCalled.Should().BeFalse();
+            failureActionCalled.Should().BeTrue();
+            actionValue.Should().Be(0);
+            actionError.Should().Be(Error.Empty);
+        }
     }
 
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = True", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForBoolean(bool success, string expected, string errorMessage)
+    [Fact]
+    public void Match_WithSuccessfulSource_ShouldInvokeSuccessFunc()
     {
         // Arrange
-        var result = success ? Result<bool>.Ok(true) : Result<bool>.Fail(errorMessage);
+        var sourceResult = Result.Ok(42);
+        var successFuncCalled = false;
+        var funcValue = 0;
+        var failureFuncCalled = false;
+        IError funcError = null!;
 
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        // Act
+        var returnResult = sourceResult.Match(value =>
+        {
+            successFuncCalled = true;
+            funcValue = value;
+            return $"Value: {value}";
+        }, error =>
+        {
+            failureFuncCalled = true;
+            funcError = error;
+            return $"Error: {error.Message}";
+        });
+
+        // Assert
+        using (new AssertionScope())
+        {
+            successFuncCalled.Should().BeTrue();
+            failureFuncCalled.Should().BeFalse();
+            funcValue.Should().Be(42);
+            funcError.Should().Be(null);
+            returnResult.Should().Be("Value: 42");
+        }
     }
 
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForSByte(bool success, string expected, string errorMessage)
+    [Fact]
+    public void Match_WithFailedSource_ShouldInvokeFailureFunc()
     {
         // Arrange
-        var result = success ? Result<sbyte>.Ok(1) : Result<sbyte>.Fail(errorMessage);
+        var sourceResult = Result.Fail<int>("Generic error");
+        var successFuncCalled = false;
+        var funcValue = 0;
+        var failureFuncCalled = false;
+        IError funcError = null!;
 
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
+        // Act
+        var returnResult = sourceResult.Match(value =>
+        {
+            successFuncCalled = true;
+            funcValue = value;
+            return $"Value: {value}";
+        }, error =>
+        {
+            failureFuncCalled = true;
+            funcError = error;
+            return $"Error: {error.Message}";
+        });
 
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForByte(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<byte>.Ok(1) : Result<byte>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForInt16(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<short>.Ok(1) : Result<short>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForUInt16(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<ushort>.Ok(1) : Result<ushort>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForInt32(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<int>.Ok(1) : Result<int>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForUInt32(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<uint>.Ok(1) : Result<uint>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForInt64(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<long>.Ok(1) : Result<long>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForUInt64(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<ulong>.Ok(1) : Result<ulong>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForDecimal(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<decimal>.Ok(1.1m) : Result<decimal>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForFloat(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<float>.Ok(1.1f) : Result<float>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForDouble(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<double>.Ok(1.1d) : Result<double>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 'c'", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForChar(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result.Ok('c') : Result<char>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = \"StringValue\"", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForString(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result.Ok("StringValue") : Result<string>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForObject(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result.Ok(new object()) : Result<object>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
-    }
-
-    [Theory]
-    [InlineData(true, "IsSuccess = True, Value = 1", "")]
-    [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
-    public void ToString_ShouldReturnProperRepresentationForNullableValueTypes(bool success, string expected, string errorMessage)
-    {
-        // Arrange
-        var result = success ? Result<int?>.Ok(1) : Result<int?>.Fail(errorMessage);
-
-        // Act & Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        // Assert
+        using (new AssertionScope())
+        {
+            successFuncCalled.Should().BeFalse();
+            failureFuncCalled.Should().BeTrue();
+            funcValue.Should().Be(0);
+            funcError.Should().BeOfType<Error>().Which.Message.Should().Be("Generic error");
+            returnResult.Should().Be("Error: Generic error");
+        }
     }
 
     [Fact]
@@ -603,7 +684,7 @@ public class ResultTValueTests
             new Error("Error 1"),
             new Error("Error 2")
         };
-        var result = Result<int>.Fail(errors);
+        var result = Result.Fail<int>(errors);
 
         // Act
         var nonGenericResult = result.ToResult();
@@ -621,8 +702,8 @@ public class ResultTValueTests
     public void Equals_ResultInt_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(42);
 
         // Act & Assert
         result1.Equals(result2).Should().BeTrue();
@@ -632,8 +713,8 @@ public class ResultTValueTests
     public void Equals_ResultInt_ShouldReturnFalseForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(43);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(43);
 
         // Act & Assert
         result1.Equals(result2).Should().BeFalse();
@@ -643,8 +724,8 @@ public class ResultTValueTests
     public void Equals_ResultObject_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result<object>.Ok("test");
-        var result2 = Result<object>.Ok("test");
+        var result1 = Result.Ok<object>("test");
+        var result2 = Result.Ok<object>("test");
 
         // Act & Assert
         result1.Equals(result2).Should().BeTrue();
@@ -654,8 +735,8 @@ public class ResultTValueTests
     public void Equals_ResultObject_ShouldReturnFalseForDifferentResults()
     {
         // Arrange
-        var result1 = Result<object>.Ok("test1");
-        var result2 = Result<object>.Ok("test2");
+        var result1 = Result.Ok<object>("test1");
+        var result2 = Result.Ok<object>("test2");
 
         // Act & Assert
         result1.Equals(result2).Should().BeFalse();
@@ -665,8 +746,8 @@ public class ResultTValueTests
     public void Equals_ResultIntToObject_ShouldReturnFalseForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<object>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok<object>(42);
 
         // Act & Assert
         result1.Equals(result2).Should().BeFalse();
@@ -676,8 +757,8 @@ public class ResultTValueTests
     public void GetHashCode_ResultInt_ShouldReturnSameHashCodeForEqualResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(42);
 
         // Act & Assert
         result1.GetHashCode().Should().Be(result2.GetHashCode());
@@ -687,8 +768,8 @@ public class ResultTValueTests
     public void GetHashCode_ResultInt_ShouldReturnDifferentHashCodeForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(43);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(43);
 
         // Act & Assert
         result1.GetHashCode().Should().NotBe(result2.GetHashCode());
@@ -698,8 +779,8 @@ public class ResultTValueTests
     public void op_Equality_ResultInt_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(42);
 
         // Act & Assert
         (result1 == result2).Should().BeTrue();
@@ -709,8 +790,8 @@ public class ResultTValueTests
     public void op_Equality_ResultInt_ShouldReturnFalseForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(43);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(43);
 
         // Act & Assert
         (result1 == result2).Should().BeFalse();
@@ -720,8 +801,8 @@ public class ResultTValueTests
     public void op_Inequality_ResultInt_ShouldReturnFalseForEqualResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(42);
 
         // Act & Assert
         (result1 != result2).Should().BeFalse();
@@ -731,8 +812,8 @@ public class ResultTValueTests
     public void op_Inequality_ResultInt_ShouldReturnTrueForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<int>.Ok(43);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok(43);
 
         // Act & Assert
         (result1 != result2).Should().BeTrue();
@@ -742,8 +823,8 @@ public class ResultTValueTests
     public void op_Equality_ResultObject_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result<object>.Ok("test");
-        var result2 = Result<object>.Ok("test");
+        var result1 = Result.Ok<object>("test");
+        var result2 = Result.Ok<object>("test");
 
         // Act & Assert
         (result1 == result2).Should().BeTrue();
@@ -753,8 +834,8 @@ public class ResultTValueTests
     public void op_Equality_ResultObject_ShouldReturnFalseForDifferentResults()
     {
         // Arrange
-        var result1 = Result<object>.Ok("test1");
-        var result2 = Result<object>.Ok("test2");
+        var result1 = Result.Ok<object>("test1");
+        var result2 = Result.Ok<object>("test2");
 
         // Act & Assert
         (result1 == result2).Should().BeFalse();
@@ -764,8 +845,8 @@ public class ResultTValueTests
     public void op_Inequality_ResultObject_ShouldReturnFalseForEqualResults()
     {
         // Arrange
-        var result1 = Result<object>.Ok("test");
-        var result2 = Result<object>.Ok("test");
+        var result1 = Result.Ok<object>("test");
+        var result2 = Result.Ok<object>("test");
 
         // Act & Assert
         (result1 != result2).Should().BeFalse();
@@ -775,8 +856,8 @@ public class ResultTValueTests
     public void op_Inequality_ResultObject_ShouldReturnTrueForDifferentResults()
     {
         // Arrange
-        var result1 = Result<object>.Ok("test1");
-        var result2 = Result<object>.Ok("test2");
+        var result1 = Result.Ok<object>("test1");
+        var result2 = Result.Ok<object>("test2");
 
         // Act & Assert
         (result1 != result2).Should().BeTrue();
@@ -786,8 +867,8 @@ public class ResultTValueTests
     public void op_Equality_ResultIntToObject_ShouldReturnFalseForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<object>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok<object>(42);
 
         // Act & Assert
         (result1 == result2).Should().BeFalse();
@@ -797,11 +878,219 @@ public class ResultTValueTests
     public void op_Inequality_ResultIntToObject_ShouldReturnTrueForDifferentResults()
     {
         // Arrange
-        var result1 = Result<int>.Ok(42);
-        var result2 = Result<object>.Ok(42);
+        var result1 = Result.Ok(42);
+        var result2 = Result.Ok<object>(42);
 
         // Act & Assert
         (result1 != result2).Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = True", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForBoolean(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(true) : Result.Fail<bool>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForSByte(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<sbyte>(1) : Result.Fail<sbyte>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForByte(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<byte>(1) : Result.Fail<byte>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt16(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<short>(1) : Result.Fail<short>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt16(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<ushort>(1) : Result.Fail<ushort>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt32(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(1) : Result.Fail<int>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt32(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<uint>(1) : Result.Fail<uint>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForInt64(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<long>(1) : Result.Fail<long>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForUInt64(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<ulong>(1) : Result.Fail<ulong>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDecimal(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(1.1m) : Result.Fail<decimal>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForFloat(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(1.1f) : Result.Fail<float>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDouble(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(1.1d) : Result.Fail<double>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 'c'", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForChar(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok('c') : Result.Fail<char>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = \"StringValue\"", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForString(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok("StringValue") : Result.Fail<string>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForObject(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(new object()) : Result.Fail<object>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 1", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForNullableValueTypes(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok<int?>(1) : Result.Fail<int?>(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
@@ -814,17 +1103,17 @@ public class ResultTValueTests
         const int value = 42;
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Ok(value);
+        var result = (IActionableResult<int, Result<int>>)Result.Ok(value);
 
         // Assert
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var successValue).Should().BeTrue();
-            successValue.Should().Be(value);
+            result.IsSuccess(out var resultValue).Should().BeTrue();
+            resultValue.Should().Be(value);
             result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
+            result.IsFailed(out var resultError).Should().BeFalse();
+            resultError.Should().Be(null);
             result.Errors.Should().BeEmpty();
             result.Value.Should().Be(value);
         }
@@ -834,7 +1123,7 @@ public class ResultTValueTests
     public void InterfaceFail_ShouldCreateFailedResultWithSingleError()
     {
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail();
+        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>();
 
         // Assert
         using (new AssertionScope())
@@ -854,7 +1143,7 @@ public class ResultTValueTests
         const string errorMessage = "Sample error message";
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(errorMessage);
+        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>(errorMessage);
 
         // Assert
         using (new AssertionScope())
@@ -875,7 +1164,7 @@ public class ResultTValueTests
         (string Key, object Value) metadata = ("Key", 0);
 
         // Act
-        var result = (IActionableResult<object, Result<object>>)Result<object>.Fail(errorMessage, metadata);
+        var result = (IActionableResult<object, Result<object>>)Result.Fail<object>(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -898,7 +1187,7 @@ public class ResultTValueTests
         IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
 
         // Act
-        var result = (IActionableResult<object, Result<object>>)Result<object>.Fail(errorMessage, metadata);
+        var result = (IActionableResult<object, Result<object>>)Result.Fail<object>(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -920,7 +1209,7 @@ public class ResultTValueTests
         var error = new Error("Sample error");
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(error);
+        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>(error);
 
         // Assert
         using (new AssertionScope())
@@ -944,7 +1233,7 @@ public class ResultTValueTests
         };
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result<int>.Fail(errors);
+        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>(errors);
 
         // Assert
         using (new AssertionScope())
@@ -966,7 +1255,7 @@ public class ResultTValueTests
     public void ToString_ShouldReturnProperRepresentationForInt128(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<Int128>.Ok(1) : Result<Int128>.Fail(errorMessage);
+        var result = success ? Result.Ok<Int128>(1) : Result.Fail<Int128>(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
@@ -979,7 +1268,7 @@ public class ResultTValueTests
     public void ToString_ShouldReturnProperRepresentationForUInt128(bool success, string expected, string errorMessage)
     {
         // Arrange
-        var result = success ? Result<UInt128>.Ok(1) : Result<UInt128>.Fail(errorMessage);
+        var result = success ? Result.Ok<UInt128>(1) : Result.Fail<UInt128>(errorMessage);
 
         // Act & Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");

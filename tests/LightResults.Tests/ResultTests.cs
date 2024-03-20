@@ -4,7 +4,7 @@ using Xunit;
 
 namespace LightResults.Tests;
 
-public class ResultTests
+public sealed class ResultTests
 {
     [Fact]
     public void DefaultStruct_ShouldBeFailedResult()
@@ -17,13 +17,61 @@ public class ResultTests
         {
             result.IsSuccess().Should().BeFalse();
             result.IsFailed().Should().BeTrue();
-            result.IsFailed(out var failedError).Should().BeTrue();
-            failedError.Should().Be(Error.Empty);
+            result.IsFailed(out var resultError).Should().BeTrue();
+            resultError.Should().Be(Error.Empty);
             result.Errors.Should().ContainSingle();
             result.Errors.First().Should().BeOfType<Error>();
             result.HasError<Error>().Should().BeTrue();
             result.HasError<ValidationError>().Should().BeFalse();
         }
+    }
+
+    [Fact]
+    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2")
+        };
+
+        // Act
+        var result = Result.Fail(errors);
+
+        // Assert
+        ((IResult)result).Error.Should().Be(firstError);
+    }
+
+    [Fact]
+    public void Error_WhenResultIsSuccess_ShouldThrowException()
+    {
+        // Arrange
+        var result = Result.Ok();
+
+        // Act & Assert
+        result.Invoking(r => _ = ((IResult)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
+    }
+
+    [Fact]
+    public void IsSuccess_WhenResultIsSuccess()
+    {
+        // Arrange
+        var result = Result.Ok();
+
+        // Act & Assert
+        result.IsSuccess().Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsFailed_WhenResultIsFailed()
+    {
+        // Arrange
+        var result = Result.Fail();
+
+        // Act & Assert
+        result.IsFailed().Should().BeTrue();
     }
 
     [Fact]
@@ -39,10 +87,14 @@ public class ResultTests
         var result = Result.Fail(errors);
 
         // Act
-        result.IsFailed(out var error);
+        var isFailed = result.IsFailed(out var resultError);
 
         // Assert
-        error.Should().Be(firstError);
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeTrue();
+            resultError.Should().Be(firstError);
+        }
     }
 
     [Fact]
@@ -52,23 +104,31 @@ public class ResultTests
         var result = Result.Ok();
 
         // Act
-        result.IsFailed(out var error);
+        var isFailed = result.IsFailed(out var resultError);
 
         // Assert
-        error.Should().Be(default);
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeFalse();
+            resultError.Should().Be(null);
+        }
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsSuccess_ShouldReturnNull()
+    public void IsFailed_WhenResultIsSuccess_ShouldReturnNullValue()
     {
         // Arrange
         var result = Result.Ok();
 
         // Act
-        result.IsFailed(out var error);
+        var isFailed = result.IsFailed(out var resultError);
 
         // Assert
-        error.Should().Be(null);
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeFalse();
+            resultError.Should().Be(null);
+        }
     }
 
     [Fact]
@@ -82,8 +142,8 @@ public class ResultTests
         {
             result.IsSuccess().Should().BeTrue();
             result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
+            result.IsFailed(out var resultError).Should().BeFalse();
+            resultError.Should().Be(null);
             result.Errors.Should().BeEmpty();
         }
     }
@@ -101,11 +161,11 @@ public class ResultTests
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var successValue).Should().BeTrue();
-            successValue.Should().Be(value);
+            result.IsSuccess(out var resultValue).Should().BeTrue();
+            resultValue.Should().Be(value);
             result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var successError).Should().BeFalse();
-            successError.Should().Be(null);
+            result.IsFailed(out var resultError).Should().BeFalse();
+            resultError.Should().Be(null);
             result.Errors.Should().BeEmpty();
             ((IResult<int>)result).Value.Should().Be(value);
         }
@@ -390,53 +450,125 @@ public class ResultTests
     }
 
     [Fact]
-    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
+    public void Match_WithSuccessfulSource_ShouldInvokeSuccessAction()
     {
         // Arrange
-        var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var sourceResult = Result.Ok();
+        var successActionCalled = false;
+        var failureActionCalled = false;
+        IError actionError = null!;
 
         // Act
-        var result = Result.Fail(errors);
+        sourceResult.Match(() =>
+        {
+            successActionCalled = true;
+        }, error =>
+        {
+            failureActionCalled = true;
+            actionError = error;
+        });
 
         // Assert
-        ((IResult)result).Error.Should().Be(firstError);
+        using (new AssertionScope())
+        {
+            successActionCalled.Should().BeTrue();
+            failureActionCalled.Should().BeFalse();
+            actionError.Should().Be(null);
+        }
     }
 
     [Fact]
-    public void Error_WhenResultIsSuccess_ShouldThrowException()
+    public void Match_WithFailedSource_ShouldInvokeFailureAction()
     {
         // Arrange
-        var result = Result.Ok();
+        var sourceResult = Result.Fail();
+        var successActionCalled = false;
+        var actionValue = 0;
+        var failureActionCalled = false;
+        IError actionError = null!;
 
-        // Act & Assert
-        result.Invoking(r => _ = ((IResult)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
+        // Act
+        sourceResult.Match(() =>
+        {
+            successActionCalled = true;
+        }, error =>
+        {
+            failureActionCalled = true;
+            actionError = error;
+        });
+
+        // Assert
+        using (new AssertionScope())
+        {
+            successActionCalled.Should().BeFalse();
+            failureActionCalled.Should().BeTrue();
+            actionValue.Should().Be(0);
+            actionError.Should().Be(Error.Empty);
+        }
     }
 
     [Fact]
-    public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
+    public void Match_WithSuccessfulSource_ShouldInvokeSuccessFunc()
     {
         // Arrange
-        var result = Result.Ok();
+        var sourceResult = Result.Ok();
+        var successFuncCalled = false;
+        var failureFuncCalled = false;
+        IError funcError = null!;
 
-        // Act & Assert
-        result.ToString().Should().Be("Result { IsSuccess = True }");
+        // Act
+        var returnResult = sourceResult.Match(() =>
+        {
+            successFuncCalled = true;
+            return $"Value";
+        }, error =>
+        {
+            failureFuncCalled = true;
+            funcError = error;
+            return $"Error: {error.Message}";
+        });
+
+        // Assert
+        using (new AssertionScope())
+        {
+            successFuncCalled.Should().BeTrue();
+            failureFuncCalled.Should().BeFalse();
+            funcError.Should().Be(null);
+            returnResult.Should().Be("Value");
+        }
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("An unknown error occured!")]
-    public void ToString_WhenFailed_ShouldReturnStringRepresentation(string errorMessage)
+    [Fact]
+    public void Match_WithFailedSource_ShouldInvokeFailureFunc()
     {
         // Arrange
-        var result = Result.Fail(errorMessage);
+        var sourceResult = Result.Fail("Generic error");
+        var successFuncCalled = false;
+        var funcValue = 0;
+        var failureFuncCalled = false;
+        IError funcError = null!;
 
-        // Act & Assert
-        result.ToString().Should().Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
+        // Act
+        var returnResult = sourceResult.Match(() =>
+        {
+            successFuncCalled = true;
+            return $"Value";
+        }, error =>
+        {
+            failureFuncCalled = true;
+            funcError = error;
+            return $"Error: {error.Message}";
+        });
+
+        // Assert
+        using (new AssertionScope())
+        {
+            successFuncCalled.Should().BeFalse();
+            failureFuncCalled.Should().BeTrue();
+            funcValue.Should().Be(0);
+            funcError.Should().BeOfType<Error>().Which.Message.Should().Be("Generic error");
+            returnResult.Should().Be("Error: Generic error");
+        }
     }
 
     [Fact]
@@ -536,6 +668,28 @@ public class ResultTests
 
         // Act & Assert
         (result1 != result2).Should().BeTrue();
+    }
+
+    [Fact]
+    public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
+    {
+        // Arrange
+        var result = Result.Ok();
+
+        // Act & Assert
+        result.ToString().Should().Be("Result { IsSuccess = True }");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("An unknown error occured!")]
+    public void ToString_WhenFailed_ShouldReturnStringRepresentation(string errorMessage)
+    {
+        // Arrange
+        var result = Result.Fail(errorMessage);
+
+        // Act & Assert
+        result.ToString().Should().Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
