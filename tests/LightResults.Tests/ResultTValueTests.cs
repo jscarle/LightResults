@@ -54,54 +54,6 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void Value_WhenResultIsSuccess_ShouldReturnAssignedValue()
-    {
-        // Arrange
-        var result = Result.Ok(42);
-
-        // Act & Assert
-        ((IResult<int>)result).Value.Should().Be(42);
-    }
-
-    [Fact]
-    public void Value_WhenResultIsFailed_ShouldThrowException()
-    {
-        // Arrange
-        var result = Result.Fail<int>("Error message");
-
-        // Act & Assert
-        result.Invoking(r => _ = ((IResult<int>)r).Value).Should().Throw<InvalidOperationException>().WithMessage("Result is failed. Value is not set.");
-    }
-
-    [Fact]
-    public void Error_WhenResultIsFailed_ShouldReturnFirstError()
-    {
-        // Arrange
-        var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
-
-        // Act
-        var result = Result.Fail<int>(errors);
-
-        // Assert
-        ((IResult<int>)result).Error.Should().Be(firstError);
-    }
-
-    [Fact]
-    public void Error_WhenResultIsSuccess_ShouldThrowException()
-    {
-        // Arrange
-        var result = Result.Ok(42);
-
-        // Act & Assert
-        result.Invoking(r => _ = ((IResult<int>)r).Error).Should().Throw<InvalidOperationException>().WithMessage("Result is successful. Error is not set.");
-    }
-
-    [Fact]
     public void IsSuccess_WhenResultIsSuccess()
     {
         // Arrange
@@ -363,7 +315,6 @@ public sealed class ResultTValueTests
             result.IsFailed(out var resultError).Should().BeFalse();
             resultError.Should().Be(null);
             result.Errors.Should().BeEmpty();
-            ((IResult<int>)result).Value.Should().Be(value);
         }
     }
 
@@ -667,11 +618,11 @@ public sealed class ResultTValueTests
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out _).Should().BeTrue();
+            result.IsSuccess(out var resultValue).Should().BeTrue();
+            resultValue.Should().Be(value);
             result.IsFailed().Should().BeFalse();
             result.IsFailed(out _).Should().BeFalse();
             result.Errors.Should().BeEmpty();
-            ((IResult<int>)result).Value.Should().Be(value);
         }
     }
 
@@ -1115,7 +1066,6 @@ public sealed class ResultTValueTests
             result.IsFailed(out var resultError).Should().BeFalse();
             resultError.Should().Be(null);
             result.Errors.Should().BeEmpty();
-            result.Value.Should().Be(value);
         }
     }
 

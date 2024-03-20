@@ -76,7 +76,7 @@ public class Benchmarks
     public void Develop_Result_Error()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ((IResult)ResultFailWithErrorMessage).Error;
+            _ = ResultFailWithErrorMessage.IsFailed(out _);
     }
 
     [Benchmark]

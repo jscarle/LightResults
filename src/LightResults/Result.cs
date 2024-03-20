@@ -15,18 +15,6 @@ public readonly struct Result :
     /// <inheritdoc />
     public IReadOnlyCollection<IError> Errors => _errors ?? (_isSuccess ? Error.EmptyCollection : Error.DefaultCollection);
 
-    /// <inheritdoc />
-    IError IResult.Error
-    {
-        get
-        {
-            if (_isSuccess)
-                throw new InvalidOperationException($"{nameof(Result)} is successful. {nameof(Error)} is not set.");
-
-            return _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
-        }
-    }
-
     private static readonly Result OkResult = new(true);
     private static readonly Result FailedResult = new(Error.Empty);
     private readonly bool _isSuccess = false;

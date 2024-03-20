@@ -122,6 +122,6 @@ public partial class Benchmarks
     public void LightResults_Result_FirstError()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = ((IResult)LightResultsResultFailWithErrorMessage).Error;
+            _ = LightResultsResultFailWithErrorMessage.IsFailed(out _);
     }
 }
