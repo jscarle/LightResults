@@ -13,7 +13,19 @@ public readonly struct Result :
 #endif
 {
     /// <inheritdoc/>
-    public IReadOnlyCollection<IError> Errors => _errors ?? (_isSuccess ? Error.EmptyCollection : Error.DefaultCollection);
+    public IReadOnlyCollection<IError> Errors
+    {
+        get
+        {
+            if (_errors.HasValue)
+                return _errors;
+
+            if (_isSuccess)
+                return Error.EmptyCollection;
+
+            return Error.DefaultCollection;
+        }
+    }
 
     private static readonly Result OkResult = new(true);
     private static readonly Result FailedResult = new(Error.Empty);
@@ -55,7 +67,13 @@ public readonly struct Result :
     /// <inheritdoc/>
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
-        error = _isSuccess ? default : GetError();
+        if (_isSuccess)
+            error = default;
+        else if (_errors.HasValue)
+            error = _errors.Value[0];
+        else
+            error = Error.Empty;
+
         return !_isSuccess;
     }
 
@@ -192,11 +210,8 @@ public readonly struct Result :
         if (_isSuccess)
             return false;
 
-        if (_errors is null && typeof(TError) == typeof(Error))
-            return true;
-
-        if (_errors is null || _errors.Value.Length == 0)
-            return false;
+        if (_errors is null)
+            return typeof(TError) == typeof(Error);
 
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
@@ -228,8 +243,10 @@ public readonly struct Result :
 #endif
         if (_isSuccess)
             success();
+        else if (_errors.HasValue)
+            failure(_errors.Value[0]);
         else
-            failure(GetError());
+            failure(Error.Empty);
     }
 
     /// <summary>Matches the result and executes a function based on whether the result is successful or failed.</summary>
@@ -248,7 +265,13 @@ public readonly struct Result :
         if (failure is null)
             throw new ArgumentNullException(nameof(failure));
 #endif
-        return _isSuccess ? success() : failure(GetError());
+        if (_isSuccess)
+            return success();
+
+        if (_errors.HasValue)
+            return failure(_errors.Value[0]);
+
+        return failure(Error.Empty);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
@@ -298,15 +321,9 @@ public readonly struct Result :
         if (_isSuccess)
             return $"{nameof(Result)} {{ IsSuccess = True }}";
 
-        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
-            return $"{nameof(Result)} {{ IsSuccess = False }}";
+        if (_errors.HasValue && _errors.Value[0].Message.Length > 0)
+            return StringHelper.GetResultErrorString(_errors.Value[0].Message);
 
-        var errorString = StringHelper.GetResultErrorString(_errors.Value);
-        return StringHelper.GetResultString(nameof(Result), "False", errorString);
-    }
-
-    private IError GetError()
-    {
-        return _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        return $"{nameof(Result)} {{ IsSuccess = False }}";
     }
 }

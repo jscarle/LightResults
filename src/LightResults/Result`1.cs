@@ -15,7 +15,19 @@ public readonly struct Result<TValue> :
 #endif
 {
     /// <inheritdoc/>
-    public IReadOnlyCollection<IError> Errors => _errors ?? (_isSuccess ? Error.EmptyCollection : Error.DefaultCollection);
+    public IReadOnlyCollection<IError> Errors
+    {
+        get
+        {
+            if (_errors.HasValue)
+                return _errors;
+
+            if (_isSuccess)
+                return Error.EmptyCollection;
+
+            return Error.DefaultCollection;
+        }
+    }
 
     private static readonly Result<TValue> FailedResult = new(Error.Empty);
     private readonly bool _isSuccess = false;
@@ -59,8 +71,20 @@ public readonly struct Result<TValue> :
     /// <inheritdoc/>
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(true)] out IError error)
     {
-        value = _valueOrDefault;
-        error = _isSuccess ? default : GetError();
+        if (_isSuccess)
+        {
+            value = _valueOrDefault;
+            error = default;
+        }
+        else
+        {
+            value = default;
+            if (_errors.HasValue)
+                error = _errors.Value[0];
+            else
+                error = Error.Empty;
+        }
+
         return _isSuccess;
     }
 
@@ -73,7 +97,13 @@ public readonly struct Result<TValue> :
     /// <inheritdoc/>
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
-        error = _isSuccess ? default : GetError();
+        if (_isSuccess)
+            error = default;
+        else if (_errors.HasValue)
+            error = _errors.Value[0];
+        else
+            error = Error.Empty;
+
         return !_isSuccess;
     }
 
@@ -88,7 +118,10 @@ public readonly struct Result<TValue> :
         else
         {
             value = default;
-            error = GetError();
+            if (_errors.HasValue)
+                error = _errors.Value[0];
+            else
+                error = Error.Empty;
         }
 
         return !_isSuccess;
@@ -136,14 +169,14 @@ public readonly struct Result<TValue> :
 #if NET7_0_OR_GREATER
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a success result with the specified value.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Ok(TValue value)
     {
         return Ok(value);
     }
 
     /// <summary>Creates a failed result.</summary>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail()
     {
         return Fail();
@@ -151,7 +184,7 @@ public readonly struct Result<TValue> :
 
     /// <summary>Creates a failed result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage)
     {
         return Fail(errorMessage);
@@ -160,7 +193,7 @@ public readonly struct Result<TValue> :
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage, (string Key, object Value) metadata)
     {
         return Fail(errorMessage, metadata);
@@ -169,7 +202,7 @@ public readonly struct Result<TValue> :
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage, IDictionary<string, object> metadata)
     {
         return Fail(errorMessage, metadata);
@@ -177,7 +210,7 @@ public readonly struct Result<TValue> :
 
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(IError error)
     {
         return Fail(error);
@@ -185,7 +218,7 @@ public readonly struct Result<TValue> :
 
     /// <summary>Creates a failed result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(IEnumerable<IError> errors)
     {
         return Fail(errors);
@@ -199,11 +232,8 @@ public readonly struct Result<TValue> :
         if (_isSuccess)
             return false;
 
-        if (_errors is null && typeof(TError) == typeof(Error))
-            return true;
-
-        if (_errors is null || _errors.Value.Length == 0)
-            return false;
+        if (_errors is null)
+            return typeof(TError) == typeof(Error);
 
         // Do not convert to LINQ, this creates unnecessary heap allocations.
         // For is the most efficient way to loop. It is the fastest and does not allocate.
@@ -235,8 +265,10 @@ public readonly struct Result<TValue> :
 #endif
         if (_isSuccess)
             success(_valueOrDefault!);
+        else if (_errors.HasValue)
+            failure(_errors.Value[0]);
         else
-            failure(GetError());
+            failure(Error.Empty);
     }
 
     /// <summary>Matches the result and executes a function based on whether the result is successful or failed.</summary>
@@ -255,7 +287,13 @@ public readonly struct Result<TValue> :
         if (failure is null)
             throw new ArgumentNullException(nameof(failure));
 #endif
-        return _isSuccess ? success(_valueOrDefault!) : failure(GetError());
+        if (_isSuccess)
+            return success(_valueOrDefault!);
+
+        if (_errors.HasValue)
+            return failure(_errors.Value[0]);
+
+        return failure(Error.Empty);
     }
 
     /// <summary>Implicitly converts a value to a success <see cref="Result{TValue}"/>.</summary>
@@ -320,20 +358,11 @@ public readonly struct Result<TValue> :
     public override string ToString()
     {
         if (_isSuccess)
-        {
-            var valueString = StringHelper.GetResultValueString(_valueOrDefault);
-            return StringHelper.GetResultString(nameof(Result), "True", valueString);
-        }
+            return StringHelper.GetResultValueString(_valueOrDefault);
 
-        if (_errors is null || _errors.Value.Length == 0 || _errors.Value[0].Message.Length == 0)
-            return $"{nameof(Result)} {{ IsSuccess = False }}";
+        if (_errors.HasValue && _errors.Value[0].Message.Length > 0)
+            return StringHelper.GetResultErrorString(_errors.Value[0].Message);
 
-        var errorString = StringHelper.GetResultErrorString(_errors.Value);
-        return StringHelper.GetResultString(nameof(Result), "False", errorString);
-    }
-
-    private IError GetError()
-    {
-        return _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        return $"{nameof(Result)} {{ IsSuccess = False }}";
     }
 }

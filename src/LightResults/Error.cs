@@ -88,6 +88,11 @@ public class Error : IError
     /// <inheritdoc />
     public override string ToString()
     {
-        return StringHelper.GetErrorString(this);
+        var errorType = GetType().Name;
+
+        if (Message.Length == 0)
+            return errorType;
+
+        return StringHelper.GetErrorString(errorType, Message);
     }
 }
