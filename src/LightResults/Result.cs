@@ -12,7 +12,7 @@ public readonly struct Result :
     IResult, IEquatable<Result>
 #endif
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IReadOnlyCollection<IError> Errors => _errors ?? (_isSuccess ? Error.EmptyCollection : Error.DefaultCollection);
 
     private static readonly Result OkResult = new(true);
@@ -20,7 +20,7 @@ public readonly struct Result :
     private readonly bool _isSuccess = false;
     private readonly ImmutableArray<IError>? _errors;
 
-    /// <summary>Initializes a new instance of the <see cref="Result" /> struct.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Result"/> struct.</summary>
     public Result()
     {
     }
@@ -40,30 +40,27 @@ public readonly struct Result :
         _errors = errors.ToImmutableArray();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool IsSuccess()
     {
         return _isSuccess;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool IsFailed()
     {
         return !_isSuccess;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool IsFailed([MaybeNullWhen(false)] out IError error)
     {
-        if (_isSuccess)
-            error = default;
-        else
-            error = _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
+        error = _isSuccess ? default : GetError();
         return !_isSuccess;
     }
 
     /// <summary>Creates a success result.</summary>
-    /// <returns>A new instance of <see cref="Result" /> representing a success result with the specified value.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a success result with the specified value.</returns>
     public static Result Ok()
     {
         return OkResult;
@@ -72,14 +69,14 @@ public readonly struct Result :
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a success result with the specified value.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
     public static Result<TValue> Ok<TValue>(TValue value)
     {
         return Result<TValue>.Ok(value);
     }
 
     /// <summary>Creates a failed result.</summary>
-    /// <returns>A new instance of <see cref="Result" /> representing a failed result.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failed result.</returns>
     public static Result Fail()
     {
         return FailedResult;
@@ -87,7 +84,7 @@ public readonly struct Result :
 
     /// <summary>Creates a failed result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error message.</returns>
     public static Result Fail(string errorMessage)
     {
         var error = new Error(errorMessage);
@@ -97,7 +94,7 @@ public readonly struct Result :
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error message and metadata.</returns>
     public static Result Fail(string errorMessage, (string Key, object Value) metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -107,7 +104,7 @@ public readonly struct Result :
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error message and metadata.</returns>
     public static Result Fail(string errorMessage, IDictionary<string, object> metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -116,7 +113,7 @@ public readonly struct Result :
 
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified error.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error.</returns>
     public static Result Fail(IError error)
     {
         return new Result(error);
@@ -124,7 +121,7 @@ public readonly struct Result :
 
     /// <summary>Creates a failed result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result" /> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified errors.</returns>
     public static Result Fail(IEnumerable<IError> errors)
     {
         return new Result(errors);
@@ -132,7 +129,7 @@ public readonly struct Result :
 
     /// <summary>Creates a failed result.</summary>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result.</returns>
     public static Result<TValue> Fail<TValue>()
     {
         return Result<TValue>.Fail();
@@ -141,7 +138,7 @@ public readonly struct Result :
     /// <summary>Creates a failed result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     public static Result<TValue> Fail<TValue>(string errorMessage)
     {
         var error = new Error(errorMessage);
@@ -152,7 +149,7 @@ public readonly struct Result :
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message and metadata.</returns>
     public static Result<TValue> Fail<TValue>(string errorMessage, (string Key, object Value) metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -163,7 +160,7 @@ public readonly struct Result :
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message and metadata.</returns>
     public static Result<TValue> Fail<TValue>(string errorMessage, IDictionary<string, object> metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -173,7 +170,7 @@ public readonly struct Result :
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified error.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error.</returns>
     public static Result<TValue> Fail<TValue>(IError error)
     {
         return Result<TValue>.Fail(error);
@@ -182,13 +179,13 @@ public readonly struct Result :
     /// <summary>Creates a failed result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value in the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}" /> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
     public static Result<TValue> Fail<TValue>(IEnumerable<IError> errors)
     {
         return Result<TValue>.Fail(errors);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool HasError<TError>()
         where TError : IError
     {
@@ -232,7 +229,7 @@ public readonly struct Result :
         if (_isSuccess)
             success();
         else
-            failure(_errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty);
+            failure(GetError());
     }
 
     /// <summary>Matches the result and executes a function based on whether the result is successful or failed.</summary>
@@ -251,12 +248,12 @@ public readonly struct Result :
         if (failure is null)
             throw new ArgumentNullException(nameof(failure));
 #endif
-        return _isSuccess ? success() : failure(_errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty);
+        return _isSuccess ? success() : failure(GetError());
     }
 
-    /// <summary>Determines whether two <see cref="Result" /> instances are equal.</summary>
-    /// <param name="other">The <see cref="Result" /> instance to compare with this instance.</param>
-    /// <returns><c>true</c> if the specified <see cref="Result" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
+    /// <param name="other">The <see cref="Result"/> instance to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>
     public bool Equals(Result other)
     {
         return Nullable.Equals(_errors, other._errors);
@@ -277,25 +274,25 @@ public readonly struct Result :
         return _errors.GetHashCode();
     }
 
-    /// <summary>Determines whether two <see cref="Result" /> instances are equal.</summary>
-    /// <param name="left">The first <see cref="Result" /> instance to compare.</param>
-    /// <param name="right">The second <see cref="Result" /> instance to compare.</param>
-    /// <returns><c>true</c> if the specified <see cref="Result" /> instances are equal; otherwise, <c>false</c>.</returns>
+    /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
+    /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result"/> instances are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(Result left, Result right)
     {
         return left.Equals(right);
     }
 
-    /// <summary>Determines whether two <see cref="Result" /> instances are not equal.</summary>
-    /// <param name="left">The first <see cref="Result" /> instance to compare.</param>
-    /// <param name="right">The second <see cref="Result" /> instance to compare.</param>
-    /// <returns><c>true</c> if the specified <see cref="Result" /> instances are not equal; otherwise, <c>false</c>.</returns>
+    /// <summary>Determines whether two <see cref="Result"/> instances are not equal.</summary>
+    /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Result"/> instances are not equal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(Result left, Result right)
     {
         return !left.Equals(right);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override string ToString()
     {
         if (_isSuccess)
@@ -306,5 +303,10 @@ public readonly struct Result :
 
         var errorString = StringHelper.GetResultErrorString(_errors.Value);
         return StringHelper.GetResultString(nameof(Result), "False", errorString);
+    }
+
+    private IError GetError()
+    {
+        return _errors is { Length: > 0 } ? _errors.Value[0] : Error.Empty;
     }
 }
