@@ -41,6 +41,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
+        
+      - name: Setup .NET 9.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+          dotnet-quality: preview
 
       - name: Restore dependencies
         run: dotnet restore
