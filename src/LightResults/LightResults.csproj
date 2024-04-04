@@ -37,7 +37,7 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>9.0.0-preview.8</Version>
+        <Version>9.0.0-preview.9</Version>
         <AssemblyVersion>9.0.0.0</AssemblyVersion>
         <FileVersion>9.0.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -72,66 +72,60 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Result.Equality.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Errors.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Fail.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Fail`1.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.IsFailed.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.IsSuccess.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Match.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Ok.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Ok`1.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.ToString.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.Cast.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.Equality.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.Errors.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.Fail.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.IsFailed.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.IsSuccess.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.Match.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.Ok.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.ToResult.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result`1.ToString.cs">
-        <DependentUpon>Result`1.cs</DependentUpon>
-      </Compile>
+        <Compile Update="Result.Equality.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.Errors.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.Fail.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.Fail`1.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.IsFailed.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.IsSuccess.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.Ok.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.Ok`1.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result.ToString.cs">
+            <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.Cast.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.Equality.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.Errors.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.Fail.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.IsFailed.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.IsSuccess.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.Ok.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.ToResult.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Result`1.ToString.cs">
+            <DependentUpon>Result`1.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>
