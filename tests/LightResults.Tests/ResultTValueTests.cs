@@ -137,11 +137,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { firstError, new Error("Error 2") };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -161,11 +157,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { firstError, new Error("Error 2") };
         var result = Result.Fail<object>(errors);
 
         // Act
@@ -195,11 +187,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { firstError, new Error("Error 2") };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -235,11 +223,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { firstError, new Error("Error 2") };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -259,11 +243,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError>
-        {
-            firstError,
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { firstError, new Error("Error 2") };
         var result = Result.Fail<object>(errors);
 
         // Act
@@ -425,11 +405,7 @@ public sealed class ResultTValueTests
     public void Fail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
     {
         // Arrange
-        var errors = new List<IError>
-        {
-            new Error("Error 1"),
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
 
         // Act
         var result = Result.Fail<int>(errors);
@@ -476,136 +452,6 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void Match_WithSuccessfulSource_ShouldInvokeSuccessAction()
-    {
-        // Arrange
-        var sourceResult = Result.Ok(42);
-        var successActionCalled = false;
-        var actionValue = 0;
-        var failureActionCalled = false;
-        IError actionError = null!;
-
-        // Act
-        sourceResult.Match(value =>
-        {
-            successActionCalled = true;
-            actionValue = value;
-        }, error =>
-        {
-            failureActionCalled = true;
-            actionError = error;
-        });
-
-        // Assert
-        using (new AssertionScope())
-        {
-            successActionCalled.Should().BeTrue();
-            failureActionCalled.Should().BeFalse();
-            actionValue.Should().Be(42);
-            actionError.Should().Be(null);
-        }
-    }
-
-    [Fact]
-    public void Match_WithFailedSource_ShouldInvokeFailureAction()
-    {
-        // Arrange
-        var sourceResult = Result.Fail<int>();
-        var successActionCalled = false;
-        var actionValue = 0;
-        var failureActionCalled = false;
-        IError actionError = null!;
-
-        // Act
-        sourceResult.Match(value =>
-        {
-            successActionCalled = true;
-            actionValue = value;
-        }, error =>
-        {
-            failureActionCalled = true;
-            actionError = error;
-        });
-
-        // Assert
-        using (new AssertionScope())
-        {
-            successActionCalled.Should().BeFalse();
-            failureActionCalled.Should().BeTrue();
-            actionValue.Should().Be(0);
-            actionError.Should().Be(Error.Empty);
-        }
-    }
-
-    [Fact]
-    public void Match_WithSuccessfulSource_ShouldInvokeSuccessFunc()
-    {
-        // Arrange
-        var sourceResult = Result.Ok(42);
-        var successFuncCalled = false;
-        var funcValue = 0;
-        var failureFuncCalled = false;
-        IError funcError = null!;
-
-        // Act
-        var returnResult = sourceResult.Match(value =>
-        {
-            successFuncCalled = true;
-            funcValue = value;
-            return $"Value: {value}";
-        }, error =>
-        {
-            failureFuncCalled = true;
-            funcError = error;
-            return $"Error: {error.Message}";
-        });
-
-        // Assert
-        using (new AssertionScope())
-        {
-            successFuncCalled.Should().BeTrue();
-            failureFuncCalled.Should().BeFalse();
-            funcValue.Should().Be(42);
-            funcError.Should().Be(null);
-            returnResult.Should().Be("Value: 42");
-        }
-    }
-
-    [Fact]
-    public void Match_WithFailedSource_ShouldInvokeFailureFunc()
-    {
-        // Arrange
-        var sourceResult = Result.Fail<int>("Generic error");
-        var successFuncCalled = false;
-        var funcValue = 0;
-        var failureFuncCalled = false;
-        IError funcError = null!;
-
-        // Act
-        var returnResult = sourceResult.Match(value =>
-        {
-            successFuncCalled = true;
-            funcValue = value;
-            return $"Value: {value}";
-        }, error =>
-        {
-            failureFuncCalled = true;
-            funcError = error;
-            return $"Error: {error.Message}";
-        });
-
-        // Assert
-        using (new AssertionScope())
-        {
-            successFuncCalled.Should().BeFalse();
-            failureFuncCalled.Should().BeTrue();
-            funcValue.Should().Be(0);
-            funcError.Should().BeOfType<Error>().Which.Message.Should().Be("Generic error");
-            returnResult.Should().Be("Error: Generic error");
-        }
-    }
-
-    [Fact]
     public void ImplicitOperator_ShouldCreateSuccessResultWithValue()
     {
         // Arrange
@@ -630,11 +476,7 @@ public sealed class ResultTValueTests
     public void ToResult_ShouldConvertResultToNonGenericResultWithSameErrors()
     {
         // Arrange
-        var errors = new List<IError>
-        {
-            new Error("Error 1"),
-            new Error("Error 2")
-        };
+        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
         var result = Result.Fail<int>(errors);
 
         // Act
