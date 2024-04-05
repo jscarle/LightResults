@@ -11,7 +11,7 @@ public sealed class ErrorTests
         // Arrange
         var error = new Error();
 
-        // Act & Assert
+        // Assert
         error.Message.Should().BeEmpty();
         error.Metadata.Should().BeEmpty();
     }
@@ -50,11 +50,7 @@ public sealed class ErrorTests
     public void ConstructorWithMetadataDictionary_ShouldCreateErrorWithMultipleMetadata()
     {
         // Arrange
-        var metadata = new Dictionary<string, object>
-        {
-            { "Key1", "Value1" },
-            { "Key2", 42 }
-        };
+        var metadata = new Dictionary<string, object> { { "Key1", "Value1" }, { "Key2", 42 } };
 
         // Act
         var error = new Error(metadata);
@@ -86,11 +82,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
-        {
-            { "Key1", "Value1" },
-            { "Key2", 42 }
-        };
+        var metadata = new Dictionary<string, object> { { "Key1", "Value1" }, { "Key2", 42 } };
 
         // Act
         var error = new Error(errorMessage, metadata);
@@ -108,7 +100,7 @@ public sealed class ErrorTests
         // Arrange
         var error = new Error(errorMessage);
 
-        // Act & Assert
+        // Assert
         error.ToString().Should().Be(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
     }
 }

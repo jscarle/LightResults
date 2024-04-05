@@ -1,8 +1,8 @@
-﻿#if NET8_0_OR_GREATER
+﻿using System.Collections.Immutable;
+using LightResults.Common;
+#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
 #endif
-using System.Collections.Immutable;
-using LightResults.Common;
 
 namespace LightResults;
 
@@ -15,10 +15,10 @@ public class Error : IError
     internal static IReadOnlyCollection<IError> EmptyCollection { get; } = ImmutableArray<IError>.Empty;
     internal static IReadOnlyCollection<IError> DefaultCollection { get; } = ImmutableArray.Create(Empty);
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public string Message { get; }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IReadOnlyDictionary<string, object> Metadata => _metadata;
 
 #if NET8_0_OR_GREATER
@@ -27,12 +27,13 @@ public class Error : IError
     private readonly ImmutableDictionary<string, object> _metadata;
 #endif
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class.</summary>
-    public Error() : this("")
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
+    public Error()
+        : this("")
     {
     }
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified error message.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message.</summary>
     /// <param name="message">The error message.</param>
     public Error(string message)
     {
@@ -44,13 +45,14 @@ public class Error : IError
 #endif
     }
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified metadata.</summary>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error((string Key, object Value) metadata) : this("", metadata)
+    public Error((string Key, object Value) metadata)
+        : this("", metadata)
     {
     }
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified error message and metadata.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
     public Error(string message, (string Key, object Value) metadata)
@@ -66,13 +68,14 @@ public class Error : IError
 #endif
     }
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified metadata.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified metadata.</summary>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(IDictionary<string, object> metadata) : this("", metadata)
+    public Error(IDictionary<string, object> metadata)
+        : this("", metadata)
     {
     }
 
-    /// <summary>Initializes a new instance of the <see cref="Error" /> class with the specified error message and metadata.</summary>
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
     public Error(string message, IDictionary<string, object> metadata)
@@ -85,7 +88,7 @@ public class Error : IError
 #endif
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override string ToString()
     {
         var errorType = GetType().Name;

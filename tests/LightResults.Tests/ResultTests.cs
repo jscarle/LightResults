@@ -12,7 +12,7 @@ public sealed class ResultTests
         // Arrange
         Result result = default;
 
-        // Act & Assert
+        // Assert
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeFalse();
@@ -32,7 +32,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Ok();
 
-        // Act & Assert
+        // Assert
         result.IsSuccess().Should().BeTrue();
     }
 
@@ -42,7 +42,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Fail();
 
-        // Act & Assert
+        // Assert
         result.IsFailed().Should().BeTrue();
     }
 
@@ -384,7 +384,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Fail(new ValidationError("Validation error"));
 
-        // Act & Assert
+        // Assert
         result.HasError<ValidationError>().Should().BeTrue();
     }
 
@@ -394,7 +394,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Fail(new Error("Generic error"));
 
-        // Act & Assert
+        // Assert
         result.HasError<ValidationError>().Should().BeFalse();
     }
 
@@ -404,7 +404,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Ok();
 
-        // Act & Assert
+        // Assert
         result.HasError<ValidationError>().Should().BeFalse();
     }
 
@@ -415,7 +415,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Ok();
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeTrue();
     }
 
@@ -426,7 +426,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Fail("Error");
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeFalse();
     }
 
@@ -437,7 +437,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Ok();
 
-        // Act & Assert
+        // Assert
         result1.Equals((object)result2).Should().BeTrue();
     }
 
@@ -448,7 +448,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Fail("Error");
 
-        // Act & Assert
+        // Assert
         result1.Equals((object)result2).Should().BeFalse();
     }
 
@@ -459,7 +459,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Ok();
 
-        // Act & Assert
+        // Assert
         result1.GetHashCode().Should().Be(result2.GetHashCode());
     }
 
@@ -470,7 +470,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Ok();
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeTrue();
     }
 
@@ -481,7 +481,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Fail("Error");
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeFalse();
     }
 
@@ -492,7 +492,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Ok();
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeFalse();
     }
 
@@ -503,7 +503,7 @@ public sealed class ResultTests
         var result1 = Result.Ok();
         var result2 = Result.Fail("Error");
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeTrue();
     }
 
@@ -513,7 +513,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Ok();
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be("Result { IsSuccess = True }");
     }
 
@@ -525,7 +525,7 @@ public sealed class ResultTests
         // Arrange
         var result = Result.Fail(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
     }
 

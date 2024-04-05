@@ -17,7 +17,7 @@ public sealed class ResultTValueTests
         // Arrange
         Result<int> result = default;
 
-        // Act & Assert
+        // Assert
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeFalse();
@@ -38,7 +38,7 @@ public sealed class ResultTValueTests
         // Arrange
         Result<object> result = default;
 
-        // Act & Assert
+        // Assert
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeFalse();
@@ -59,7 +59,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = Result.Ok(42);
 
-        // Act & Assert
+        // Assert
         result.IsSuccess().Should().BeTrue();
     }
 
@@ -178,7 +178,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = Result.Fail<int>();
 
-        // Act & Assert
+        // Assert
         result.IsFailed().Should().BeTrue();
     }
 
@@ -427,7 +427,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = Result.Fail<int>(new ValidationError("Validation error"));
 
-        // Act & Assert
+        // Assert
         result.HasError<ValidationError>().Should().BeTrue();
     }
 
@@ -437,7 +437,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = Result.Fail<int>(new Error("Generic error"));
 
-        // Act & Assert
+        // Assert
         result.HasError<ValidationError>().Should().BeFalse();
     }
 
@@ -447,7 +447,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = Result.Ok(42);
 
-        // Act & Assert
+        // Assert
         result.HasError<ValidationError>().Should().BeFalse();
     }
 
@@ -498,7 +498,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(42);
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeTrue();
     }
 
@@ -509,7 +509,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(43);
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeFalse();
     }
 
@@ -520,7 +520,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok<object>("test");
         var result2 = Result.Ok<object>("test");
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeTrue();
     }
 
@@ -531,7 +531,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok<object>("test1");
         var result2 = Result.Ok<object>("test2");
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeFalse();
     }
 
@@ -542,7 +542,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok<object>(42);
 
-        // Act & Assert
+        // Assert
         result1.Equals(result2).Should().BeFalse();
     }
 
@@ -553,7 +553,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(42);
 
-        // Act & Assert
+        // Assert
         result1.GetHashCode().Should().Be(result2.GetHashCode());
     }
 
@@ -564,7 +564,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(43);
 
-        // Act & Assert
+        // Assert
         result1.GetHashCode().Should().NotBe(result2.GetHashCode());
     }
 
@@ -575,7 +575,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(42);
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeTrue();
     }
 
@@ -586,7 +586,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(43);
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeFalse();
     }
 
@@ -597,7 +597,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(42);
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeFalse();
     }
 
@@ -608,7 +608,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok(43);
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeTrue();
     }
 
@@ -619,7 +619,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok<object>("test");
         var result2 = Result.Ok<object>("test");
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeTrue();
     }
 
@@ -630,7 +630,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok<object>("test1");
         var result2 = Result.Ok<object>("test2");
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeFalse();
     }
 
@@ -641,7 +641,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok<object>("test");
         var result2 = Result.Ok<object>("test");
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeFalse();
     }
 
@@ -652,7 +652,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok<object>("test1");
         var result2 = Result.Ok<object>("test2");
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeTrue();
     }
 
@@ -663,7 +663,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok<object>(42);
 
-        // Act & Assert
+        // Assert
         (result1 == result2).Should().BeFalse();
     }
 
@@ -674,7 +674,7 @@ public sealed class ResultTValueTests
         var result1 = Result.Ok(42);
         var result2 = Result.Ok<object>(42);
 
-        // Act & Assert
+        // Assert
         (result1 != result2).Should().BeTrue();
     }
 
@@ -687,7 +687,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok(true) : Result.Fail<bool>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -700,7 +700,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<sbyte>(1) : Result.Fail<sbyte>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -713,7 +713,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<byte>(1) : Result.Fail<byte>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -726,7 +726,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<short>(1) : Result.Fail<short>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -739,7 +739,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<ushort>(1) : Result.Fail<ushort>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -752,7 +752,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok(1) : Result.Fail<int>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -765,7 +765,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<uint>(1) : Result.Fail<uint>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -778,7 +778,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<long>(1) : Result.Fail<long>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -791,7 +791,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<ulong>(1) : Result.Fail<ulong>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -804,7 +804,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok(1.1m) : Result.Fail<decimal>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -817,7 +817,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok(1.1f) : Result.Fail<float>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -830,7 +830,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok(1.1d) : Result.Fail<double>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -843,7 +843,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok('c') : Result.Fail<char>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -856,7 +856,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok("StringValue") : Result.Fail<string>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -869,7 +869,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok(new object()) : Result.Fail<object>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -882,7 +882,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<int?>(1) : Result.Fail<int?>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -1049,7 +1049,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<Int128>(1) : Result.Fail<Int128>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 
@@ -1062,7 +1062,7 @@ public sealed class ResultTValueTests
         // Arrange
         var result = success ? Result.Ok<UInt128>(1) : Result.Fail<UInt128>(errorMessage);
 
-        // Act & Assert
+        // Assert
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 #endif

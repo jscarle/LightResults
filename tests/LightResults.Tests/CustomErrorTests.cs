@@ -11,7 +11,7 @@ public sealed class CustomErrorTests
         // Arrange
         var error = new CustomError();
 
-        // Act & Assert
+        // Assert
         error.Message.Should().BeEmpty();
         error.Metadata.Should().BeEmpty();
     }
@@ -50,11 +50,7 @@ public sealed class CustomErrorTests
     public void ConstructorWithMetadataDictionary_ShouldCreateErrorWithMultipleMetadata()
     {
         // Arrange
-        var metadata = new Dictionary<string, object>
-        {
-            { "Key1", "Value1" },
-            { "Key2", 42 }
-        };
+        var metadata = new Dictionary<string, object> { { "Key1", "Value1" }, { "Key2", 42 } };
 
         // Act
         var error = new CustomError(metadata);
@@ -86,11 +82,7 @@ public sealed class CustomErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
-        {
-            { "Key1", "Value1" },
-            { "Key2", 42 }
-        };
+        var metadata = new Dictionary<string, object> { { "Key1", "Value1" }, { "Key2", 42 } };
 
         // Act
         var error = new CustomError(errorMessage, metadata);
@@ -108,10 +100,9 @@ public sealed class CustomErrorTests
         // Arrange
         var error = new CustomError(errorMessage);
 
-        // Act & Assert
+        // Assert
         error.ToString().Should().Be(errorMessage.Length > 0 ? $"CustomError {{ Message = \"{errorMessage}\" }}" : "CustomError");
     }
-    
 
     private sealed class CustomError : Error
     {
@@ -119,23 +110,28 @@ public sealed class CustomErrorTests
         {
         }
 
-        public CustomError(string errorMessage) : base(errorMessage)
+        public CustomError(string errorMessage)
+            : base(errorMessage)
         {
         }
 
-        public CustomError(string errorMessage, (string Key, object Value) metadata) : base(errorMessage, metadata)
+        public CustomError(string errorMessage, (string Key, object Value) metadata)
+            : base(errorMessage, metadata)
         {
         }
 
-        public CustomError((string Key, object Value) metadata) : base("", metadata)
+        public CustomError((string Key, object Value) metadata)
+            : base("", metadata)
         {
         }
 
-        public CustomError(string errorMessage, IDictionary<string, object> metadata) : base(errorMessage, metadata)
+        public CustomError(string errorMessage, IDictionary<string, object> metadata)
+            : base(errorMessage, metadata)
         {
         }
 
-        public CustomError(IDictionary<string, object> metadata) : base("", metadata)
+        public CustomError(IDictionary<string, object> metadata)
+            : base("", metadata)
         {
         }
     }
