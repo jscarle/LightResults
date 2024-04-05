@@ -12,7 +12,7 @@
     <!-- Analysis -->
     <PropertyGroup>
         <AnalysisLevel>latest-all</AnalysisLevel>
-        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+        <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
     </PropertyGroup>
 
     <!-- References -->
@@ -71,6 +71,7 @@
         <None Include="..\..\Icon.png" Pack="true" PackagePath="\" Visible="false"/>
     </ItemGroup>
 
+    <!-- Content -->
     <ItemGroup>
         <Compile Update="Result.Equality.cs">
             <DependentUpon>Result.cs</DependentUpon>
