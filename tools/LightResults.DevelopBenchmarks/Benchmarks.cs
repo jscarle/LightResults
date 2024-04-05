@@ -11,6 +11,9 @@ namespace LightResults.DevelopBenchmarks;
 [HideColumns(Column.Job, Column.Iterations, Column.Error, Column.StdDev, Column.Median, Column.RatioSD, Column.Gen0, Column.Gen1, Column.Gen2)]
 public class Benchmarks
 {
+    [Params(10)]
+    public int Iterations { get; set; }
+
     private const int ResultValue = 0;
     private const string ErrorMessage = "An unknown error occured.";
     private static readonly Error EmptyError = new();
@@ -21,9 +24,6 @@ public class Benchmarks
     private static readonly Result<int> ResultTValueOk = Result.Ok<int>(ResultValue);
     private static readonly Result<int> ResultTValueFail = Result.Fail<int>();
     private static readonly Result<int> ResultTValueFailWithErrorMessage = Result.Fail<int>(ErrorWithErrorMessage);
-
-    [Params(10)]
-    public int Iterations { get; set; }
 
     [Benchmark]
     public void Develop_Result_Ok()

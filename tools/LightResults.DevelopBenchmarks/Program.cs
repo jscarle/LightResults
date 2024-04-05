@@ -2,4 +2,3 @@
 using LightResults.DevelopBenchmarks;
 
 BenchmarkRunner.Run<Benchmarks>();
-

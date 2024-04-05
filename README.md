@@ -28,7 +28,8 @@ This library has no dependencies.
 - 🧵 Thread-safe — The Error list and Metadata dictionary use Immutable classes for thread-safety.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
-- ❤️ Compatible — Available for dozens of versions of .NET as a [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
+- ❤️ Compatible — Available for dozens of versions of .NET as a
+[.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
 - 🪚 Trimmable — Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 - 🚀 Performant — Heavily optimized and [benchmarked](https://jscarle.github.io/LightResults/docs/performance.html) to aim for the highest possible performance.
 
@@ -224,7 +225,8 @@ public Result GetPerson(int id)
 
 _Note: Applies to .NET 7.0 (C# 11.0) or higher only!_
 
-Thanks to the [static abstract members in interfaces](https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/static-abstract-interface-methods)
+Thanks to the
+[static abstract members in interfaces](https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/static-abstract-interface-methods)
 introduced in .NET 7.0 (C# 11.0), it is possible to use generics to obtain access to the methods
 of the generic variant of the result. As such the error factory can be enhanced to take advantage of that.
 

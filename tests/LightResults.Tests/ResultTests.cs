@@ -155,23 +155,6 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_ShouldCreateFailedResultWithSingleError()
-    {
-        // Act
-        var result = Result.Fail<object>();
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
-        }
-    }
-
-    [Fact]
     public void Fail_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
@@ -184,26 +167,6 @@ public sealed class ResultTests
         using (new AssertionScope())
         {
             result.IsSuccess().Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
-        }
-    }
-
-    [Fact]
-    public void FailTValue_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-
-        // Act
-        var result = Result.Fail<object>(errorMessage);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
             result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
@@ -233,6 +196,103 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Fail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+
+        // Act
+        var result = Result.Fail(errorMessage, metadata);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            var error = result.Errors.Should().ContainSingle().Which;
+            error.Message.Should().Be(errorMessage);
+            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
+    public void Fail_WithErrorObject_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        var error = new Error("Sample error");
+
+        // Act
+        var result = Result.Fail(error);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
+        }
+    }
+
+    [Fact]
+    public void Fail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
+    {
+        // Arrange
+        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
+
+        // Act
+        var result = Result.Fail(errors);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+        }
+    }
+
+    [Fact]
+    public void FailTValue_ShouldCreateFailedResultWithSingleError()
+    {
+        // Act
+        var result = Result.Fail<object>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
+        }
+    }
+
+    [Fact]
+    public void FailTValue_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+
+        // Act
+        var result = Result.Fail<object>(errorMessage);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess().Should().BeFalse();
+            result.IsSuccess(out _).Should().BeFalse();
+            result.IsFailed().Should().BeTrue();
+            result.IsFailed(out _).Should().BeTrue();
+            result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
+        }
+    }
+
+    [Fact]
     public void FailTValue_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
@@ -247,28 +307,6 @@ public sealed class ResultTests
         {
             result.IsSuccess().Should().BeFalse();
             result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
-            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
-        }
-    }
-
-    [Fact]
-    public void Fail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
-
-        // Act
-        var result = Result.Fail(errorMessage, metadata);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
             var error = result.Errors.Should().ContainSingle().Which;
@@ -301,25 +339,6 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_WithErrorObject_ShouldCreateFailedResultWithSingleError()
-    {
-        // Arrange
-        var error = new Error("Sample error");
-
-        // Act
-        var result = Result.Fail(error);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
-        }
-    }
-
-    [Fact]
     public void FailTValue_WithErrorObject_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
@@ -336,25 +355,6 @@ public sealed class ResultTests
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
             result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
-        }
-    }
-
-    [Fact]
-    public void Fail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
-    {
-        // Arrange
-        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
-
-        // Act
-        var result = Result.Fail(errors);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.IsSuccess().Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
         }
     }
 

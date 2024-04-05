@@ -16,16 +16,6 @@ internal static class StringHelper
     private const string PreMessageStr = " { Message = \"";
     private const string PostMessageStr = "\" }";
 
-    public static string GetResultString(string successString, string informationString)
-    {
-#if NET6_0_OR_GREATER
-        var stringLength = PreResultStrLength + successString.Length + informationString.Length + PostResultStrLength;
-        return string.Create(stringLength, (successString, informationString), GetResultSpan);
-#else
-        return $"{PreResultStr}{successString}{informationString}{PostResultStr}";
-#endif
-    }
-
     public static string GetResultValueString<T>(T value)
     {
         switch (value)
@@ -61,39 +51,54 @@ internal static class StringHelper
             case double doubleValue:
                 return GetResultValueString(doubleValue.ToString(CultureInfo.InvariantCulture));
             case DateTime dateTimeValue:
-                return GetResultValueString(dateTimeValue.ToString("u", CultureInfo.InvariantCulture));
+                return GetResultStringValueString(dateTimeValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
             case DateTimeOffset dateTimeOffsetValue:
-                return GetResultValueString(dateTimeOffsetValue.ToString("u", CultureInfo.InvariantCulture));
+                return GetResultStringValueString(dateTimeOffsetValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
 #if NET6_0_OR_GREATER
             case DateOnly dateOnlyValue:
-                return GetResultValueString(dateOnlyValue.ToString("u", CultureInfo.InvariantCulture));
+                return GetResultStringValueString(dateOnlyValue.ToString("yyyy'-'MM'-'dd", CultureInfo.InvariantCulture));
             case TimeOnly timeOnlyValue:
-                return GetResultValueString(timeOnlyValue.ToString("u", CultureInfo.InvariantCulture));
+                return GetResultStringValueString(timeOnlyValue.ToString("HH':'mm':'ss", CultureInfo.InvariantCulture));
 #endif
-            case char charString:
-            {
-                var valueString = charString.ToString();
-#if NET6_0_OR_GREATER
-                var stringLength = PreResultStrLength + SuccessResultStrLength + PreValueStrLength + CharStrLength + valueString.Length + CharStrLength +
-                                   PostResultStrLength;
-                return string.Create(stringLength, valueString, GetResultValueCharSpan);
-#else
-                return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{CharStr}{valueString}{CharStr}{PostResultStr}";
-#endif
-            }
-            case string valueString:
-            {
-#if NET6_0_OR_GREATER
-                var stringLength = PreResultStrLength + SuccessResultStrLength + PreValueStrLength + StringStrLength + valueString.Length + StringStrLength +
-                                   PostResultStrLength;
-                return string.Create(stringLength, valueString, GetResultValueStringSpan);
-#else
-                return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{StringStr}{valueString}{StringStr}{PostResultStr}";
-#endif
-            }
+            case char charValue:
+                return GetResultCharValueString(charValue.ToString());
+            case string stringValue:
+                return GetResultStringValueString(stringValue);
             default:
                 return "Result { IsSuccess = True }";
         }
+    }
+
+    private static string GetResultCharValueString(string valueString)
+    {
+#if NET6_0_OR_GREATER
+        var stringLength = PreResultStrLength
+                           + SuccessResultStrLength
+                           + PreValueStrLength
+                           + CharStrLength
+                           + valueString.Length
+                           + CharStrLength
+                           + PostResultStrLength;
+        return string.Create(stringLength, valueString, GetResultValueCharSpan);
+#else
+        return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{CharStr}{valueString}{CharStr}{PostResultStr}";
+#endif
+    }
+
+    private static string GetResultStringValueString(string valueString)
+    {
+#if NET6_0_OR_GREATER
+        var stringLength = PreResultStrLength
+                           + SuccessResultStrLength
+                           + PreValueStrLength
+                           + StringStrLength
+                           + valueString.Length
+                           + StringStrLength
+                           + PostResultStrLength;
+        return string.Create(stringLength, valueString, GetResultValueStringSpan);
+#else
+        return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{StringStr}{valueString}{StringStr}{PostResultStr}";
+#endif
     }
 
     private static string GetResultValueString(string valueString)
@@ -138,17 +143,6 @@ internal static class StringHelper
     private const int PostResultStrLength = 2;
     private const int PreMessageStrLength = 14;
     private const int PostMessageStrLength = 3;
-
-    private static void GetResultSpan(Span<char> span, (string successString, string informationString) state)
-    {
-        PreResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreResultStrLength);
-        state.successString.AsSpan().CopyTo(span);
-        span = span.Slice(state.successString.Length);
-        state.informationString.AsSpan().CopyTo(span);
-        span = span.Slice(state.informationString.Length);
-        PostResultStr.AsSpan().CopyTo(span);
-    }
 
     private static void GetResultValueSpan(Span<char> span, string state)
     {

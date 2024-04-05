@@ -8,8 +8,7 @@ partial struct Result<TValue>
 {
     internal static Result<TValue> Ok(TValue value)
     {
-        var result = new Result<TValue>(value);
-        return result;
+        return new Result<TValue>(value);
     }
 
 #if NET7_0_OR_GREATER
@@ -18,7 +17,7 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Ok(TValue value)
     {
-        return Ok(value);
+        return new Result<TValue>(value);
     }
 #endif
 }

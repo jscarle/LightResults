@@ -173,6 +173,24 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void IsSuccess_WhenResultIsFailed_ShouldReturnDefaultValueAndDefaultError()
+    {
+        // Arrange
+        Result<object> result = default;
+
+        // Act
+        var isSuccess = result.IsSuccess(out var resultValue, out var resultError);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isSuccess.Should().BeFalse();
+            resultValue.Should().Be(null);
+            resultError.Should().Be(Error.Empty);
+        }
+    }
+
+    [Fact]
     public void IsFailed_WhenResultIsFailed()
     {
         // Arrange
@@ -254,6 +272,24 @@ public sealed class ResultTValueTests
         {
             isFailed.Should().BeTrue();
             resultError.Should().Be(firstError);
+            resultValue.Should().Be(null);
+        }
+    }
+
+    [Fact]
+    public void IsFailed_WhenResultIsFailed_ShouldReturnDefaultErrorAndNullValue()
+    {
+        // Arrange
+        Result<object> result = default;
+
+        // Act
+        var isFailed = result.IsFailed(out var resultError, out var resultValue);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            isFailed.Should().BeTrue();
+            resultError.Should().Be(Error.Empty);
             resultValue.Should().Be(null);
         }
     }
@@ -473,14 +509,14 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void ToResult_ShouldConvertResultToNonGenericResultWithSameErrors()
+    public void AsFailed_ShouldConvertResultToNonGenericResultWithSameErrors()
     {
         // Arrange
         var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
         var result = Result.Fail<int>(errors);
 
         // Act
-        var nonGenericResult = result.ToResult();
+        var nonGenericResult = result.AsFailed();
 
         // Assert
         using (new AssertionScope())
@@ -488,6 +524,61 @@ public sealed class ResultTValueTests
             nonGenericResult.IsSuccess().Should().BeFalse();
             nonGenericResult.IsFailed().Should().BeTrue();
             nonGenericResult.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+        }
+    }
+
+    [Fact]
+    public void AsFailed_ShouldConvertDefaultResultToNonGenericResult()
+    {
+        // Arrange
+        Result<int> result = default;
+
+        // Act
+        var nonGenericResult = result.AsFailed();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            nonGenericResult.IsSuccess().Should().BeFalse();
+            nonGenericResult.IsFailed().Should().BeTrue();
+            nonGenericResult.Errors.Should().HaveCount(1).And.HaveElementAt(0, Error.Empty);
+        }
+    }
+
+    [Fact]
+    public void AsFailed_ShouldConvertResultToGenericResultWithSameErrors()
+    {
+        // Arrange
+        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
+        var result = Result.Fail<int>(errors);
+
+        // Act
+        var genericResult = result.AsFailed<object>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            genericResult.IsSuccess().Should().BeFalse();
+            genericResult.IsFailed().Should().BeTrue();
+            genericResult.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+        }
+    }
+
+    [Fact]
+    public void AsFailed_ShouldConvertDefaultResultToGenericResult()
+    {
+        // Arrange
+        Result<int> result = default;
+
+        // Act
+        var genericResult = result.AsFailed<object>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            genericResult.IsSuccess().Should().BeFalse();
+            genericResult.IsFailed().Should().BeTrue();
+            genericResult.Errors.Should().HaveCount(1).And.HaveElementAt(0, Error.Empty);
         }
     }
 
@@ -835,6 +926,32 @@ public sealed class ResultTValueTests
     }
 
     [Theory]
+    [InlineData(true, "IsSuccess = True, Value = \"2024-04-05T12:30:00Z\"", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDateTime(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(new DateTime(2024, 04, 05, 12, 30, 00, DateTimeKind.Utc)) : Result.Fail<DateTime>(errorMessage);
+
+        // Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = \"2024-04-05T12:30:00+00:00\"", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDateTimeOffset(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(new DateTimeOffset(2024, 04, 05, 12, 30, 00, TimeSpan.Zero)) : Result.Fail<DateTimeOffset>(errorMessage);
+
+        // Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
     [InlineData(true, "IsSuccess = True, Value = 'c'", "")]
     [InlineData(false, "IsSuccess = False", "")]
     [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
@@ -894,9 +1011,14 @@ public sealed class ResultTValueTests
     {
         // Arrange
         const int value = 42;
+        static Result<TValue> Ok<TValue, TResult>(TValue value)
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            return TResult.Ok(value);
+        }
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result.Ok(value);
+        var result = Ok<int, Result<int>>(value);
 
         // Assert
         using (new AssertionScope())
@@ -914,8 +1036,15 @@ public sealed class ResultTValueTests
     [Fact]
     public void InterfaceFail_ShouldCreateFailedResultWithSingleError()
     {
+        // Arrange
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            return TResult.Fail();
+        }
+
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>();
+        var result = Fail<int, Result<int>>();
 
         // Assert
         using (new AssertionScope())
@@ -932,10 +1061,15 @@ public sealed class ResultTValueTests
     public void InterfaceFail_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
-        const string errorMessage = "Sample error message";
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            const string errorMessage = "Sample error message";
+            return TResult.Fail(errorMessage);
+        }
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>(errorMessage);
+        var result = Fail<int, Result<int>>();
 
         // Assert
         using (new AssertionScope())
@@ -944,7 +1078,7 @@ public sealed class ResultTValueTests
             result.IsSuccess(out _).Should().BeFalse();
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
+            result.Errors.Should().ContainSingle().Which.Message.Should().Be("Sample error message");
         }
     }
 
@@ -952,11 +1086,16 @@ public sealed class ResultTValueTests
     public void InterfaceFail_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
-        const string errorMessage = "Sample error message";
-        (string Key, object Value) metadata = ("Key", 0);
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            const string errorMessage = "Sample error message";
+            (string Key, object Value) metadata = ("Key", 0);
+            return TResult.Fail(errorMessage, metadata);
+        }
 
         // Act
-        var result = (IActionableResult<object, Result<object>>)Result.Fail<object>(errorMessage, metadata);
+        var result = Fail<int, Result<int>>();
 
         // Assert
         using (new AssertionScope())
@@ -966,7 +1105,7 @@ public sealed class ResultTValueTests
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
             var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
+            error.Message.Should().Be("Sample error message");
             error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
         }
     }
@@ -975,11 +1114,16 @@ public sealed class ResultTValueTests
     public void InterfaceFail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
-        const string errorMessage = "Sample error message";
-        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            const string errorMessage = "Sample error message";
+            IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+            return TResult.Fail(errorMessage, metadata);
+        }
 
         // Act
-        var result = (IActionableResult<object, Result<object>>)Result.Fail<object>(errorMessage, metadata);
+        var result = Fail<int, Result<int>>();
 
         // Assert
         using (new AssertionScope())
@@ -989,7 +1133,7 @@ public sealed class ResultTValueTests
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
             var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
+            error.Message.Should().Be("Sample error message");
             error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
         }
     }
@@ -998,10 +1142,15 @@ public sealed class ResultTValueTests
     public void InterfaceFail_WithErrorObject_ShouldCreateFailedResultWithSingleError()
     {
         // Arrange
-        var error = new Error("Sample error");
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            var error = new Error("Sample error");
+            return TResult.Fail(error);
+        }
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>(error);
+        var result = Fail<int, Result<int>>();
 
         // Assert
         using (new AssertionScope())
@@ -1010,7 +1159,7 @@ public sealed class ResultTValueTests
             result.IsSuccess(out _).Should().BeFalse();
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
+            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(new Error("Sample error"));
         }
     }
 
@@ -1018,14 +1167,15 @@ public sealed class ResultTValueTests
     public void InterfaceFail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
     {
         // Arrange
-        var errors = new List<IError>
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
         {
-            new Error("Error 1"),
-            new Error("Error 2")
-        };
+            var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
+            return TResult.Fail(errors);
+        }
 
         // Act
-        var result = (IActionableResult<int, Result<int>>)Result.Fail<int>(errors);
+        var result = Fail<int, Result<int>>();
 
         // Assert
         using (new AssertionScope())
@@ -1034,8 +1184,36 @@ public sealed class ResultTValueTests
             result.IsSuccess(out _).Should().BeFalse();
             result.IsFailed().Should().BeTrue();
             result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(new List<IError> { new Error("Error 1"), new Error("Error 2") });
         }
+    }
+#endif
+
+#if NET6_0_OR_GREATER
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = \"2024-04-05\"", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForDateOnly(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(new DateOnly(2024, 04, 05)) : Result.Fail<DateOnly>(errorMessage);
+
+        // Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = \"12:30:00\"", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    public void ToString_ShouldReturnProperRepresentationForTimeOnly(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var result = success ? Result.Ok(new TimeOnly(12, 30, 00)) : Result.Fail<TimeOnly>(errorMessage);
+
+        // Assert
+        result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 #endif
 

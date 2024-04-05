@@ -16,11 +16,6 @@ public readonly partial struct Result : IEquatable<Result>,
     private readonly bool _isSuccess = false;
     private readonly ImmutableArray<IError>? _errors;
 
-    /// <summary>Initializes a new instance of the <see cref="Result"/> struct.</summary>
-    public Result()
-    {
-    }
-
     private Result(bool isSuccess)
     {
         _isSuccess = isSuccess;
@@ -29,6 +24,11 @@ public readonly partial struct Result : IEquatable<Result>,
     private Result(IError error)
     {
         _errors = ImmutableArray.Create(error);
+    }
+
+    internal Result(ImmutableArray<IError> errors)
+    {
+        _errors = errors;
     }
 
     private Result(IEnumerable<IError> errors)

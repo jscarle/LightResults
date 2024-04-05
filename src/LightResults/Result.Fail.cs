@@ -2,7 +2,7 @@ namespace LightResults;
 
 partial struct Result
 {
-    private static readonly Result FailedResult = new(Error.Empty);
+    internal static readonly Result FailedResult = new(Error.Empty);
 
     /// <summary>Creates a failed result.</summary>
     /// <returns>A new instance of <see cref="Result"/> representing a failed result.</returns>
@@ -17,7 +17,7 @@ partial struct Result
     public static Result Fail(string errorMessage)
     {
         var error = new Error(errorMessage);
-        return Fail(error);
+        return new Result(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -27,7 +27,7 @@ partial struct Result
     public static Result Fail(string errorMessage, (string Key, object Value) metadata)
     {
         var error = new Error(errorMessage, metadata);
-        return Fail(error);
+        return new Result(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -37,7 +37,7 @@ partial struct Result
     public static Result Fail(string errorMessage, IDictionary<string, object> metadata)
     {
         var error = new Error(errorMessage, metadata);
-        return Fail(error);
+        return new Result(error);
     }
 
     /// <summary>Creates a failed result with the given error.</summary>

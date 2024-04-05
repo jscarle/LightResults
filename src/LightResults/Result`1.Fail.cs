@@ -6,47 +6,14 @@ namespace LightResults;
 
 partial struct Result<TValue>
 {
-    private static readonly Result<TValue> FailedResult = new(Error.Empty);
-
-    internal static Result<TValue> Fail()
-    {
-        return FailedResult;
-    }
-
-    internal static Result<TValue> Fail(string errorMessage)
-    {
-        var error = new Error(errorMessage);
-        return Fail(error);
-    }
-
-    internal static Result<TValue> Fail(string errorMessage, (string Key, object Value) metadata)
-    {
-        var error = new Error(errorMessage, metadata);
-        return Fail(error);
-    }
-
-    internal static Result<TValue> Fail(string errorMessage, IDictionary<string, object> metadata)
-    {
-        var error = new Error(errorMessage, metadata);
-        return Fail(error);
-    }
-
-    internal static Result<TValue> Fail(IError error)
-    {
-        return new Result<TValue>(error);
-    }
-
-    internal static Result<TValue> Fail(IEnumerable<IError> errors)
-    {
-        return new Result<TValue>(errors);
-    }
+    internal static readonly Result<TValue> FailedResult = new(Error.Empty);
 
 #if NET7_0_OR_GREATER
     /// <summary>Creates a failed result.</summary>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail()
     {
-        return Fail();
+        return FailedResult;
     }
 
     /// <summary>Creates a failed result with the given error message.</summary>
@@ -54,7 +21,8 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage)
     {
-        return Fail(errorMessage);
+        var error = new Error(errorMessage);
+        return new Result<TValue>(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -63,7 +31,8 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage, (string Key, object Value) metadata)
     {
-        return Fail(errorMessage, metadata);
+        var error = new Error(errorMessage, metadata);
+        return new Result<TValue>(error);
     }
 
     /// <summary>Creates a failed result with the given error message and metadata.</summary>
@@ -72,7 +41,8 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage, IDictionary<string, object> metadata)
     {
-        return Fail(errorMessage, metadata);
+        var error = new Error(errorMessage, metadata);
+        return new Result<TValue>(error);
     }
 
     /// <summary>Creates a failed result with the given error.</summary>
@@ -80,7 +50,7 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(IError error)
     {
-        return Fail(error);
+        return new Result<TValue>(error);
     }
 
     /// <summary>Creates a failed result with the given errors.</summary>
@@ -88,7 +58,7 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(IEnumerable<IError> errors)
     {
-        return Fail(errors);
+        return new Result<TValue>(errors);
     }
 #endif
 }

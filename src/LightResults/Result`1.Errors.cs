@@ -24,20 +24,17 @@ partial struct Result<TValue>
         if (_isSuccess)
             return false;
 
-        if (_errors is null)
-            return typeof(TError) == typeof(Error);
+        if (_errors.HasValue)
+            // Do not convert to LINQ, this creates unnecessary heap allocations.
+            // For is the most efficient way to loop. It is the fastest and does not allocate.
+            // ReSharper disable once ForCanBeConvertedToForeach
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            for (var index = 0; index < _errors.Value.Length; index++)
+            {
+                if (_errors.Value[index] is TError)
+                    return true;
+            }
 
-        // Do not convert to LINQ, this creates unnecessary heap allocations.
-        // For is the most efficient way to loop. It is the fastest and does not allocate.
-        // ReSharper disable once ForCanBeConvertedToForeach
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        for (var index = 0; index < _errors.Value.Length; index++)
-        {
-            var error = _errors.Value[index];
-            if (error is TError)
-                return true;
-        }
-
-        return false;
+        return typeof(TError) == typeof(Error);
     }
 }
