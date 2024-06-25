@@ -117,6 +117,13 @@ public class Benchmarks
     }
 
     [Benchmark]
+    public void Develop_Result_HasError_Out()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.HasError<Error>(out _);
+    }
+
+    [Benchmark]
     public void Develop_Result_Error()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)

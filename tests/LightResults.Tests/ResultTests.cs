@@ -22,7 +22,11 @@ public sealed class ResultTests
             result.Errors.Should().ContainSingle();
             result.Errors.First().Should().BeOfType<Error>();
             result.HasError<Error>().Should().BeTrue();
+            result.HasError<Error>(out var error).Should().BeTrue();
+            error.Should().Be(Error.Empty);
             result.HasError<ValidationError>().Should().BeFalse();
+            result.HasError<ValidationError>(out var validationError).Should().BeFalse();
+            validationError.Should().Be(default);
         }
     }
 
@@ -389,6 +393,25 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void HasError_WithMatchingErrorType_ShouldOutFirstMatch()
+    {
+        // Arrange
+        var firstError = new ValidationError("Validation error");
+        var errors = new List<IError> { firstError, new ValidationError("Validation error 2") };
+        var result = Result.Fail(errors);
+
+        // Act
+        var hasError = result.HasError<ValidationError>(out var error);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            hasError.Should().BeTrue();
+            error.Should().Be(firstError);
+        }
+    }
+
+    [Fact]
     public void HasError_WithNonMatchingErrorType_ShouldReturnFalse()
     {
         // Arrange
@@ -399,6 +422,23 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void HasError_WithNonMatchingErrorType_ShouldOutDefaultError()
+    {
+        // Arrange
+        var result = Result.Fail(new Error("Generic error"));
+
+        // Act
+        var hasError = result.HasError<ValidationError>(out var error);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            hasError.Should().BeFalse();
+            error.Should().Be(default);
+        }
+    }
+
+    [Fact]
     public void HasError_WhenIsSuccess_ShouldReturnFalse()
     {
         // Arrange
@@ -406,6 +446,23 @@ public sealed class ResultTests
 
         // Assert
         result.HasError<ValidationError>().Should().BeFalse();
+    }
+
+    [Fact]
+    public void HasError_WhenIsSuccess_ShouldOutDefaultError()
+    {
+        // Arrange
+        var result = Result.Ok();
+
+        // Act
+        var hasError = result.HasError<ValidationError>(out var error);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            hasError.Should().BeFalse();
+            error.Should().Be(default);
+        }
     }
 
     [Fact]

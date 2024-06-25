@@ -27,4 +27,11 @@ public interface IResult
     /// <returns><c>true</c> if an error of the specified type is present; otherwise, <c>false</c>.</returns>
     bool HasError<TError>()
         where TError : IError;
+
+    /// <summary>Checks if the result contains an error of the specific type.</summary>
+    /// <param name="error">The error with the specified type.</param>
+    /// <typeparam name="TError">The type of error to check for.</typeparam>
+    /// <returns><c>true</c> if an error of the specified type is present; otherwise, <c>false</c></returns>
+    bool HasError<TError>([MaybeNullWhen(false)] out TError error)
+        where TError : IError;
 }
