@@ -27,6 +27,7 @@ partial struct Result
             return false;
 
         if (_errors.HasValue)
+        {
             // Do not convert to LINQ, this creates unnecessary heap allocations.
             // For is the most efficient way to loop. It is the fastest and does not allocate.
             // ReSharper disable once ForCanBeConvertedToForeach
@@ -36,6 +37,7 @@ partial struct Result
                 if (_errors.Value[index] is TError)
                     return true;
             }
+        }
 
         return typeof(TError) == typeof(Error);
     }
