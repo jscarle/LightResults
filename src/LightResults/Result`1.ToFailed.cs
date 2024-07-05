@@ -6,8 +6,8 @@ partial struct Result<TValue>
     /// <returns>A new instance of <see cref="Result"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
     public Result ToFailed()
     {
-        if (ErrorsInternal is not null)
-            return new Result(ErrorsInternal);
+        if (_errors is not null)
+            return new Result(_errors);
 
         return Result.FailedResult;
     }
@@ -17,8 +17,8 @@ partial struct Result<TValue>
     /// <typeparam name="TDestination">The type of the value of the failed result.</typeparam>
     public Result<TDestination> ToFailed<TDestination>()
     {
-        if (ErrorsInternal is not null)
-            return new Result<TDestination>(ErrorsInternal);
+        if (_errors is not null)
+            return new Result<TDestination>(_errors);
 
         return Result<TDestination>.FailedResult;
     }

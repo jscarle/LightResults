@@ -7,7 +7,7 @@ partial struct Result<TValue>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> is equal to this instance; otherwise, <c>false</c>.</returns>
     public bool Equals(Result<TValue> other)
     {
-        return Nullable.Equals(ErrorsInternal, other.ErrorsInternal) && EqualityComparer<TValue?>.Default.Equals(ValueOrDefaultInternal, other.ValueOrDefaultInternal);
+        return Nullable.Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -22,7 +22,7 @@ partial struct Result<TValue>
     /// <returns>A 32-bit signed integer hash code.</returns>
     public override int GetHashCode()
     {
-        return HashCode.Combine(ErrorsInternal, ValueOrDefaultInternal);
+        return HashCode.Combine(_errors, _valueOrDefault);
     }
 
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are equal.</summary>

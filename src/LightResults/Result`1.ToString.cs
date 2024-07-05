@@ -7,11 +7,11 @@ partial struct Result<TValue>
     /// <inheritdoc/>
     public override string ToString()
     {
-        if (IsSuccessInternal)
-            return StringHelper.GetResultValueString(ValueOrDefaultInternal);
+        if (_isSuccess)
+            return StringHelper.GetResultValueString(_valueOrDefault);
 
-        if (ErrorsInternal is not null && ErrorsInternal[0].Message.Length > 0)
-            return StringHelper.GetResultErrorString(ErrorsInternal[0].Message);
+        if (_errors is not null && _errors[0].Message.Length > 0)
+            return StringHelper.GetResultErrorString(_errors[0].Message);
 
         return $"{nameof(Result)} {{ IsSuccess = False }}";
     }
