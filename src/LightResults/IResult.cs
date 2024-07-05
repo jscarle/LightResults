@@ -7,7 +7,7 @@ public interface IResult
 {
     /// <summary>Gets a collection of errors associated with the result.</summary>
     /// <returns>An <see cref="IReadOnlyCollection{T}"/> of <see cref="IError"/> representing the errors.</returns>
-    IReadOnlyCollection<IError> Errors { get; }
+    IReadOnlyList<IError> Errors { get; }
 
     /// <summary>Gets whether the result was successful or not.</summary>
     /// <returns><c>true</c> if the result was successful; otherwise, <c>false</c>.</returns>

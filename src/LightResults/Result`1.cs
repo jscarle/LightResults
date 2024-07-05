@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-#if NET7_0_OR_GREATER
+﻿#if NET7_0_OR_GREATER
 using LightResults.Common;
 #endif
 
@@ -16,7 +15,7 @@ public readonly partial struct Result<TValue> : IEquatable<Result<TValue>>,
 #endif
 {
     private readonly bool _isSuccess = false;
-    private readonly ImmutableArray<IError>? _errors;
+    private readonly IReadOnlyList<IError>? _errors;
     private readonly TValue? _valueOrDefault;
 
     internal Result(TValue value)
@@ -27,16 +26,16 @@ public readonly partial struct Result<TValue> : IEquatable<Result<TValue>>,
 
     internal Result(IError error)
     {
-        _errors = ImmutableArray.Create(error);
-    }
-
-    private Result(ImmutableArray<IError> errors)
-    {
-        _errors = errors;
+        _errors = [error];
     }
 
     internal Result(IEnumerable<IError> errors)
     {
-        _errors = errors.ToImmutableArray();
+        _errors = errors.ToArray();
+    }
+
+    private Result(IReadOnlyList<IError> errors)
+    {
+        _errors = errors;
     }
 }

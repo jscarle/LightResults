@@ -7,7 +7,7 @@ partial struct Result
     /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>
     public bool Equals(Result other)
     {
-        return Nullable.Equals(_errors, other._errors);
+        return Equals(_errors, other._errors);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -22,7 +22,7 @@ partial struct Result
     /// <returns>A 32-bit signed integer hash code.</returns>
     public override int GetHashCode()
     {
-        return _errors.GetHashCode();
+        return _errors?.GetHashCode() ?? 0;
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>

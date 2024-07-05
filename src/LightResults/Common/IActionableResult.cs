@@ -28,7 +28,7 @@ public interface IActionableResult<out TResult> : IResult
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <typeparamref name="TResult" /> representing a failed result with the specified error message and metadata.</returns>
-    static abstract TResult Fail(string errorMessage, IDictionary<string, object> metadata);
+    static abstract TResult Fail(string errorMessage, IReadOnlyDictionary<string, object> metadata);
 
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
@@ -39,6 +39,11 @@ public interface IActionableResult<out TResult> : IResult
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <typeparamref name="TResult" /> representing a failed result with the specified errors.</returns>
     static abstract TResult Fail(IEnumerable<IError> errors);
+
+    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <param name="errors">A collection of errors associated with the failure.</param>
+    /// <returns>A new instance of <typeparamref name="TResult" /> representing a failed result with the specified errors.</returns>
+    static abstract TResult Fail(IReadOnlyList<IError> errors);
 }
 
 /// <summary>Defines an actionable result.</summary>
@@ -69,7 +74,7 @@ public interface IActionableResult<TValue, out TResult> : IResult<TValue>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <typeparamref name="TResult" /> representing a failed result with the specified error message and metadata.</returns>
-    static abstract TResult Fail(string errorMessage, IDictionary<string, object> metadata);
+    static abstract TResult Fail(string errorMessage, IReadOnlyDictionary<string, object> metadata);
 
     /// <summary>Creates a failed result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
@@ -80,5 +85,10 @@ public interface IActionableResult<TValue, out TResult> : IResult<TValue>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <typeparamref name="TResult" /> representing a failed result with the specified errors.</returns>
     static abstract TResult Fail(IEnumerable<IError> errors);
+
+    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <param name="errors">A collection of errors associated with the failure.</param>
+    /// <returns>A new instance of <typeparamref name="TResult" /> representing a failed result with the specified errors.</returns>
+    static abstract TResult Fail(IReadOnlyList<IError> errors);
 }
 #endif

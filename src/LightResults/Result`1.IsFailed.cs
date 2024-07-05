@@ -15,8 +15,8 @@ partial struct Result<TValue>
     {
         if (_isSuccess)
             error = default;
-        else if (_errors.HasValue)
-            error = _errors.Value[0];
+        else if (_errors is not null)
+            error = _errors[0];
         else
             error = Error.Empty;
 
@@ -34,8 +34,8 @@ partial struct Result<TValue>
         else
         {
             value = default;
-            if (_errors.HasValue)
-                error = _errors.Value[0];
+            if (_errors is not null)
+                error = _errors[0];
             else
                 error = Error.Empty;
         }

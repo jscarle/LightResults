@@ -28,8 +28,8 @@ partial struct Result<TValue>
         else
         {
             value = default;
-            if (_errors.HasValue)
-                error = _errors.Value[0];
+            if (_errors is not null)
+                error = _errors[0];
             else
                 error = Error.Empty;
         }
