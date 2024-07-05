@@ -10,8 +10,8 @@ partial struct Result
         if (_isSuccess)
             return $"{nameof(Result)} {{ IsSuccess = True }}";
 
-        if (_errors.HasValue && _errors.Value[0].Message.Length > 0)
-            return StringHelper.GetResultErrorString(_errors.Value[0].Message);
+        if (_errors is not null && _errors[0].Message.Length > 0)
+            return StringHelper.GetResultErrorString(_errors[0].Message);
 
         return $"{nameof(Result)} {{ IsSuccess = False }}";
     }

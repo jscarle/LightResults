@@ -10,8 +10,8 @@ partial struct Result<TValue>
         if (_isSuccess)
             return StringHelper.GetResultValueString(_valueOrDefault);
 
-        if (_errors.HasValue && _errors.Value[0].Message.Length > 0)
-            return StringHelper.GetResultErrorString(_errors.Value[0].Message);
+        if (_errors is not null && _errors[0].Message.Length > 0)
+            return StringHelper.GetResultErrorString(_errors[0].Message);
 
         return $"{nameof(Result)} {{ IsSuccess = False }}";
     }

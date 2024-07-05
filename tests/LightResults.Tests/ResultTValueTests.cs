@@ -20,19 +20,44 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out var resultValue).Should().BeFalse();
-            resultValue.Should().Be(default);
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out var resultError).Should().BeTrue();
-            resultError.Should().Be(Error.Empty);
-            result.Errors.Should().ContainSingle().Which.Should().BeOfType<Error>();
-            result.HasError<Error>().Should().BeTrue();
-            result.HasError<Error>(out var error).Should().BeTrue();
-            error.Should().Be(Error.Empty);
-            result.HasError<ValidationError>().Should().BeFalse();
-            result.HasError<ValidationError>(out var validationError).Should().BeFalse();
-            validationError.Should().Be(default);
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out var resultValue)
+                .Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(default);
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out var resultError)
+                .Should()
+                .BeTrue();
+            resultError.Should()
+                .Be(Error.Empty);
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeOfType<Error>();
+            result.HasError<Error>()
+                .Should()
+                .BeTrue();
+            result.HasError<Error>(out var error)
+                .Should()
+                .BeTrue();
+            error.Should()
+                .Be(Error.Empty);
+            result.HasError<ValidationError>()
+                .Should()
+                .BeFalse();
+            result.HasError<ValidationError>(out var validationError)
+                .Should()
+                .BeFalse();
+            validationError.Should()
+                .Be(default);
         }
     }
 
@@ -45,19 +70,44 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out var resultValue).Should().BeFalse();
-            resultValue.Should().Be(null);
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out var resultError).Should().BeTrue();
-            resultError.Should().Be(Error.Empty);
-            result.Errors.Should().ContainSingle().Which.Should().BeOfType<Error>();
-            result.HasError<Error>().Should().BeTrue();
-            result.HasError<Error>(out var error).Should().BeTrue();
-            error.Should().Be(Error.Empty);
-            result.HasError<ValidationError>().Should().BeFalse();
-            result.HasError<ValidationError>(out var validationError).Should().BeFalse();
-            validationError.Should().Be(default);
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out var resultValue)
+                .Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(null);
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out var resultError)
+                .Should()
+                .BeTrue();
+            resultError.Should()
+                .Be(Error.Empty);
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeOfType<Error>();
+            result.HasError<Error>()
+                .Should()
+                .BeTrue();
+            result.HasError<Error>(out var error)
+                .Should()
+                .BeTrue();
+            error.Should()
+                .Be(Error.Empty);
+            result.HasError<ValidationError>()
+                .Should()
+                .BeFalse();
+            result.HasError<ValidationError>(out var validationError)
+                .Should()
+                .BeFalse();
+            validationError.Should()
+                .Be(default);
         }
     }
 
@@ -68,7 +118,9 @@ public sealed class ResultTValueTests
         var result = Result.Ok(42);
 
         // Assert
-        result.IsSuccess().Should().BeTrue();
+        result.IsSuccess()
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -83,8 +135,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeTrue();
-            resultValue.Should().Be(42);
+            isSuccess.Should()
+                .BeTrue();
+            resultValue.Should()
+                .Be(42);
         }
     }
 
@@ -100,9 +154,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeTrue();
-            resultValue.Should().Be(42);
-            resultError.Should().Be(null);
+            isSuccess.Should()
+                .BeTrue();
+            resultValue.Should()
+                .Be(42);
+            resultError.Should()
+                .Be(null);
         }
     }
 
@@ -118,8 +175,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeFalse();
-            resultValue.Should().Be(default);
+            isSuccess.Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(default);
         }
     }
 
@@ -135,8 +194,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeFalse();
-            resultValue.Should().Be(null);
+            isSuccess.Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(null);
         }
     }
 
@@ -145,7 +206,11 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError> { firstError, new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -154,9 +219,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeFalse();
-            resultValue.Should().Be(default);
-            resultError.Should().Be(firstError);
+            isSuccess.Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(default);
+            resultError.Should()
+                .Be(firstError);
         }
     }
 
@@ -165,7 +233,11 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError> { firstError, new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
         var result = Result.Fail<object>(errors);
 
         // Act
@@ -174,9 +246,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeFalse();
-            resultValue.Should().Be(null);
-            resultError.Should().Be(firstError);
+            isSuccess.Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(null);
+            resultError.Should()
+                .Be(firstError);
         }
     }
 
@@ -192,9 +267,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isSuccess.Should().BeFalse();
-            resultValue.Should().Be(null);
-            resultError.Should().Be(Error.Empty);
+            isSuccess.Should()
+                .BeFalse();
+            resultValue.Should()
+                .Be(null);
+            resultError.Should()
+                .Be(Error.Empty);
         }
     }
 
@@ -205,7 +283,9 @@ public sealed class ResultTValueTests
         var result = Result.Fail<int>();
 
         // Assert
-        result.IsFailed().Should().BeTrue();
+        result.IsFailed()
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -213,7 +293,11 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError> { firstError, new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -222,8 +306,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should().BeTrue();
-            resultError.Should().Be(firstError);
+            isFailed.Should()
+                .BeTrue();
+            resultError.Should()
+                .Be(firstError);
         }
     }
 
@@ -239,8 +325,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should().BeFalse();
-            resultError.Should().Be(null);
+            isFailed.Should()
+                .BeFalse();
+            resultError.Should()
+                .Be(null);
         }
     }
 
@@ -249,7 +337,11 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError> { firstError, new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -258,9 +350,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should().BeTrue();
-            resultError.Should().Be(firstError);
-            resultValue.Should().Be(default);
+            isFailed.Should()
+                .BeTrue();
+            resultError.Should()
+                .Be(firstError);
+            resultValue.Should()
+                .Be(default);
         }
     }
 
@@ -269,7 +364,11 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new Error("Error 1");
-        var errors = new List<IError> { firstError, new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
         var result = Result.Fail<object>(errors);
 
         // Act
@@ -278,9 +377,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should().BeTrue();
-            resultError.Should().Be(firstError);
-            resultValue.Should().Be(null);
+            isFailed.Should()
+                .BeTrue();
+            resultError.Should()
+                .Be(firstError);
+            resultValue.Should()
+                .Be(null);
         }
     }
 
@@ -296,9 +398,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should().BeTrue();
-            resultError.Should().Be(Error.Empty);
-            resultValue.Should().Be(null);
+            isFailed.Should()
+                .BeTrue();
+            resultError.Should()
+                .Be(Error.Empty);
+            resultValue.Should()
+                .Be(null);
         }
     }
 
@@ -314,9 +419,12 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should().BeFalse();
-            resultError.Should().Be(null);
-            resultValue.Should().Be(42);
+            isFailed.Should()
+                .BeFalse();
+            resultError.Should()
+                .Be(null);
+            resultValue.Should()
+                .Be(42);
         }
     }
 
@@ -332,13 +440,25 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var resultValue).Should().BeTrue();
-            resultValue.Should().Be(value);
-            result.IsFailed().Should().BeFalse();
-            result.IsFailed(out var resultError).Should().BeFalse();
-            resultError.Should().Be(null);
-            result.Errors.Should().BeEmpty();
+            result.IsSuccess()
+                .Should()
+                .BeTrue();
+            result.IsSuccess(out var resultValue)
+                .Should()
+                .BeTrue();
+            resultValue.Should()
+                .Be(value);
+            result.IsFailed()
+                .Should()
+                .BeFalse();
+            result.IsFailed(out var resultError)
+                .Should()
+                .BeFalse();
+            resultError.Should()
+                .Be(null);
+            result.Errors
+                .Should()
+                .BeEmpty();
         }
     }
 
@@ -351,11 +471,25 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be("");
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Message
+                .Should()
+                .Be("");
         }
     }
 
@@ -371,11 +505,25 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Message.Should().Be(errorMessage);
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Message
+                .Should()
+                .Be(errorMessage);
         }
     }
 
@@ -392,13 +540,31 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
-            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(errorMessage);
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
         }
     }
 
@@ -407,7 +573,10 @@ public sealed class ResultTValueTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+        IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+        {
+            { "Key", 0 },
+        };
 
         // Act
         var result = Result.Fail<object>(errorMessage, metadata);
@@ -415,13 +584,31 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            var error = result.Errors.Should().ContainSingle().Which;
-            error.Message.Should().Be(errorMessage);
-            error.Metadata.Should().ContainSingle().Which.Should().BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(errorMessage);
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
         }
     }
 
@@ -437,11 +624,24 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().ContainSingle().Which.Should().BeEquivalentTo(error);
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(error);
         }
     }
 
@@ -449,7 +649,11 @@ public sealed class ResultTValueTests
     public void Fail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
     {
         // Arrange
-        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
 
         // Act
         var result = Result.Fail<int>(errors);
@@ -457,11 +661,23 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeFalse();
-            result.IsSuccess(out _).Should().BeFalse();
-            result.IsFailed().Should().BeTrue();
-            result.IsFailed(out _).Should().BeTrue();
-            result.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailed()
+                .Should()
+                .BeTrue();
+            result.IsFailed(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(errors);
         }
     }
 
@@ -472,7 +688,9 @@ public sealed class ResultTValueTests
         var result = Result.Fail<int>(new ValidationError("Validation error"));
 
         // Assert
-        result.HasError<ValidationError>().Should().BeTrue();
+        result.HasError<ValidationError>()
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -480,7 +698,11 @@ public sealed class ResultTValueTests
     {
         // Arrange
         var firstError = new ValidationError("Validation error");
-        var errors = new List<IError> { firstError, new ValidationError("Error 2") };
+        var errors = new List<IError>
+        {
+            firstError,
+            new ValidationError("Error 2"),
+        };
         var result = Result.Fail<int>(errors);
 
         // Act
@@ -489,8 +711,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            hasError.Should().BeTrue();
-            error.Should().Be(firstError);
+            hasError.Should()
+                .BeTrue();
+            error.Should()
+                .Be(firstError);
         }
     }
 
@@ -501,7 +725,9 @@ public sealed class ResultTValueTests
         var result = Result.Fail<int>(new Error("Generic error"));
 
         // Assert
-        result.HasError<ValidationError>().Should().BeFalse();
+        result.HasError<ValidationError>()
+            .Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -516,8 +742,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            hasError.Should().BeFalse();
-            error.Should().Be(default);
+            hasError.Should()
+                .BeFalse();
+            error.Should()
+                .Be(default);
         }
     }
 
@@ -528,7 +756,9 @@ public sealed class ResultTValueTests
         var result = Result.Ok(42);
 
         // Assert
-        result.HasError<ValidationError>().Should().BeFalse();
+        result.HasError<ValidationError>()
+            .Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -543,8 +773,10 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            hasError.Should().BeFalse();
-            error.Should().Be(default);
+            hasError.Should()
+                .BeFalse();
+            error.Should()
+                .Be(default);
         }
     }
 
@@ -560,12 +792,23 @@ public sealed class ResultTValueTests
         // Assert
         using (new AssertionScope())
         {
-            result.IsSuccess().Should().BeTrue();
-            result.IsSuccess(out var resultValue).Should().BeTrue();
-            resultValue.Should().Be(value);
-            result.IsFailed().Should().BeFalse();
-            result.IsFailed(out _).Should().BeFalse();
-            result.Errors.Should().BeEmpty();
+            result.IsSuccess()
+                .Should()
+                .BeTrue();
+            result.IsSuccess(out var resultValue)
+                .Should()
+                .BeTrue();
+            resultValue.Should()
+                .Be(value);
+            result.IsFailed()
+                .Should()
+                .BeFalse();
+            result.IsFailed(out _)
+                .Should()
+                .BeFalse();
+            result.Errors
+                .Should()
+                .BeEmpty();
         }
     }
 
@@ -573,18 +816,30 @@ public sealed class ResultTValueTests
     public void AsFailed_ShouldConvertResultToNonGenericResultWithSameErrors()
     {
         // Arrange
-        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
         var result = Result.Fail<int>(errors);
 
         // Act
-        var nonGenericResult = result.AsFailed();
+        var nonGenericResult = result.ToFailed();
 
         // Assert
         using (new AssertionScope())
         {
-            nonGenericResult.IsSuccess().Should().BeFalse();
-            nonGenericResult.IsFailed().Should().BeTrue();
-            nonGenericResult.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+            nonGenericResult.IsSuccess()
+                .Should()
+                .BeFalse();
+            nonGenericResult.IsFailed()
+                .Should()
+                .BeTrue();
+            nonGenericResult.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(errors);
         }
     }
 
@@ -595,14 +850,22 @@ public sealed class ResultTValueTests
         Result<int> result = default;
 
         // Act
-        var nonGenericResult = result.AsFailed();
+        var nonGenericResult = result.ToFailed();
 
         // Assert
         using (new AssertionScope())
         {
-            nonGenericResult.IsSuccess().Should().BeFalse();
-            nonGenericResult.IsFailed().Should().BeTrue();
-            nonGenericResult.Errors.Should().HaveCount(1).And.HaveElementAt(0, Error.Empty);
+            nonGenericResult.IsSuccess()
+                .Should()
+                .BeFalse();
+            nonGenericResult.IsFailed()
+                .Should()
+                .BeTrue();
+            nonGenericResult.Errors
+                .Should()
+                .HaveCount(1)
+                .And
+                .HaveElementAt(0, Error.Empty);
         }
     }
 
@@ -610,18 +873,30 @@ public sealed class ResultTValueTests
     public void AsFailed_ShouldConvertResultToGenericResultWithSameErrors()
     {
         // Arrange
-        var errors = new List<IError> { new Error("Error 1"), new Error("Error 2") };
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
         var result = Result.Fail<int>(errors);
 
         // Act
-        var genericResult = result.AsFailed<object>();
+        var genericResult = result.ToFailed<object>();
 
         // Assert
         using (new AssertionScope())
         {
-            genericResult.IsSuccess().Should().BeFalse();
-            genericResult.IsFailed().Should().BeTrue();
-            genericResult.Errors.Should().HaveCount(2).And.BeEquivalentTo(errors);
+            genericResult.IsSuccess()
+                .Should()
+                .BeFalse();
+            genericResult.IsFailed()
+                .Should()
+                .BeTrue();
+            genericResult.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(errors);
         }
     }
 
@@ -632,14 +907,22 @@ public sealed class ResultTValueTests
         Result<int> result = default;
 
         // Act
-        var genericResult = result.AsFailed<object>();
+        var genericResult = result.ToFailed<object>();
 
         // Assert
         using (new AssertionScope())
         {
-            genericResult.IsSuccess().Should().BeFalse();
-            genericResult.IsFailed().Should().BeTrue();
-            genericResult.Errors.Should().HaveCount(1).And.HaveElementAt(0, Error.Empty);
+            genericResult.IsSuccess()
+                .Should()
+                .BeFalse();
+            genericResult.IsFailed()
+                .Should()
+                .BeTrue();
+            genericResult.Errors
+                .Should()
+                .HaveCount(1)
+                .And
+                .HaveElementAt(0, Error.Empty);
         }
     }
 
@@ -651,7 +934,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(42);
 
         // Assert
-        result1.Equals(result2).Should().BeTrue();
+        result1.Equals(result2)
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -662,7 +947,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(43);
 
         // Assert
-        result1.Equals(result2).Should().BeFalse();
+        result1.Equals(result2)
+            .Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -673,7 +960,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>("test");
 
         // Assert
-        result1.Equals(result2).Should().BeTrue();
+        result1.Equals(result2)
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -684,7 +973,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>("test2");
 
         // Assert
-        result1.Equals(result2).Should().BeFalse();
+        result1.Equals(result2)
+            .Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -695,7 +986,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>(42);
 
         // Assert
-        result1.Equals(result2).Should().BeFalse();
+        result1.Equals(result2)
+            .Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -706,7 +999,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(42);
 
         // Assert
-        result1.GetHashCode().Should().Be(result2.GetHashCode());
+        result1.GetHashCode()
+            .Should()
+            .Be(result2.GetHashCode());
     }
 
     [Fact]
@@ -717,7 +1012,9 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(43);
 
         // Assert
-        result1.GetHashCode().Should().NotBe(result2.GetHashCode());
+        result1.GetHashCode()
+            .Should()
+            .NotBe(result2.GetHashCode());
     }
 
     [Fact]
@@ -728,7 +1025,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(42);
 
         // Assert
-        (result1 == result2).Should().BeTrue();
+        (result1 == result2).Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -739,7 +1037,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(43);
 
         // Assert
-        (result1 == result2).Should().BeFalse();
+        (result1 == result2).Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -750,7 +1049,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(42);
 
         // Assert
-        (result1 != result2).Should().BeFalse();
+        (result1 != result2).Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -761,7 +1061,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok(43);
 
         // Assert
-        (result1 != result2).Should().BeTrue();
+        (result1 != result2).Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -772,7 +1073,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>("test");
 
         // Assert
-        (result1 == result2).Should().BeTrue();
+        (result1 == result2).Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -783,7 +1085,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>("test2");
 
         // Assert
-        (result1 == result2).Should().BeFalse();
+        (result1 == result2).Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -794,7 +1097,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>("test");
 
         // Assert
-        (result1 != result2).Should().BeFalse();
+        (result1 != result2).Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -805,7 +1109,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>("test2");
 
         // Assert
-        (result1 != result2).Should().BeTrue();
+        (result1 != result2).Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -816,7 +1121,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>(42);
 
         // Assert
-        (result1 == result2).Should().BeFalse();
+        (result1 == result2).Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -827,7 +1133,8 @@ public sealed class ResultTValueTests
         var result2 = Result.Ok<object>(42);
 
         // Assert
-        (result1 != result2).Should().BeTrue();
+        (result1 != result2).Should()
+            .BeTrue();
     }
 
     [Theory]
@@ -840,7 +1147,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(true) : Result.Fail<bool>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -853,7 +1162,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<sbyte>(1) : Result.Fail<sbyte>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -866,7 +1177,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<byte>(1) : Result.Fail<byte>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -879,7 +1192,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<short>(1) : Result.Fail<short>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -892,7 +1207,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<ushort>(1) : Result.Fail<ushort>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -905,7 +1222,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(1) : Result.Fail<int>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -918,7 +1237,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<uint>(1) : Result.Fail<uint>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -931,7 +1252,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<long>(1) : Result.Fail<long>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -944,7 +1267,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<ulong>(1) : Result.Fail<ulong>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -957,7 +1282,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(1.1m) : Result.Fail<decimal>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -970,7 +1297,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(1.1f) : Result.Fail<float>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -983,7 +1312,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(1.1d) : Result.Fail<double>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -996,7 +1327,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(new DateTime(2024, 04, 05, 12, 30, 00, DateTimeKind.Utc)) : Result.Fail<DateTime>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -1009,7 +1342,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(new DateTimeOffset(2024, 04, 05, 12, 30, 00, TimeSpan.Zero)) : Result.Fail<DateTimeOffset>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -1022,7 +1357,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok('c') : Result.Fail<char>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -1035,7 +1372,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok("StringValue") : Result.Fail<string>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -1048,7 +1387,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok(new object()) : Result.Fail<object>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     [Theory]
@@ -1061,7 +1402,9 @@ public sealed class ResultTValueTests
         var result = success ? Result.Ok<int?>(1) : Result.Fail<int?>(errorMessage);
 
         // Assert
-        result.ToString().Should().Be($"Result {{ {expected} }}");
+        result.ToString()
+            .Should()
+            .Be($"Result {{ {expected} }}");
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
@@ -1179,7 +1522,7 @@ public sealed class ResultTValueTests
             where TResult : IActionableResult<TValue, Result<TValue>>
         {
             const string errorMessage = "Sample error message";
-            IDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
+            IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object> { { "Key", 0 } };
             return TResult.Fail(errorMessage, metadata);
         }
 

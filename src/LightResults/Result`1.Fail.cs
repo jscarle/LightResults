@@ -39,7 +39,7 @@ partial struct Result<TValue>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage, IDictionary<string, object> metadata)
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(string errorMessage, IReadOnlyDictionary<string, object> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
@@ -57,6 +57,14 @@ partial struct Result<TValue>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(IEnumerable<IError> errors)
+    {
+        return new Result<TValue>(errors);
+    }
+
+    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <param name="errors">A collection of errors associated with the failure.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Fail(IReadOnlyList<IError> errors)
     {
         return new Result<TValue>(errors);
     }
