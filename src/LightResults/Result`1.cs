@@ -14,28 +14,28 @@ public readonly partial struct Result<TValue> : IEquatable<Result<TValue>>,
     IResult<TValue>
 #endif
 {
-    private readonly bool _isSuccess = false;
-    private readonly IReadOnlyList<IError>? _errors;
-    private readonly TValue? _valueOrDefault;
+    internal readonly bool IsSuccessInternal = false;
+    internal readonly IReadOnlyList<IError>? ErrorsInternal;
+    internal readonly TValue? ValueOrDefaultInternal;
 
     internal Result(TValue value)
     {
-        _isSuccess = true;
-        _valueOrDefault = value;
+        IsSuccessInternal = true;
+        ValueOrDefaultInternal = value;
     }
 
     internal Result(IError error)
     {
-        _errors = [error];
+        ErrorsInternal = [error];
     }
 
     internal Result(IEnumerable<IError> errors)
     {
-        _errors = errors.ToArray();
+        ErrorsInternal = errors.ToArray();
     }
 
     private Result(IReadOnlyList<IError> errors)
     {
-        _errors = errors;
+        ErrorsInternal = errors;
     }
 }

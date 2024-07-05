@@ -7,33 +7,33 @@ partial struct Result<TValue>
     /// <inheritdoc/>
     public bool IsSuccess()
     {
-        return _isSuccess;
+        return IsSuccessInternal;
     }
 
     /// <inheritdoc/>
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value)
     {
-        value = _valueOrDefault;
-        return _isSuccess;
+        value = ValueOrDefaultInternal;
+        return IsSuccessInternal;
     }
 
     /// <inheritdoc/>
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(true)] out IError error)
     {
-        if (_isSuccess)
+        if (IsSuccessInternal)
         {
-            value = _valueOrDefault;
+            value = ValueOrDefaultInternal;
             error = default;
         }
         else
         {
             value = default;
-            if (_errors is not null)
-                error = _errors[0];
+            if (ErrorsInternal is not null)
+                error = ErrorsInternal[0];
             else
                 error = Error.Empty;
         }
 
-        return _isSuccess;
+        return IsSuccessInternal;
     }
 }

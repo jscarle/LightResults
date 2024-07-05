@@ -9,10 +9,10 @@ partial struct Result<TValue>
     {
         get
         {
-            if (_errors is not null)
-                return _errors;
+            if (ErrorsInternal is not null)
+                return ErrorsInternal;
 
-            if (_isSuccess)
+            if (IsSuccessInternal)
                 return Error.EmptyErrorList;
 
             return Error.DefaultErrorList;
@@ -23,17 +23,17 @@ partial struct Result<TValue>
     public bool HasError<TError>()
         where TError : IError
     {
-        if (_isSuccess)
+        if (IsSuccessInternal)
             return false;
 
-        if (_errors is not null)
+        if (ErrorsInternal is not null)
             // Do not convert to LINQ, this creates unnecessary heap allocations.
             // For is the most efficient way to loop. It is the fastest and does not allocate.
             // ReSharper disable once ForCanBeConvertedToForeach
             // ReSharper disable once LoopCanBeConvertedToQuery
-            for (var index = 0; index < _errors.Count; index++)
+            for (var index = 0; index < ErrorsInternal.Count; index++)
             {
-                if (_errors[index] is TError)
+                if (ErrorsInternal[index] is TError)
                     return true;
             }
 
@@ -44,20 +44,20 @@ partial struct Result<TValue>
     public bool HasError<TError>([MaybeNullWhen(false)] out TError error)
         where TError : IError
     {
-        if (_isSuccess)
+        if (IsSuccessInternal)
         {
             error = default;
             return false;
         }
 
-        if (_errors is not null)
+        if (ErrorsInternal is not null)
             // Do not convert to LINQ, this creates unnecessary heap allocations.
             // For is the most efficient way to loop. It is the fastest and does not allocate.
             // ReSharper disable once ForCanBeConvertedToForeach
             // ReSharper disable once LoopCanBeConvertedToQuery
-            for (var index = 0; index < _errors.Count; index++)
+            for (var index = 0; index < ErrorsInternal.Count; index++)
             {
-                if (_errors[index] is not TError tError)
+                if (ErrorsInternal[index] is not TError tError)
                     continue;
 
                 error = tError;
