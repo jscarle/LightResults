@@ -37,7 +37,7 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>9.0.0-preview.13</Version>
+        <Version>9.0.0-preview.14</Version>
         <AssemblyVersion>9.0.0.0</AssemblyVersion>
         <FileVersion>9.0.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -70,7 +70,7 @@
         <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" Visible="false"/>
         <None Include="..\..\Icon.png" Pack="true" PackagePath="\" Visible="false"/>
     </ItemGroup>
-    
+
     <!-- Extensions -->
     <ItemGroup>
         <InternalsVisibleTo Include="LightResults.Extensions.Operations"/>
