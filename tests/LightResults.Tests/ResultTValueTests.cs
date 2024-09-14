@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Xunit;
 
 namespace LightResults.Tests;
@@ -421,6 +422,33 @@ public class ResultTValueTests
         result.ToString().Should().Be($"Result {{ {expected} }}");
     }
 #endif
+    
+    
+    [Fact]
+    public void ImplicitOperator_ShouldCreateSuccessResultWithValue()
+    {
+        // Arrange
+        const int value = 42;
+
+        // Act
+        Result<int> result = value;
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess
+                .Should()
+                .BeTrue();
+            result.Value.Should()
+                .Be(value);
+            result.IsFailed
+                .Should()
+                .BeFalse();
+            result.Errors
+                .Should()
+                .BeEmpty();
+        }
+    }
     
     private class ValidationError(string errorMessage) : Error(errorMessage);
 }
