@@ -6,7 +6,7 @@ using BenchmarkDotNet.Jobs;
 namespace LightResults.ComparisonBenchmarks;
 
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net80)]
+[SimpleJob(RuntimeMoniker.Net90)]
 [IterationTime(250)]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [CategoriesColumn]

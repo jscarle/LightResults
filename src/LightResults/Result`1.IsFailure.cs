@@ -5,13 +5,13 @@ namespace LightResults;
 partial struct Result<TValue>
 {
     /// <inheritdoc/>
-    public bool IsFailed()
+    public bool IsFailure()
     {
         return !_isSuccess;
     }
 
     /// <inheritdoc/>
-    public bool IsFailed([MaybeNullWhen(false)] out IError error)
+    public bool IsFailure([MaybeNullWhen(false)] out IError error)
     {
         if (_isSuccess)
             error = default;
@@ -24,7 +24,7 @@ partial struct Result<TValue>
     }
 
     /// <inheritdoc/>
-    public bool IsFailed([MaybeNullWhen(false)] out IError error, [MaybeNullWhen(true)] out TValue value)
+    public bool IsFailure([MaybeNullWhen(false)] out IError error, [MaybeNullWhen(true)] out TValue value)
     {
         if (_isSuccess)
         {

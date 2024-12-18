@@ -29,7 +29,7 @@ This library has no dependencies.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
 - ❤️ Compatible — Available for dozens of versions of .NET as a
-[.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
+  [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
 - 🪚 Trimmable — Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 - 🚀 Performant — Heavily optimized and [benchmarked](https://jscarle.github.io/LightResults/docs/performance.html) to aim for the highest possible performance.
 
@@ -64,11 +64,11 @@ var successResultWithValue = Result.Ok(349.4);
 Failed results can be created using the `Fail` method.
 
 ```csharp
-var failedResult = Result.Fail();
+var failedResult = Result.Failure();
 
-var failedResultWithMessage = Result.Fail("Operation failed!");
+var failedResultWithMessage = Result.Failure("Operation failed!");
 
-var failedResultWithMessageAndMetadata = Result.Fail("Operation failed!", ("Exception", ex));
+var failedResultWithMessageAndMetadata = Result.Failure("Operation failed!", ("Exception", ex));
 ```
 
 ### Checking the state of a result
@@ -145,7 +145,7 @@ public sealed class NotFoundError : Error
 }
 
 var notFoundError = new NotFoundError();
-var notFoundResult = Result.Fail(notFoundError);
+var notFoundResult = Result.Failure(notFoundError);
 ```
 
 Then the result can be checked against that error type.
@@ -181,7 +181,7 @@ public Result DoSomeWork()
     catch(Exception ex)
     {
         var unhandledExceptionError = new UnhandledExceptionError(ex);
-        return Result.Fail(unhandledExceptionError);
+        return Result.Failure(unhandledExceptionError);
     }
     
     return Result.Ok();
@@ -196,13 +196,13 @@ public static AppError
     public Result NotFound()
     {
         var notFoundError = new NotFoundError();
-        return Result.Fail(notFoundError);
+        return Result.Failure(notFoundError);
     }
 
     public Result UnhandledException(Exception ex)
     {
         var unhandledExceptionError = new UnhandledExceptionError(ex)
-        return Result.Fail(unhandledExceptionError);
+        return Result.Failure(unhandledExceptionError);
     }
 }
 ```
@@ -242,7 +242,7 @@ public static AppError
     public TResult NotFound<TResult>()
     {
         var notFoundError = new NotFoundError(); 
-        return TResult.Fail(notFoundError);
+        return TResult.Failure(notFoundError);
     }
 }
 ```

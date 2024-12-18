@@ -6,19 +6,19 @@ namespace LightResults.ComparisonBenchmarks;
 public partial class Benchmarks
 {
     private static readonly Error LightResultsErrorWithErrorMessage = new(ErrorMessage);
-    private static readonly Result LightResultsResultOk = Result.Ok();
-    private static readonly Result LightResultsResultFail = Result.Fail();
-    private static readonly Result LightResultsResultFailWithErrorMessage = Result.Fail(LightResultsErrorWithErrorMessage);
-    private static readonly Result<int> LightResultsResultTValueOk = Result.Ok<int>(ResultValue);
-    private static readonly Result<int> LightResultsResultTValueFail = Result.Fail<int>();
-    private static readonly Result<int> LightResultsResultTValueFailWithErrorMessage = Result.Fail<int>(LightResultsErrorWithErrorMessage);
+    private static readonly Result LightResultsResultOk = Result.Success();
+    private static readonly Result LightResultsResultFail = Result.Failure();
+    private static readonly Result LightResultsResultFailWithErrorMessage = Result.Failure(LightResultsErrorWithErrorMessage);
+    private static readonly Result<int> LightResultsResultTValueOk = Result.Success<int>(ResultValue);
+    private static readonly Result<int> LightResultsResultTValueFail = Result.Failure<int>();
+    private static readonly Result<int> LightResultsResultTValueFailWithErrorMessage = Result.Failure<int>(LightResultsErrorWithErrorMessage);
 
     [Benchmark(Baseline = true)]
     [BenchmarkCategory("A01: Returning a successful result")]
     public void A_LightResults_Result_Ok()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Ok();
+            _ = Result.Success();
     }
 
     [Benchmark(Baseline = true)]
@@ -34,7 +34,7 @@ public partial class Benchmarks
     public void A_LightResults_Result_OkTValue()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Ok<int>(ResultValue);
+            _ = Result.Success<int>(ResultValue);
     }
 
     [Benchmark(Baseline = true)]
@@ -50,7 +50,7 @@ public partial class Benchmarks
     public void A_LightResults_Result_Fail()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail();
+            _ = Result.Failure();
     }
 
     [Benchmark(Baseline = true)]
@@ -66,7 +66,7 @@ public partial class Benchmarks
     public void A_LightResults_Result_Fail_WithErrorMessage()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail(LightResultsErrorWithErrorMessage);
+            _ = Result.Failure(LightResultsErrorWithErrorMessage);
     }
 
     [Benchmark(Baseline = true)]
@@ -82,7 +82,7 @@ public partial class Benchmarks
     public void A_LightResults_Result_FailTValue()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail<int>();
+            _ = Result.Failure<int>();
     }
 
     [Benchmark(Baseline = true)]
@@ -98,7 +98,7 @@ public partial class Benchmarks
     public void A_LightResults_Result_FailTValue_WithErrorMessage()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = Result.Fail<int>(LightResultsErrorWithErrorMessage);
+            _ = Result.Failure<int>(LightResultsErrorWithErrorMessage);
     }
 
     [Benchmark(Baseline = true)]
@@ -146,6 +146,6 @@ public partial class Benchmarks
     public void A_LightResults_Result_FirstError()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = LightResultsResultFailWithErrorMessage.IsFailed(out _);
+            _ = LightResultsResultFailWithErrorMessage.IsFailure(out _);
     }
 }

@@ -5,14 +5,16 @@ namespace LightResults;
 partial struct Result
 {
     /// <inheritdoc/>
-    public bool IsFailed()
+    public bool IsFailure()
     {
         return !_isSuccess;
     }
 
     /// <inheritdoc/>
-    public bool IsFailed([MaybeNullWhen(false)] out IError error)
+    public bool IsFailure([MaybeNullWhen(false)] out IError error)
     {
+        // ReSharper disable once PreferConcreteValueOverDefault
+        // Easier to refactor if this changes.
         if (_isSuccess)
             error = default;
         else if (_errors is not null)

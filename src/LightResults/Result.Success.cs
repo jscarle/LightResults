@@ -2,12 +2,12 @@ namespace LightResults;
 
 partial struct Result
 {
-    internal static readonly Result OkResult = new(true);
+    private static readonly Result SuccessResult = new(true);
 
     /// <summary>Creates a success result.</summary>
     /// <returns>A new instance of <see cref="Result"/> representing a success result with the specified value.</returns>
-    public static Result Ok()
+    public static Result Success()
     {
-        return OkResult;
+        return SuccessResult;
     }
 }

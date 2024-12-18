@@ -17,17 +17,17 @@
 
     <!-- References -->
     <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
-        <PackageReference Include="PolySharp" Version="1.14.1">
+        <PackageReference Include="PolySharp" Version="1.15.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1"/>
-        <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
-        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
+        <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.0"/>
+        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="9.28.0.94264">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.3.0.106239">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -79,22 +79,22 @@
         <Compile Update="Result.Errors.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result.Fail.cs">
+        <Compile Update="Result.Failure.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result.Fail`1.cs">
+        <Compile Update="Result.Failure`1.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result.IsFailed.cs">
+        <Compile Update="Result.IsFailure.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
         <Compile Update="Result.IsSuccess.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result.Ok.cs">
+        <Compile Update="Result.Success.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result.Ok`1.cs">
+        <Compile Update="Result.Success`1.cs">
             <DependentUpon>Result.cs</DependentUpon>
         </Compile>
         <Compile Update="Result.ToString.cs">
@@ -109,19 +109,19 @@
         <Compile Update="Result`1.Errors.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result`1.Fail.cs">
+        <Compile Update="Result`1.Failure.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result`1.IsFailed.cs">
+        <Compile Update="Result`1.IsFailure.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
         <Compile Update="Result`1.IsSuccess.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result`1.Ok.cs">
+        <Compile Update="Result`1.Success.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
-        <Compile Update="Result`1.ToFailed.cs">
+        <Compile Update="Result`1.ToFailure.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
         <Compile Update="Result`1.ToString.cs">

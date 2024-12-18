@@ -7,7 +7,7 @@ namespace LightResults.Tests;
 public sealed class ResultTests
 {
     [Fact]
-    public void DefaultStruct_ShouldBeFailedResult()
+    public void DefaultStruct_ShouldBeFailureResult()
     {
         // Arrange
         Result result = default;
@@ -18,10 +18,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out var resultError)
+            result.IsFailure(out var resultError)
                 .Should()
                 .BeTrue();
             resultError.Should()
@@ -56,7 +56,7 @@ public sealed class ResultTests
     public void IsSuccess_WhenResultIsSuccess()
     {
         // Arrange
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Assert
         result.IsSuccess()
@@ -65,19 +65,19 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsFailed()
+    public void IsFailure_WhenResultIsFailure()
     {
         // Arrange
-        var result = Result.Fail();
+        var result = Result.Failure();
 
         // Assert
-        result.IsFailed()
+        result.IsFailure()
             .Should()
             .BeTrue();
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsFailed_ShouldReturnFirstError()
+    public void IsFailure_WhenResultIsFailure_ShouldReturnFirstError()
     {
         // Arrange
         var firstError = new Error("Error 1");
@@ -86,15 +86,15 @@ public sealed class ResultTests
             firstError,
             new Error("Error 2"),
         };
-        var result = Result.Fail(errors);
+        var result = Result.Failure(errors);
 
         // Act
-        var isFailed = result.IsFailed(out var resultError);
+        var isFailure = result.IsFailure(out var resultError);
 
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should()
+            isFailure.Should()
                 .BeTrue();
             resultError.Should()
                 .Be(firstError);
@@ -102,18 +102,18 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsSuccess_ShouldReturnDefaultValue()
+    public void IsFailure_WhenResultIsSuccess_ShouldReturnDefaultValue()
     {
         // Arrange
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Act
-        var isFailed = result.IsFailed(out var resultError);
+        var isFailure = result.IsFailure(out var resultError);
 
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should()
+            isFailure.Should()
                 .BeFalse();
             resultError.Should()
                 .Be(null);
@@ -121,18 +121,18 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void IsFailed_WhenResultIsSuccess_ShouldReturnNullValue()
+    public void IsFailure_WhenResultIsSuccess_ShouldReturnNullValue()
     {
         // Arrange
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Act
-        var isFailed = result.IsFailed(out var resultError);
+        var isFailure = result.IsFailure(out var resultError);
 
         // Assert
         using (new AssertionScope())
         {
-            isFailed.Should()
+            isFailure.Should()
                 .BeFalse();
             resultError.Should()
                 .Be(null);
@@ -140,10 +140,10 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Ok_ShouldCreateSuccessResult()
+    public void Success_ShouldCreateSuccessResult()
     {
         // Act
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Assert
         using (new AssertionScope())
@@ -151,10 +151,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeTrue();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeFalse();
-            result.IsFailed(out var resultError)
+            result.IsFailure(out var resultError)
                 .Should()
                 .BeFalse();
             resultError.Should()
@@ -166,13 +166,13 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void OkTValue_WithValue_ShouldCreateSuccessResultWithValue()
+    public void SuccessTValue_WithValue_ShouldCreateSuccessResultWithValue()
     {
         // Arrange
         const int value = 42;
 
         // Act
-        var result = Result.Ok(value);
+        var result = Result.Success(value);
 
         // Assert
         using (new AssertionScope())
@@ -185,10 +185,10 @@ public sealed class ResultTests
                 .BeTrue();
             resultValue.Should()
                 .Be(value);
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeFalse();
-            result.IsFailed(out var resultError)
+            result.IsFailure(out var resultError)
                 .Should()
                 .BeFalse();
             resultError.Should()
@@ -200,10 +200,10 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_ShouldCreateFailedResultWithSingleError()
+    public void Failure_ShouldCreateFailureResultWithSingleError()
     {
         // Act
-        var result = Result.Fail();
+        var result = Result.Failure();
 
         // Assert
         using (new AssertionScope())
@@ -211,10 +211,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -228,13 +228,13 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
+    public void Failure_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         const string errorMessage = "Sample error message";
 
         // Act
-        var result = Result.Fail(errorMessage);
+        var result = Result.Failure(errorMessage);
 
         // Assert
         using (new AssertionScope())
@@ -242,10 +242,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -259,14 +259,14 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
+    public void Failure_WithErrorMessageAndTupleMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         const string errorMessage = "Sample error message";
         (string Key, object Value) metadata = ("Key", 0);
 
         // Act
-        var result = Result.Fail(errorMessage, metadata);
+        var result = Result.Failure(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -274,10 +274,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             var error = result.Errors
@@ -297,7 +297,7 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
+    public void Failure_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         const string errorMessage = "Sample error message";
@@ -307,7 +307,7 @@ public sealed class ResultTests
         };
 
         // Act
-        var result = Result.Fail(errorMessage, metadata);
+        var result = Result.Failure(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -315,10 +315,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             var error = result.Errors
@@ -338,13 +338,13 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_WithErrorObject_ShouldCreateFailedResultWithSingleError()
+    public void Failure_WithErrorObject_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         var error = new Error("Sample error");
 
         // Act
-        var result = Result.Fail(error);
+        var result = Result.Failure(error);
 
         // Assert
         using (new AssertionScope())
@@ -352,10 +352,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -368,7 +368,7 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Fail_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
+    public void Failure_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
         var errors = new List<IError>
@@ -378,7 +378,7 @@ public sealed class ResultTests
         };
 
         // Act
-        var result = Result.Fail(errors);
+        var result = Result.Failure(errors);
 
         // Assert
         using (new AssertionScope())
@@ -386,10 +386,10 @@ public sealed class ResultTests
             result.IsSuccess()
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -401,10 +401,10 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_ShouldCreateFailedResultWithSingleError()
+    public void FailureTValue_ShouldCreateFailureResultWithSingleError()
     {
         // Act
-        var result = Result.Fail<object>();
+        var result = Result.Failure<object>();
 
         // Assert
         using (new AssertionScope())
@@ -415,10 +415,10 @@ public sealed class ResultTests
             result.IsSuccess(out _)
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -432,13 +432,13 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_WithErrorMessage_ShouldCreateFailedResultWithSingleError()
+    public void FailureTValue_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         const string errorMessage = "Sample error message";
 
         // Act
-        var result = Result.Fail<object>(errorMessage);
+        var result = Result.Failure<object>(errorMessage);
 
         // Assert
         using (new AssertionScope())
@@ -449,10 +449,10 @@ public sealed class ResultTests
             result.IsSuccess(out _)
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -466,14 +466,14 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_WithErrorMessageAndTupleMetadata_ShouldCreateFailedResultWithSingleError()
+    public void FailureTValue_WithErrorMessageAndTupleMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         const string errorMessage = "Sample error message";
         (string Key, object Value) metadata = ("Key", 0);
 
         // Act
-        var result = Result.Fail<object>(errorMessage, metadata);
+        var result = Result.Failure<object>(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -484,10 +484,10 @@ public sealed class ResultTests
             result.IsSuccess(out _)
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             var error = result.Errors
@@ -507,7 +507,7 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailedResultWithSingleError()
+    public void FailureTValue_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         const string errorMessage = "Sample error message";
@@ -517,7 +517,7 @@ public sealed class ResultTests
         };
 
         // Act
-        var result = Result.Fail<object>(errorMessage, metadata);
+        var result = Result.Failure<object>(errorMessage, metadata);
 
         // Assert
         using (new AssertionScope())
@@ -528,10 +528,10 @@ public sealed class ResultTests
             result.IsSuccess(out _)
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             var error = result.Errors
@@ -551,13 +551,13 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_WithErrorObject_ShouldCreateFailedResultWithSingleError()
+    public void FailureTValue_WithErrorObject_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         var error = new Error("Sample error");
 
         // Act
-        var result = Result.Fail<object>(error);
+        var result = Result.Failure<object>(error);
 
         // Assert
         using (new AssertionScope())
@@ -568,10 +568,10 @@ public sealed class ResultTests
             result.IsSuccess(out _)
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -584,7 +584,7 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailTValue_WithErrorsEnumerable_ShouldCreateFailedResultWithMultipleErrors()
+    public void FailureTValue_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
         var errors = new List<IError>
@@ -594,7 +594,7 @@ public sealed class ResultTests
         };
 
         // Act
-        var result = Result.Fail<object>(errors);
+        var result = Result.Failure<object>(errors);
 
         // Assert
         using (new AssertionScope())
@@ -605,10 +605,10 @@ public sealed class ResultTests
             result.IsSuccess(out _)
                 .Should()
                 .BeFalse();
-            result.IsFailed()
+            result.IsFailure()
                 .Should()
                 .BeTrue();
-            result.IsFailed(out _)
+            result.IsFailure(out _)
                 .Should()
                 .BeTrue();
             result.Errors
@@ -623,7 +623,7 @@ public sealed class ResultTests
     public void HasError_WithMatchingErrorType_ShouldReturnTrue()
     {
         // Arrange
-        var result = Result.Fail(new ValidationError("Validation error"));
+        var result = Result.Failure(new ValidationError("Validation error"));
 
         // Assert
         result.HasError<ValidationError>()
@@ -641,7 +641,7 @@ public sealed class ResultTests
             firstError,
             new ValidationError("Validation error 2"),
         };
-        var result = Result.Fail(errors);
+        var result = Result.Failure(errors);
 
         // Act
         var hasError = result.HasError<ValidationError>(out var error);
@@ -660,7 +660,7 @@ public sealed class ResultTests
     public void HasError_WithNonMatchingErrorType_ShouldReturnFalse()
     {
         // Arrange
-        var result = Result.Fail(new Error("Generic error"));
+        var result = Result.Failure(new Error("Generic error"));
 
         // Assert
         result.HasError<ValidationError>()
@@ -672,7 +672,7 @@ public sealed class ResultTests
     public void HasError_WithNonMatchingErrorType_ShouldOutDefaultError()
     {
         // Arrange
-        var result = Result.Fail(new Error("Generic error"));
+        var result = Result.Failure(new Error("Generic error"));
 
         // Act
         var hasError = result.HasError<ValidationError>(out var error);
@@ -691,7 +691,7 @@ public sealed class ResultTests
     public void HasError_WhenIsSuccess_ShouldReturnFalse()
     {
         // Arrange
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Assert
         result.HasError<ValidationError>()
@@ -703,7 +703,7 @@ public sealed class ResultTests
     public void HasError_WhenIsSuccess_ShouldOutDefaultError()
     {
         // Arrange
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Act
         var hasError = result.HasError<ValidationError>(out var error);
@@ -722,8 +722,8 @@ public sealed class ResultTests
     public void Equals_Result_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Ok();
+        var result1 = Result.Success();
+        var result2 = Result.Success();
 
         // Assert
         result1.Equals(result2)
@@ -735,8 +735,8 @@ public sealed class ResultTests
     public void Equals_Result_ShouldReturnFalseForUnequalResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Fail("Error");
+        var result1 = Result.Success();
+        var result2 = Result.Failure("Error");
 
         // Assert
         result1.Equals(result2)
@@ -748,8 +748,8 @@ public sealed class ResultTests
     public void Equals_Object_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Ok();
+        var result1 = Result.Success();
+        var result2 = Result.Success();
 
         // Assert
         result1.Equals((object)result2)
@@ -761,8 +761,8 @@ public sealed class ResultTests
     public void Equals_Object_ShouldReturnFalseForUnequalResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Fail("Error");
+        var result1 = Result.Success();
+        var result2 = Result.Failure("Error");
 
         // Assert
         result1.Equals((object)result2)
@@ -774,8 +774,8 @@ public sealed class ResultTests
     public void GetHashCode_ShouldReturnSameHashCodeForEqualResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Ok();
+        var result1 = Result.Success();
+        var result2 = Result.Success();
 
         // Assert
         result1.GetHashCode()
@@ -787,8 +787,8 @@ public sealed class ResultTests
     public void op_Equality_Result_ShouldReturnTrueForEqualResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Ok();
+        var result1 = Result.Success();
+        var result2 = Result.Success();
 
         // Assert
         (result1 == result2).Should()
@@ -799,8 +799,8 @@ public sealed class ResultTests
     public void op_Equality_Result_ShouldReturnFalseForUnequalResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Fail("Error");
+        var result1 = Result.Success();
+        var result2 = Result.Failure("Error");
 
         // Assert
         (result1 == result2).Should()
@@ -811,8 +811,8 @@ public sealed class ResultTests
     public void op_Inequality_Result_ShouldReturnFalseForEqualResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Ok();
+        var result1 = Result.Success();
+        var result2 = Result.Success();
 
         // Assert
         (result1 != result2).Should()
@@ -823,8 +823,8 @@ public sealed class ResultTests
     public void op_Inequality_Result_ShouldReturnTrueForUnequalResults()
     {
         // Arrange
-        var result1 = Result.Ok();
-        var result2 = Result.Fail("Error");
+        var result1 = Result.Success();
+        var result2 = Result.Failure("Error");
 
         // Assert
         (result1 != result2).Should()
@@ -835,7 +835,7 @@ public sealed class ResultTests
     public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
     {
         // Arrange
-        var result = Result.Ok();
+        var result = Result.Success();
 
         // Assert
         result.ToString()
@@ -846,10 +846,10 @@ public sealed class ResultTests
     [Theory]
     [InlineData("")]
     [InlineData("An unknown error occured!")]
-    public void ToString_WhenFailed_ShouldReturnStringRepresentation(string errorMessage)
+    public void ToString_WhenFailure_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
-        var result = Result.Fail(errorMessage);
+        var result = Result.Failure(errorMessage);
 
         // Assert
         result.ToString()

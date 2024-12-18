@@ -6,7 +6,7 @@ internal static class StringHelper
 {
     private const string PreResultStr = "Result { IsSuccess = ";
     private const string SuccessResultStr = "True";
-    private const string FailedResultStr = "False";
+    private const string FailureResultStr = "False";
     private const string PreValueStr = ", Value = ";
     private const string CharStr = "'";
     private const string StringStr = "\"";
@@ -15,41 +15,41 @@ internal static class StringHelper
     private const string PostResultStr = " }";
     private const string PreMessageStr = " { Message = \"";
     private const string PostMessageStr = "\" }";
-
+    
     public static string GetResultValueString<T>(T value)
     {
         switch (value)
         {
             case bool booleanValue:
-                return GetResultValueString(booleanValue.ToString());
+                return GetResultValueValueString(booleanValue.ToString());
             case sbyte sbyteValue:
-                return GetResultValueString(sbyteValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(sbyteValue.ToString(CultureInfo.InvariantCulture));
             case byte byteValue:
-                return GetResultValueString(byteValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(byteValue.ToString(CultureInfo.InvariantCulture));
             case short shortValue:
-                return GetResultValueString(shortValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(shortValue.ToString(CultureInfo.InvariantCulture));
             case ushort uShortValue:
-                return GetResultValueString(uShortValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(uShortValue.ToString(CultureInfo.InvariantCulture));
             case int intValue:
-                return GetResultValueString(intValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(intValue.ToString(CultureInfo.InvariantCulture));
             case uint uintValue:
-                return GetResultValueString(uintValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(uintValue.ToString(CultureInfo.InvariantCulture));
             case long longValue:
-                return GetResultValueString(longValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(longValue.ToString(CultureInfo.InvariantCulture));
             case ulong ulongValue:
-                return GetResultValueString(ulongValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(ulongValue.ToString(CultureInfo.InvariantCulture));
 #if NET7_0_OR_GREATER
             case Int128 int128Value:
-                return GetResultValueString(int128Value.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(int128Value.ToString(CultureInfo.InvariantCulture));
             case UInt128 uint128Value:
-                return GetResultValueString(uint128Value.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(uint128Value.ToString(CultureInfo.InvariantCulture));
 #endif
             case decimal decimalValue:
-                return GetResultValueString(decimalValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(decimalValue.ToString(CultureInfo.InvariantCulture));
             case float floatValue:
-                return GetResultValueString(floatValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(floatValue.ToString(CultureInfo.InvariantCulture));
             case double doubleValue:
-                return GetResultValueString(doubleValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultValueValueString(doubleValue.ToString(CultureInfo.InvariantCulture));
             case DateTime dateTimeValue:
                 return GetResultStringValueString(dateTimeValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
             case DateTimeOffset dateTimeOffsetValue:
@@ -101,7 +101,7 @@ internal static class StringHelper
 #endif
     }
 
-    private static string GetResultValueString(string valueString)
+    private static string GetResultValueValueString(string valueString)
     {
 #if NET6_0_OR_GREATER
         var stringLength = PreResultStrLength + SuccessResultStrLength + PreValueStrLength + valueString.Length + PostResultStrLength;
@@ -114,10 +114,10 @@ internal static class StringHelper
     public static string GetResultErrorString(string errorMessage)
     {
 #if NET6_0_OR_GREATER
-        var stringLength = PreResultStrLength + FailedResultStrLength + PreErrorStrLength + errorMessage.Length + PostErrorStrLength + PostResultStrLength;
+        var stringLength = PreResultStrLength + FailureResultStrLength + PreErrorStrLength + errorMessage.Length + PostErrorStrLength + PostResultStrLength;
         return string.Create(stringLength, errorMessage, GetResultErrorSpan);
 #else
-        return $"{PreResultStr}{FailedResultStr}{PreErrorStr}{errorMessage}{PostErrorStr}{PostResultStr}";
+        return $"{PreResultStr}{FailureResultStr}{PreErrorStr}{errorMessage}{PostErrorStr}{PostResultStr}";
 #endif
     }
 
@@ -134,7 +134,7 @@ internal static class StringHelper
 #if NET6_0_OR_GREATER
     private const int PreResultStrLength = 21;
     private const int SuccessResultStrLength = 4;
-    private const int FailedResultStrLength = 5;
+    private const int FailureResultStrLength = 5;
     private const int PreValueStrLength = 10;
     private const int CharStrLength = 1;
     private const int StringStrLength = 1;
@@ -146,75 +146,106 @@ internal static class StringHelper
 
     private static void GetResultValueSpan(Span<char> span, string state)
     {
-        PreResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreResultStrLength);
-        SuccessResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(SuccessResultStrLength);
-        PreValueStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreValueStrLength);
-        state.AsSpan().CopyTo(span);
-        span = span.Slice(state.Length);
-        PostResultStr.AsSpan().CopyTo(span);
+        PreResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreResultStrLength..];
+        SuccessResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[SuccessResultStrLength..];
+        PreValueStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreValueStrLength..];
+        state
+            .CopyTo(span);
+        span = span[state.Length..];
+        PostResultStr.AsSpan()
+            .CopyTo(span);
     }
 
     private static void GetResultValueCharSpan(Span<char> span, string state)
     {
-        PreResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreResultStrLength);
-        SuccessResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(SuccessResultStrLength);
-        PreValueStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreValueStrLength);
-        CharStr.AsSpan().CopyTo(span);
-        span = span.Slice(CharStrLength);
-        state.AsSpan().CopyTo(span);
-        span = span.Slice(state.Length);
-        CharStr.AsSpan().CopyTo(span);
-        span = span.Slice(CharStrLength);
-        PostResultStr.AsSpan().CopyTo(span);
+        PreResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreResultStrLength..];
+        SuccessResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[SuccessResultStrLength..];
+        PreValueStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreValueStrLength..];
+        CharStr.AsSpan()
+            .CopyTo(span);
+        span = span[CharStrLength..];
+        state.AsSpan()
+            .CopyTo(span);
+        span = span[state.Length..];
+        CharStr.AsSpan()
+            .CopyTo(span);
+        span = span[CharStrLength..];
+        PostResultStr.AsSpan()
+            .CopyTo(span);
     }
 
     private static void GetResultValueStringSpan(Span<char> span, string state)
     {
-        PreResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreResultStrLength);
-        SuccessResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(SuccessResultStrLength);
-        PreValueStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreValueStrLength);
-        StringStr.AsSpan().CopyTo(span);
-        span = span.Slice(StringStrLength);
-        state.AsSpan().CopyTo(span);
-        span = span.Slice(state.Length);
-        StringStr.AsSpan().CopyTo(span);
-        span = span.Slice(StringStrLength);
-        PostResultStr.AsSpan().CopyTo(span);
+        PreResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreResultStrLength..];
+        SuccessResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[SuccessResultStrLength..];
+        PreValueStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreValueStrLength..];
+        StringStr.AsSpan()
+            .CopyTo(span);
+        span = span[StringStrLength..];
+        state.AsSpan()
+            .CopyTo(span);
+        span = span[state.Length..];
+        StringStr.AsSpan()
+            .CopyTo(span);
+        span = span[StringStrLength..];
+        PostResultStr.AsSpan()
+            .CopyTo(span);
     }
 
     private static void GetResultErrorSpan(Span<char> span, string state)
     {
-        PreResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreResultStrLength);
-        FailedResultStr.AsSpan().CopyTo(span);
-        span = span.Slice(FailedResultStrLength);
-        PreErrorStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreErrorStrLength);
-        state.AsSpan().CopyTo(span);
-        span = span.Slice(state.Length);
-        PostErrorStr.AsSpan().CopyTo(span);
-        span = span.Slice(PostErrorStrLength);
-        PostResultStr.AsSpan().CopyTo(span);
+        PreResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreResultStrLength..];
+        FailureResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[FailureResultStrLength..];
+        PreErrorStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreErrorStrLength..];
+        state.AsSpan()
+            .CopyTo(span);
+        span = span[state.Length..];
+        PostErrorStr.AsSpan()
+            .CopyTo(span);
+        span = span[PostErrorStrLength..];
+        PostResultStr.AsSpan()
+            .CopyTo(span);
     }
 
     private static void GetErrorSpan(Span<char> span, (string errorType, string errorMessage) state)
     {
-        state.errorType.AsSpan().CopyTo(span);
-        span = span.Slice(state.errorType.Length);
-        PreMessageStr.AsSpan().CopyTo(span);
-        span = span.Slice(PreMessageStrLength);
-        state.errorMessage.AsSpan().CopyTo(span);
-        span = span.Slice(state.errorMessage.Length);
-        PostMessageStr.AsSpan().CopyTo(span);
+        state.errorType
+            .AsSpan()
+            .CopyTo(span);
+        span = span[state.errorType.Length..];
+        PreMessageStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreMessageStrLength..];
+        state.errorMessage
+            .AsSpan()
+            .CopyTo(span);
+        span = span[state.errorMessage.Length..];
+        PostMessageStr.AsSpan()
+            .CopyTo(span);
     }
 #endif
 }
