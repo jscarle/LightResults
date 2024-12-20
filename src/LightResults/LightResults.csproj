@@ -37,7 +37,7 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>9.0.0-preview.15</Version>
+        <Version>9.0.0-preview.16</Version>
         <AssemblyVersion>9.0.0.0</AssemblyVersion>
         <FileVersion>9.0.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
