@@ -130,7 +130,7 @@ public partial class Benchmarks
     public void A_LightResults_Result_IsFailed()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
-            _ = LightResultsResultFail.IsSuccess();
+            _ = LightResultsResultFail.IsFailure();
     }
 
     [Benchmark(Baseline = true)]
