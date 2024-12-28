@@ -6,11 +6,6 @@ namespace LightResults;
 
 partial struct Result<TValue>
 {
-    internal static Result<TValue> Success(TValue value)
-    {
-        return new Result<TValue>(value);
-    }
-
 #if NET7_0_OR_GREATER
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>

@@ -127,6 +127,9 @@
         <Compile Update="Result`1.ToString.cs">
             <DependentUpon>Result`1.cs</DependentUpon>
         </Compile>
+        <Compile Update="Result.Cast.cs">
+          <DependentUpon>Result.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

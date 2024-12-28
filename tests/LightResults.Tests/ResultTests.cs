@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using LightResults.Common;
 using Xunit;
 
 namespace LightResults.Tests;
@@ -48,7 +49,7 @@ public sealed class ResultTests
                 .Should()
                 .BeFalse();
             validationError.Should()
-                .Be(default);
+                .Be(null);
         }
     }
 
@@ -378,6 +379,39 @@ public sealed class ResultTests
         };
 
         // Act
+        var result = Result.Failure(errors.AsEnumerable());
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(errors);
+        }
+    }
+
+    [Fact]
+    public void Failure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
+
+        // Act
         var result = Result.Failure(errors);
 
         // Assert
@@ -683,7 +717,7 @@ public sealed class ResultTests
             hasError.Should()
                 .BeFalse();
             error.Should()
-                .Be(default);
+                .Be(null);
         }
     }
 
@@ -714,7 +748,39 @@ public sealed class ResultTests
             hasError.Should()
                 .BeFalse();
             error.Should()
-                .Be(default);
+                .Be(null);
+        }
+    }
+
+    [Fact]
+    public void ImplicitCast_ShouldCreateFailureResultFromError()
+    {
+        // Arrange
+        var error = new Error("Sample error");
+
+        // Act
+        Result result = error;
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out var resultError)
+                .Should()
+                .BeTrue();
+            resultError.Should()
+                .BeEquivalentTo(error);
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(error);
         }
     }
 
@@ -830,6 +896,322 @@ public sealed class ResultTests
         (result1 != result2).Should()
             .BeTrue();
     }
+
+#if NET7_0_OR_GREATER
+    [Fact]
+    public void InterfaceSuccess_ShouldCreateSuccessResult()
+    {
+        // Arrange
+        static Result Success<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            return TResult.Success();
+        }
+
+        // Act
+        var result = Success<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeTrue();
+            result.IsFailure()
+                .Should()
+                .BeFalse();
+            result.IsFailure(out var resultError)
+                .Should()
+                .BeFalse();
+            resultError.Should()
+                .Be(null);
+            result.Errors
+                .Should()
+                .BeEmpty();
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            return TResult.Failure();
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Message
+                .Should()
+                .Be("");
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            const string errorMessage = "Sample error message";
+            return TResult.Failure(errorMessage);
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Message
+                .Should()
+                .Be("Sample error message");
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorMessageAndTupleMetadata_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            const string errorMessage = "Sample error message";
+            (string Key, object Value) metadata = ("Key", 0);
+            return TResult.Failure(errorMessage, metadata);
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be("Sample error message");
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            const string errorMessage = "Sample error message";
+            IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+            {
+                { "Key", 0 },
+            };
+            return TResult.Failure(errorMessage, metadata);
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be("Sample error message");
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorObject_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            var error = new Error("Sample error");
+            return TResult.Failure(error);
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new Error("Sample error"));
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            var errors = new List<IError>
+            {
+                new Error("Error 1"),
+                new Error("Error 2"),
+            };
+            return TResult.Failure(errors.AsEnumerable());
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(new List<IError>
+                    {
+                        new Error("Error 1"),
+                        new Error("Error 2"),
+                    }
+                );
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
+    {
+        // Arrange
+        static Result Fail<TResult>()
+            where TResult : IActionableResult<Result>
+        {
+            var errors = new List<IError>
+            {
+                new Error("Error 1"),
+                new Error("Error 2"),
+            };
+            return TResult.Failure(errors);
+        }
+
+        // Act
+        var result = Fail<Result>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(new List<IError>
+                    {
+                        new Error("Error 1"),
+                        new Error("Error 2"),
+                    }
+                );
+        }
+    }
+#endif
 
     [Fact]
     public void ToString_WhenSuccess_ShouldReturnStringRepresentation()

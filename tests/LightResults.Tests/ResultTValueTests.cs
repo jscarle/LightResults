@@ -27,7 +27,7 @@ public sealed class ResultTValueTests
                 .Should()
                 .BeFalse();
             resultValue.Should()
-                .Be(default);
+                .Be(0);
             result.IsFailure()
                 .Should()
                 .BeTrue();
@@ -57,7 +57,7 @@ public sealed class ResultTValueTests
                 .Should()
                 .BeFalse();
             validationError.Should()
-                .Be(default);
+                .Be(null);
         }
     }
 
@@ -107,7 +107,7 @@ public sealed class ResultTValueTests
                 .Should()
                 .BeFalse();
             validationError.Should()
-                .Be(default);
+                .Be(null);
         }
     }
 
@@ -178,7 +178,7 @@ public sealed class ResultTValueTests
             isSuccess.Should()
                 .BeFalse();
             resultValue.Should()
-                .Be(default);
+                .Be(0);
         }
     }
 
@@ -222,7 +222,7 @@ public sealed class ResultTValueTests
             isSuccess.Should()
                 .BeFalse();
             resultValue.Should()
-                .Be(default);
+                .Be(0);
             resultError.Should()
                 .Be(firstError);
         }
@@ -355,7 +355,7 @@ public sealed class ResultTValueTests
             resultError.Should()
                 .Be(firstError);
             resultValue.Should()
-                .Be(default);
+                .Be(0);
         }
     }
 
@@ -656,6 +656,42 @@ public sealed class ResultTValueTests
         };
 
         // Act
+        var result = Result.Failure<int>(errors.AsEnumerable());
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(errors);
+        }
+    }
+
+    [Fact]
+    public void Failure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
+
+        // Act
         var result = Result.Failure<int>(errors);
 
         // Assert
@@ -745,7 +781,7 @@ public sealed class ResultTValueTests
             hasError.Should()
                 .BeFalse();
             error.Should()
-                .Be(default);
+                .Be(null);
         }
     }
 
@@ -776,7 +812,7 @@ public sealed class ResultTValueTests
             hasError.Should()
                 .BeFalse();
             error.Should()
-                .Be(default);
+                .Be(null);
         }
     }
 
@@ -813,7 +849,7 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void ToFailure_ShouldConvertResultToNonGenericResultWithSameErrors()
+    public void AsFailure_ShouldConvertResultToNonGenericResultWithSameErrors()
     {
         // Arrange
         var errors = new List<IError>
@@ -824,7 +860,7 @@ public sealed class ResultTValueTests
         var result = Result.Failure<int>(errors);
 
         // Act
-        var nonGenericResult = result.ToFailure();
+        var nonGenericResult = result.AsFailure();
 
         // Assert
         using (new AssertionScope())
@@ -844,13 +880,13 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void ToFailure_ShouldConvertDefaultResultToNonGenericResult()
+    public void AsFailure_ShouldConvertDefaultResultToNonGenericResult()
     {
         // Arrange
         Result<int> result = default;
 
         // Act
-        var nonGenericResult = result.ToFailure();
+        var nonGenericResult = result.AsFailure();
 
         // Assert
         using (new AssertionScope())
@@ -870,7 +906,7 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void ToFailure_ShouldConvertResultToGenericResultWithSameErrors()
+    public void AsFailure_ShouldConvertResultToGenericResultWithSameErrors()
     {
         // Arrange
         var errors = new List<IError>
@@ -881,7 +917,7 @@ public sealed class ResultTValueTests
         var result = Result.Failure<int>(errors);
 
         // Act
-        var genericResult = result.ToFailure<object>();
+        var genericResult = result.AsFailure<object>();
 
         // Assert
         using (new AssertionScope())
@@ -901,13 +937,13 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void ToFailure_ShouldConvertDefaultResultToGenericResult()
+    public void AsFailure_ShouldConvertDefaultResultToGenericResult()
     {
         // Arrange
         Result<int> result = default;
 
         // Act
-        var genericResult = result.ToFailure<object>();
+        var genericResult = result.AsFailure<object>();
 
         // Assert
         using (new AssertionScope())
@@ -923,6 +959,73 @@ public sealed class ResultTValueTests
                 .HaveCount(1)
                 .And
                 .HaveElementAt(0, Error.Empty);
+        }
+    }
+    
+    [Fact]
+    public void ImplicitCast_ShouldCreateSuccessResultFromValue()
+    {
+        // Arrange
+        const int value = 42;
+
+        // Act
+        Result<int> result = value;
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeTrue();
+            result.IsSuccess(out var resultValue)
+                .Should()
+                .BeTrue();
+            resultValue.Should()
+                .Be(value);
+            result.IsFailure()
+                .Should()
+                .BeFalse();
+            result.IsFailure(out _)
+                .Should()
+                .BeFalse();
+            result.Errors
+                .Should()
+                .BeEmpty();
+        }
+    }
+
+    [Fact]
+    public void ImplicitCast_ShouldCreateFailureResultFromError()
+    {
+        // Arrange
+        var error = new Error("Sample error");
+
+        // Act
+        Result<int> result = error;
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out var resultError)
+                .Should()
+                .BeTrue();
+            resultError.Should()
+                .BeEquivalentTo(error);
+            result.Errors
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(error);
         }
     }
 
@@ -1672,6 +1775,52 @@ public sealed class ResultTValueTests
                 new Error("Error 1"),
                 new Error("Error 2"),
             };
+            return TResult.Failure(errors.AsEnumerable());
+        }
+
+        // Act
+        var result = Fail<int, Result<int>>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            result.Errors
+                .Should()
+                .HaveCount(2)
+                .And
+                .BeEquivalentTo(new List<IError>
+                    {
+                        new Error("Error 1"),
+                        new Error("Error 2"),
+                    }
+                );
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
+    {
+        // Arrange
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            var errors = new List<IError>
+            {
+                new Error("Error 1"),
+                new Error("Error 2"),
+            };
             return TResult.Failure(errors);
         }
 
@@ -1707,7 +1856,7 @@ public sealed class ResultTValueTests
     }
 #endif
 
-#if NET9_0_OR_GREATER
+#if NET6_0_OR_GREATER
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"2024-04-05\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
