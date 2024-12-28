@@ -10,108 +10,136 @@ for exceptional performance by intentionally simplifying its API.
 Below are comparisons of LightResults against other result pattern implementations.
 
 ```
-BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.3155/23H2/2023Update/SunValley3)
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2605)
 13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
-.NET SDK 8.0.200
-  [Host]     : .NET 8.0.2 (8.0.224.6711), X64 RyuJIT AVX2
-  DefaultJob : .NET 8.0.2 (8.0.224.6711), X64 RyuJIT AVX2
-  Iterations : 100 000
-```
+.NET SDK 9.0.101
+  [Host]   : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
+  .NET 9.0 : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
 
-### Returning a successful result
-| Method                            |      Mean | Ratio | Allocated | Alloc Ratio |
-|-----------------------------------|----------:|------:|----------:|------------:|
-| LightResults: `Result.Ok()`       |  18.75 μs |  1.00 |         - |             |
-| FluentResults: `Result.Ok()`      | 970.51 μs | 51.75 |   5.34 MB |             |
-| ArdalisResult: `Result.Success()` | 884.94 μs | 47.20 |  12.21 MB |             |
+Job=.NET 9.0  Runtime=.NET 9.0  IterationTime=250ms
+Iterations=10
+``` 
+### Returning results
 
-### String representation of a successful result
-| Method                                       |       Mean |  Ratio | Allocated | Alloc Ratio |
-|----------------------------------------------|-----------:|-------:|----------:|------------:|
-| LightResults: `Result.Ok().ToString()`       |   19.25 μs |   1.00 |         - |             |
-| FluentResults: `Result.Ok().ToString()`      | 6596.66 μs | 342.67 |  14.50 MB |             |
-| ArdalisResult: `Result.Success().ToString()` |  176.13 μs |   9.15 |         - |             |
+#### Returning a successful result
+| Method                            |      Mean | Ratio | Allocated |
+|-----------------------------------|----------:|------:|----------:|
+| LightResults: `Result.Success()`  |  2.229 ns |  1.00 |         - |
+| FluentResults: `Result.Ok()`      | 46.144 ns | 20.70 |     560 B |
+| ArdalisResult: `Result.Success()` | 43.977 ns | 19.73 |     720 B |
 
-### Returning a successful value result
-| Method                                    |        Mean | Ratio | Allocated | Alloc Ratio |
-|-------------------------------------------|------------:|------:|----------:|------------:|
-| LightResults: `Result<T>.Ok(value)`       |   301.55 μs |  1.00 |   3.05 MB |        1.00 |
-| FluentResults: `Result.Ok<T>(value)`      | 3,319.44 μs | 11.01 |  11.44 MB |        3.75 |
-| ArdalisResult: `Result<T>.Success(value)` |   869.52 μs |  2.88 |  11.44 MB |        3.75 |
+#### Returning a successful value result
+| Method                                    |        Mean | Ratio | Allocated |
+|-------------------------------------------|------------:|------:|----------:|
+| LightResults: `Result.Success<T>(value)`  |    2.279 ns |  1.00 |         - |
+| FluentResults: `Result.Ok<T>(value)`      |  146.461 ns | 64.28 |    1120 B |
+| ArdalisResult: `Result<T>.Success(value)` |   40.390 ns | 17.73 |     640 B |
 
-### String representation of a successful value result
-| Method                                               |        Mean | Ratio | Allocated | Alloc Ratio |
-|------------------------------------------------------|------------:|------:|----------:|------------:|
-| LightResults: `Result<T>.Ok(value).ToString()`       | 2,264.87 μs |  1.00 |  14.50 MB |        1.00 |
-| FluentResults: `Result.Ok<T>(value).ToString()`      | 9,240.23 μs |  4.08 |  29.75 MB |        2.05 |
-| ArdalisResult: `Result<T>.Success(value).ToString()` |   180.07 μs |  0.08 |         - |        0.00 |
+#### Returning a failed result
+| Method                           |       Mean |  Ratio | Allocated |
+|----------------------------------|-----------:|-------:|----------:|
+| LightResults: `Result.Failure()` |   2.171 ns |   1.00 |         - |
+| FluentResults: `Result.Fail("")` | 245.472 ns | 113.05 |    2640 B |
+| ArdalisResult: `Result.Error()`  |  44.872 ns |  20.66 |     720 B |
 
-### Returning a failed result
-| Method                           |        Mean |  Ratio | Allocated | Alloc Ratio |
-|----------------------------------|------------:|-------:|----------:|------------:|
-| LightResults: `Result.Fail()`    |    18.73 μs |   1.00 |         - |             |
-| FluentResults: `Result.Fail("")` | 4,605.57 μs | 245.94 |  25.18 MB |             |
-| ArdalisResult: `Result.Error()`  |   721.64 μs |  38.53 |  12.21 MB |             |
+#### Returning a failed result with an error message
+| Method                                       |       Mean | Ratio | Allocated | Alloc Ratio |
+|----------------------------------------------|-----------:|------:|----------:|------------:|
+| LightResults: `Result.Failure(errorMessage)` |  17.455 ns |  1.00 |     240 B |        1.00 |
+| FluentResults: `Result.Fail(errorMessage)`   | 119.614 ns |  5.89 |    1120 B |        4.67 |
+| ArdalisResult: `Result.Error(errorMessage)`  |  63.892 ns |  3.12 |    1040 B |        4.33 |
 
-### String representation of a failed result
-| Method                                      |         Mean |  Ratio | Allocated | Alloc Ratio |
-|---------------------------------------------|-------------:|-------:|----------:|------------:|
-| LightResults: `Result.Fail().ToString()`    |     59.70 μs |   1.00 |         - |             |
-| FluentResults: `Result.Fail("").ToString()` | 16,118.10 μs | 270.01 |  37.38 MB |             |
-| ArdalisResult: `Result.Error().ToString()`  |    180.96 μs |   3.03 |         - |             |
+#### Returning a failed value result
+| Method                              |       Mean |  Ratio | Allocated |
+|-------------------------------------|-----------:|-------:|----------:|
+| LightResults: `Result.Failure<T>()` |   2.462 ns |   1.00 |         - |
+| FluentResults: `Result.Fail<T>("")` | 247.613 ns | 100.62 |    2720 B |
+| ArdalisResult: `Result<T>.Error()`  |  44.701 ns |  18.16 |     640 B |
 
-### Returning a failed result with an error message
-| Method                                      |        Mean | Ratio | Allocated | Alloc Ratio |
-|---------------------------------------------|------------:|------:|----------:|------------:|
-| LightResults: `Result.Fail(errorMessage)`   |   358.16 μs |  1.00 |   5.34 MB |        1.00 |
-| FluentResults: `Result.Fail(errorMessage)`  | 2,109.22 μs |  5.89 |  10.68 MB |        2.00 |
-| ArdalisResult: `Result.Error(errorMessage)` | 1,116.45 μs |  3.12 |  15.26 MB |        2.86 |
+#### Returning a failed value result with an error message
+| Method                                          |       Mean | Ratio | Allocated | Alloc Ratio |
+|-------------------------------------------------|-----------:|------:|----------:|------------:|
+| LightResults: `Result.Failure<T>(errorMessage)` |  21.735 ns |  1.00 |     240 B |        1.00 |
+| FluentResults: `Result.Fail<T>(errorMessage)`   | 120.527 ns |  5.55 |    1200 B |        5.00 |
+| ArdalisResult: `Result<T>.Error(errorMessage)`  |  58.888 ns |  2.71 |     960 B |        4.00 |
 
-### String representation of a failed result with an error message
-| Method                                                 |         Mean | Ratio | Allocated | Alloc Ratio |
-|--------------------------------------------------------|-------------:|------:|----------:|------------:|
-| LightResults: `Result.Fail(errorMessage).ToString()`   |  2,636.35 μs |  1.00 |  23.65 MB |        1.00 |
-| FluentResults: `Result.Fail(errorMessage).ToString()`  | 21,792.47 μs |  8.27 |  89.27 MB |        3.77 |
-| ArdalisResult: `Result.Error(errorMessage).ToString()` |    176.21 μs |  0.07 |         - |        0.00 |
+### Checking results
 
-### Returning a failed value result
-| Method                              |        Mean |  Ratio | Allocated | Alloc Ratio |
-|-------------------------------------|------------:|-------:|----------:|------------:|
-| LightResults: `Result<T>.Fail()`    |    18.72 μs |   1.00 |         - |             |
-| FluentResults: `Result.Fail<T>("")` | 4,800.67 μs | 256.39 |  25.94 MB |             |
-| ArdalisResult: `Result<T>.Error()`  |   857.74 μs |  45.81 |  11.44 MB |             |
+#### Determining if a result is successful
+| Method                             |      Mean | Ratio | Allocated |
+|------------------------------------|----------:|------:|----------:|
+| LightResults: `result.IsSuccess()` |  2.759 ns |  1.00 |         - |
+| FluentResults: `result.IsSuccess`  | 95.084 ns | 34.47 |     480 B |
+| ArdalisResult: `result.IsSuccess`  |  2.299 ns |  0.83 |         - |
 
-### String representation of a failed value result
-| Method                                         |         Mean |  Ratio | Allocated | Alloc Ratio |
-|------------------------------------------------|-------------:|-------:|----------:|------------:|
-| LightResults: `Result<T>.Fail().ToString()`    |     59.57 μs |   1.00 |         - |             |
-| FluentResults: `Result.Fail<T>("").ToString()` | 19,730.34 μs | 331.37 |  55.70 MB |             |
-| ArdalisResult: `Result<T>.Error().ToString()`  |    176.75 μs |   2.97 |         - |             |
+#### Retrieving the value
+| Method                                          |      Mean | Ratio | Allocated |
+|-------------------------------------------------|----------:|------:|----------:|
+| LightResults: `result.IsSuccess(out var value)` |  2.276 ns |  1.00 |         - |
+| FluentResults: `result.Value`                   | 92.877 ns | 40.81 |     480 B |
+| ArdalisResult: `result.Value`                   |  2.769 ns |  1.22 |         - |
 
-### Returning a failed value result with an error message
-| Method                                         |        Mean | Ratio | Allocated | Alloc Ratio |
-|------------------------------------------------|------------:|------:|----------:|------------:|
-| LightResults: `Result<T>.Fail(errorMessage)`   |   373.73 μs |  1.00 |   6.11 MB |        1.00 |
-| FluentResults: `Result.Fail<T>(errorMessage)`  | 2,116.39 μs |  5.66 |  11.44 MB |        1.88 |
-| ArdalisResult: `Result<T>.Error(errorMessage)` | 1,048.89 μs |  2.81 |  14.50 MB |        2.38 |
+#### Determining if a result is failed
+| Method                             |       Mean | Ratio | Allocated |
+|------------------------------------|-----------:|------:|----------:|
+| LightResults: `result.IsFailure()` |   2.771 ns |  1.00 |         - |
+| FluentResults: `result.IsFailed`   | 144.895 ns | 52.28 |     880 B |
+| ArdalisResult: `!result.IsSuccess` |   2.288 ns |  0.83 |         - |
 
-### String representation of a failed value result with an error message
-| Method                                                    |         Mean | Ratio | Allocated | Alloc Ratio |
-|-----------------------------------------------------------|-------------:|------:|----------:|------------:|
-| LightResults: `Result<T>.Fail(errorMessage).ToString()`   |  2,867.35 μs |  1.00 |  23.65 MB |        1.00 |
-| FluentResults: `Result<T>.Error(errorMessage).ToString()` | 26,214.19 μs |  9.14 | 115.97 MB |        4.90 |
-| ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`  |    179.75 μs |  0.06 |         - |        0.00 |
+#### Determining if a result contains a specific error
+| Method                                                                                |       Mean | Ratio | Allocated |
+|---------------------------------------------------------------------------------------|-----------:|------:|----------:|
+| LightResults: `result.HasError<T>()`                                                  |  11.698 ns |  1.00 |         - |
+| FluentResults: `result.HasError<T>()`                                                 | 735.001 ns | 62.83 |    3600 B |
+| ArdalisResult: `result.Errors.Any(errorMessage => errorMessage.Equals(ErrorMessage))` |  20.135 ns |  1.72 |         - |
 
-### Determining if a result contains a specific error
-| Method                                                                                |         Mean |  Ratio | Allocated | Alloc Ratio |
-|---------------------------------------------------------------------------------------|-------------:|-------:|----------:|------------:|
-| LightResults: `result.HasError<T>()`                                                  |     93.69 μs |   1.00 |         - |             |
-| FluentResults: `result.HasError<T>()`                                                 | 12,697.37 μs | 135.53 |  40.44 MB |             |
-| ArdalisResult: `result.Errors.Any(errorMessage => errorMessage.Equals(ErrorMessage))` |    761.70 μs |   8.13 |   3.05 MB |             |
+#### Retrieving the first error
+| Method                                 |       Mean |  Ratio | Allocated |
+|----------------------------------------|-----------:|-------:|----------:|
+| LightResults: `result.Error`           |   2.484 ns |   1.00 |         - |
+| FluentResults: `result.Errors[0]`      | 249.327 ns | 100.36 |    1520 B |
+| ArdalisResult: `result.Errors.First()` |  95.526 ns |  38.45 |         - |
 
-### Retrieving the first error
-| Method                                 |        Mean |  Ratio | Allocated | Alloc Ratio |
-|----------------------------------------|------------:|-------:|----------:|------------:|
-| LightResults: `result.Error`           |    28.10 μs |   1.00 |         - |             |
-| FluentResults: `result.Errors[0]`      | 4,429.89 μs | 157.65 |  17.55 MB |             |
-| ArdalisResult: `result.Errors.First()` | 1,267.42 μs |  45.11 |         - |             |
+### Getting results as strings
+
+#### String representation of a successful result
+| Method                                       |       Mean |  Ratio | Allocated |
+|----------------------------------------------|-----------:|-------:|----------:|
+| LightResults: `Result.Success().ToString()`  |   2.336 ns |   1.00 |         - |
+| FluentResults: `Result.Ok().ToString()`      | 457.159 ns | 195.72 |    1440 B |
+| ArdalisResult: `Result.Success().ToString()` |  12.930 ns |   5.54 |         - |
+
+#### String representation of a successful value result
+| Method                                               |       Mean | Ratio | Allocated | Alloc Ratio |
+|------------------------------------------------------|-----------:|------:|----------:|------------:|
+| LightResults: `Result.Success<T>(value).ToString()`  |  94.038 ns |  1.00 |    1040 B |        1.00 |
+| FluentResults: `Result.Ok<T>(value).ToString()`      | 672.014 ns | 17.15 |    3040 B |        2.92 |
+| ArdalisResult: `Result<T>.Success(value).ToString()` |  12.597 ns |  0.13 |         - |        0.00 |
+
+#### String representation of a failed result
+| Method                                      |         Mean |  Ratio | Allocated |
+|---------------------------------------------|-------------:|-------:|----------:|
+| LightResults: `Result.Failure().ToString()` |     4.965 ns |   1.00 |         - |
+| FluentResults: `Result.Fail("").ToString()` | 1,000.265 ns | 201.46 |    3840 B |
+| ArdalisResult: `Result.Error().ToString()`  |    12.659 ns |   2.55 |         - |
+
+#### String representation of a failed result with an error message
+| Method                                                  |         Mean | Ratio | Allocated | Alloc Ratio |
+|---------------------------------------------------------|-------------:|------:|----------:|------------:|
+| LightResults: `Result.Failure(errorMessage).ToString()` |   100.338 ns |  1.00 |    1520 B |        1.00 |
+| FluentResults: `Result.Fail(errorMessage).ToString()`   | 1,564.981 ns | 15.60 |    9280 B |        6.11 |
+| ArdalisResult: `Result.Error(errorMessage).ToString()`  |    12.787 ns |  0.13 |         - |        0.00 |
+
+#### String representation of a failed value result
+| Method                                         |         Mean |  Ratio | Allocated |
+|------------------------------------------------|-------------:|-------:|----------:|
+| LightResults: `Result.Failure<T>().ToString()` |     5.016 ns |   1.00 |         - |
+| FluentResults: `Result.Fail<T>("").ToString()` | 1,302.858 ns | 259.72 |    5760 B |
+| ArdalisResult: `Result<T>.Error().ToString()`  |    12.742 ns |   2.54 |         - |
+
+#### String representation of a failed value result with an error message
+| Method                                                     |         Mean | Ratio | Allocated | Alloc Ratio |
+|------------------------------------------------------------|-------------:|------:|----------:|------------:|
+| LightResults: `Result.Failure<T>(errorMessage).ToString()` |   101.344 ns |  1.00 |    1520 B |        1.00 |
+| FluentResults: `Result<T>.Error(errorMessage).ToString()`  | 1,789.207 ns | 17.65 |   12080 B |        7.95 |
+| ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`   |    12.848 ns |  0.13 |         - |        0.00 |

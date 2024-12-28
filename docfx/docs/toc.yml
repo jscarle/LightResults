@@ -2,3 +2,5 @@
   href: getting-started.md
 - name: Performance
   href: performance.md
+- name: Breaking Changes
+  href: breaking-changes.md

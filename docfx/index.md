@@ -20,7 +20,7 @@ excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
 ## References
 
-This library targets .NET Standard 2.0, .NET 6.0, .NET 7.0, and .NET 8.0.
+This library targets .NET Standard 2.0, .NET 6.0, .NET 7.0, .NET 8.0, and .NET 9.0.
 
 ## Dependencies
 

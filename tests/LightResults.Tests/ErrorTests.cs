@@ -3,7 +3,7 @@ using Xunit;
 
 namespace LightResults.Tests;
 
-public class ErrorTests
+public sealed class ErrorTests
 {
     [Fact]
     public void DefaultConstructor_ShouldCreateEmptyError()
@@ -11,9 +11,13 @@ public class ErrorTests
         // Arrange
         var error = new Error();
 
-        // Act & Assert
-        error.Message.Should().BeEmpty();
-        error.Metadata.Should().BeEmpty();
+        // Assert
+        error.Message
+            .Should()
+            .BeEmpty();
+        error.Metadata
+            .Should()
+            .BeEmpty();
     }
 
     [Fact]
@@ -26,78 +30,81 @@ public class ErrorTests
         var error = new Error(errorMessage);
 
         // Assert
-        error.Message.Should().Be(errorMessage);
-        error.Metadata.Should().BeEmpty();
+        error.Message
+            .Should()
+            .Be(errorMessage);
+        error.Metadata
+            .Should()
+            .BeEmpty();
     }
 
     [Fact]
-    public void ConstructorWithMetadataTuple_ShouldCreateErrorWithSingleMetadata()
-    {
-        // Arrange
-        var metadata = (Key: "Key", Value: "Value");
-
-        // Act
-        var error = new Error(metadata);
-
-        // Assert
-        error.Message.Should().BeEmpty();
-        error.Metadata.Should().ContainSingle();
-        error.Metadata.First().Key.Should().BeEquivalentTo(metadata.Key);
-        error.Metadata.First().Value.Should().BeEquivalentTo(metadata.Value);
-    }
-
-    [Fact]
-    public void ConstructorWithMetadataDictionary_ShouldCreateErrorWithMultipleMetadata()
-    {
-        // Arrange
-        var metadata = new Dictionary<string, object>
-        {
-            { "Key1", "Value1" },
-            { "Key2", 42 }
-        };
-
-        // Act
-        var error = new Error(metadata);
-
-        // Assert
-        error.Message.Should().BeEmpty();
-        error.Metadata.Should().HaveCount(2).And.BeEquivalentTo(metadata);
-    }
-
-    [Fact]
-    public void ConstructorWithMessageAndMetadataTuple_ShouldCreateErrorWithMessageAndSingleMetadata()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-        var metadata = (Key: "Key", Value: "Value");
-
-        // Act
-        var error = new Error(errorMessage, metadata);
-
-        // Assert
-        error.Message.Should().Be(errorMessage);
-        error.Metadata.Should().ContainSingle();
-        error.Metadata.First().Key.Should().BeEquivalentTo(metadata.Key);
-        error.Metadata.First().Value.Should().BeEquivalentTo(metadata.Value);
-    }
-
-    [Fact]
-    public void ConstructorWithMessageAndMetadataDictionary_ShouldCreateErrorWithMessageAndMultipleMetadata()
+    public void ConstructorWithMessageAndMetadataDictionary_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
         const string errorMessage = "Sample error message";
         var metadata = new Dictionary<string, object>
         {
             { "Key1", "Value1" },
-            { "Key2", 42 }
+            { "Key2", 42 },
         };
 
         // Act
         var error = new Error(errorMessage, metadata);
 
         // Assert
-        error.Message.Should().Be(errorMessage);
-        error.Metadata.Should().HaveCount(2).And.BeEquivalentTo(metadata);
+        error.Message
+            .Should()
+            .Be(errorMessage);
+        error.Metadata
+            .Should()
+            .HaveCount(2)
+            .And
+            .BeEquivalentTo(metadata);
+    }
+
+    [Fact]
+    public void MessagePropertyInit_ShouldCreateErrorWithMessage()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        var error = new Error
+        {
+            Message = errorMessage,
+        };
+
+        // Assert
+        error.Message
+            .Should()
+            .Be(errorMessage);
+        error.Metadata
+            .Should()
+            .BeEmpty();
+    }
+
+    [Fact]
+    public void MetadataPropertyInit_ShouldCreateErrorWithMetadata()
+    {
+        // Arrange
+        var metadata = new Dictionary<string, object>
+        {
+            { "Key1", "Value1" },
+            { "Key2", 42 },
+        };
+        var error = new Error
+        {
+            Metadata = metadata,
+        };
+
+        // Assert
+        error.Message
+            .Should()
+            .BeEmpty();
+        error.Metadata
+            .Should()
+            .HaveCount(2)
+            .And
+            .BeEquivalentTo(metadata);
     }
 
     [Theory]
@@ -108,7 +115,9 @@ public class ErrorTests
         // Arrange
         var error = new Error(errorMessage);
 
-        // Act & Assert
-        error.ToString().Should().Be(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
+        // Assert
+        error.ToString()
+            .Should()
+            .Be(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
     }
 }

@@ -1,63 +1,75 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <!-- Compilation -->
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
+        <RootNamespace>LightResults</RootNamespace>
+        <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>LightResults</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <Version>8.0.11</Version>
-        <Title>LightResults</Title>
-        <Authors>Jean-Sebastien Carle</Authors>
-        <Description>An extremely light and modern Result Pattern library.</Description>
-        <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
-        <PackageId>LightResults</PackageId>
-        <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
-        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageIcon>Icon.png</PackageIcon>
-        <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageTags>result results pattern fluentresults error handling</PackageTags>
-        <AssemblyVersion>8.0.11.0</AssemblyVersion>
-        <FileVersion>8.0.11.0</FileVersion>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <!-- Analysis -->
+    <PropertyGroup>
         <AnalysisLevel>latest-All</AnalysisLevel>
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+    </PropertyGroup>
+
+    <!-- References -->
+    <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
+        <PackageReference Include="PolySharp" Version="1.15.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.0"/>
+        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.4.0.108396">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <!-- Output -->
+    <PropertyGroup>
+        <AssemblyName>LightResults</AssemblyName>
+        <Version>9.0.0</Version>
+        <AssemblyVersion>9.0.0.0</AssemblyVersion>
+        <FileVersion>9.0.0.0</FileVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
         <Optimize>true</Optimize>
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="LightResults.Tests"/>
-    </ItemGroup>
+    <!-- Package -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>LightResults</PackageId>
+        <Title>LightResults</Title>
+        <Description>An extremely light and modern Result Pattern library.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/jscarle/LightResults</PackageProjectUrl>
+        <PackageTags>result results pattern fluentresults error handling</PackageTags>
+        <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Authors>Jean-Sebastien Carle</Authors>
+        <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageIcon>Icon.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
 
-    <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
-    </ItemGroup>
-
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-        <None Include="..\..\LICENSE.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-            <Visible>False</Visible>
-        </None>
-        <None Include="..\..\README.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-            <Visible>False</Visible>
-        </None>
-        <None Include="..\..\Icon.png">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-            <Visible>False</Visible>
-        </None>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false"/>
+        <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" Visible="false"/>
+        <None Include="..\..\Icon.png" Pack="true" PackagePath="\" Visible="false"/>
+        <None Include="..\..\readme.txt" Pack="true" PackagePath="\" Visible="false"/>
     </ItemGroup>
 
 </Project>
