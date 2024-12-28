@@ -5,18 +5,15 @@ namespace LightResults;
 /// <summary>Represents an error with a message and associated metadata.</summary>
 public class Error : IError
 {
-    /// <summary>Gets an empty error.</summary>
-    public static IError Empty { get; } = new Error();
-
     /// <inheritdoc/>
     public string Message { get; init; }
 
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object> Metadata { get; init; }
 
+    internal static IError Empty { get; } = new Error("", new Dictionary<string, object>());
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
-
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", new Dictionary<string, object>())];
     private static readonly IReadOnlyDictionary<string, object> EmptyMetaData = new Dictionary<string, object>();
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>

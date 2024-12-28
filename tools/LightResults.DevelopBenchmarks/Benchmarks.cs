@@ -25,136 +25,136 @@ public class Benchmarks
     private static readonly Result<int> ResultTValueFail = Result.Failure<int>();
     private static readonly Result<int> ResultTValueFailWithErrorMessage = Result.Failure<int>(ErrorWithErrorMessage);
 
-    // [Benchmark]
-    // public void Develop_Result_Ok()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = Result.Success();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_Ok_ToString()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ResultOk.ToString();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_Fail()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = Result.Failure();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_Fail_ToString()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ResultFail.ToString();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_Fail_WithErrorMessage()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = Result.Failure(ErrorWithErrorMessage);
-    // }
-    //
+    [Benchmark]
+    public void Develop_Result_Ok()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Success();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Ok_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultOk.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Failure();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFail.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_Fail_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Failure(ErrorWithErrorMessage);
+    }
+
     [Benchmark]
     public void Develop_Result_Fail_WithErrorMessage_ToString()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = ResultFailWithErrorMessage.ToString();
     }
-    //
-    // [Benchmark]
-    // public void Develop_Result_OkTValue()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = Result.Success<int>(ResultValue);
-    // }
-    //
+
+    [Benchmark]
+    public void Develop_Result_OkTValue()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Success<int>(ResultValue);
+    }
+
     [Benchmark]
     public void Develop_Result_OkTValue_ToString()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = ResultTValueOk.ToString();
     }
-    //
-    // [Benchmark]
-    // public void Develop_Result_FailTValue()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = Result.Failure<int>();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_FailTValue_ToString()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ResultTValueFail.ToString();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_FailTValue_WithErrorMessage()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = Result.Failure<int>(ErrorWithErrorMessage);
-    // }
-    //
+
+    [Benchmark]
+    public void Develop_Result_FailTValue()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Failure<int>();
+    }
+
+    [Benchmark]
+    public void Develop_Result_FailTValue_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultTValueFail.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Result_FailTValue_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = Result.Failure<int>(ErrorWithErrorMessage);
+    }
+
     [Benchmark]
     public void Develop_Result_FailTValue_WithErrorMessage_ToString()
     {
         for (var iteration = 0; iteration < Iterations; iteration++)
             _ = ResultTValueFailWithErrorMessage.ToString();
     }
-    //
-    // [Benchmark]
-    // public void Develop_Result_HasError()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ResultFailWithErrorMessage.HasError<Error>();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_HasError_Out()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ResultFailWithErrorMessage.HasError<Error>(out _);
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Result_Error()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ResultFailWithErrorMessage.IsFailure(out _);
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Error_New()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = new Error();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Error_New_ToString()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = EmptyError.ToString();
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Error_New_WithErrorMessage()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = new Error(ErrorMessage);
-    // }
-    //
-    // [Benchmark]
-    // public void Develop_Error_New_WithErrorMessage_ToString()
-    // {
-    //     for (var iteration = 0; iteration < Iterations; iteration++)
-    //         _ = ErrorWithErrorMessage.ToString();
-    // }
+
+    [Benchmark]
+    public void Develop_Result_HasError()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.HasError<Error>();
+    }
+
+    [Benchmark]
+    public void Develop_Result_HasError_Out()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.HasError<Error>(out _);
+    }
+
+    [Benchmark]
+    public void Develop_Result_Error()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ResultFailWithErrorMessage.IsFailure(out _);
+    }
+
+    [Benchmark]
+    public void Develop_Error_New()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = new Error();
+    }
+
+    [Benchmark]
+    public void Develop_Error_New_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = EmptyError.ToString();
+    }
+
+    [Benchmark]
+    public void Develop_Error_New_WithErrorMessage()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = new Error(ErrorMessage);
+    }
+
+    [Benchmark]
+    public void Develop_Error_New_WithErrorMessage_ToString()
+    {
+        for (var iteration = 0; iteration < Iterations; iteration++)
+            _ = ErrorWithErrorMessage.ToString();
+    }
 }

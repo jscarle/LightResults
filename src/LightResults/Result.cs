@@ -93,7 +93,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result Failure(string errorMessage, KeyValuePair<string, object> metadata)
+    public static Result Failure(string errorMessage, (string Key, object Value) metadata)
     {
         var dictionary = new Dictionary<string, object>(1)
         {
@@ -107,7 +107,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result Failure(string errorMessage, (string Key, object Value) metadata)
+    public static Result Failure(string errorMessage, KeyValuePair<string, object> metadata)
     {
         var dictionary = new Dictionary<string, object>(1)
         {

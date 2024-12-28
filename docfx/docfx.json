@@ -59,6 +59,21 @@
       "properties": {
         "TargetFramework": "net8.0"
       }
+    },
+    {
+      "src": [
+        {
+          "src": "../src",
+          "files": [
+            "**/*.csproj"
+          ]
+        }
+      ],
+      "outputFormat": "apiPage",
+      "dest": "net9.0",
+      "properties": {
+        "TargetFramework": "net9.0"
+      }
     }
   ],
   "build": {

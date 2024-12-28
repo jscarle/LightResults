@@ -1,12 +1,16 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using LightResults.Common;
 using Xunit;
+#if NET7_0_OR_GREATER
+using LightResults.Common;
+#endif
 
 namespace LightResults.Tests;
 
 public sealed class ResultTests
 {
+    private static readonly Error EmptyError = new();
+
     [Fact]
     public void DefaultStruct_ShouldBeFailureResult()
     {
@@ -26,7 +30,7 @@ public sealed class ResultTests
                 .Should()
                 .BeTrue();
             resultError.Should()
-                .Be(Error.Empty);
+                .BeEquivalentTo(EmptyError);
             result.Errors
                 .Should()
                 .ContainSingle();
@@ -41,7 +45,7 @@ public sealed class ResultTests
                 .Should()
                 .BeTrue();
             error.Should()
-                .Be(Error.Empty);
+                .BeEquivalentTo(EmptyError);
             result.HasError<ValidationError>()
                 .Should()
                 .BeFalse();
@@ -49,7 +53,7 @@ public sealed class ResultTests
                 .Should()
                 .BeFalse();
             validationError.Should()
-                .Be(null);
+                .BeNull();
         }
     }
 
@@ -117,7 +121,7 @@ public sealed class ResultTests
             isFailure.Should()
                 .BeFalse();
             resultError.Should()
-                .Be(null);
+                .BeNull();
         }
     }
 
@@ -136,7 +140,7 @@ public sealed class ResultTests
             isFailure.Should()
                 .BeFalse();
             resultError.Should()
-                .Be(null);
+                .BeNull();
         }
     }
 
@@ -159,7 +163,7 @@ public sealed class ResultTests
                 .Should()
                 .BeFalse();
             resultError.Should()
-                .Be(null);
+                .BeNull();
             result.Errors
                 .Should()
                 .BeEmpty();
@@ -193,7 +197,7 @@ public sealed class ResultTests
                 .Should()
                 .BeFalse();
             resultError.Should()
-                .Be(null);
+                .BeNull();
             result.Errors
                 .Should()
                 .BeEmpty();
@@ -471,7 +475,8 @@ public sealed class ResultTests
         var act = () => Result.Failure(exception!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>();
+        act.Should()
+            .Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -484,7 +489,8 @@ public sealed class ResultTests
         var act = () => Result.Failure("", exception!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>();
+        act.Should()
+            .Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -869,7 +875,8 @@ public sealed class ResultTests
         var act = () => Result.Failure<object>(exception!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>();
+        act.Should()
+            .Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -882,7 +889,8 @@ public sealed class ResultTests
         var act = () => Result.Failure<object>("", exception!);
 
         // Assert
-        act.Should().Throw<ArgumentNullException>();
+        act.Should()
+            .Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -1018,7 +1026,7 @@ public sealed class ResultTests
             hasError.Should()
                 .BeFalse();
             error.Should()
-                .Be(null);
+                .BeNull();
         }
     }
 
@@ -1049,7 +1057,7 @@ public sealed class ResultTests
             hasError.Should()
                 .BeFalse();
             error.Should()
-                .Be(null);
+                .BeNull();
         }
     }
 
@@ -1253,7 +1261,7 @@ public sealed class ResultTests
                 .Should()
                 .BeFalse();
             resultError.Should()
-                .Be(null);
+                .BeNull();
             result.Errors
                 .Should()
                 .BeEmpty();
