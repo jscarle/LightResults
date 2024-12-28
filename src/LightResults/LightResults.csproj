@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.3.0.106239">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.4.0.108396">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -69,67 +69,6 @@
         <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false"/>
         <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" Visible="false"/>
         <None Include="..\..\Icon.png" Pack="true" PackagePath="\" Visible="false"/>
-    </ItemGroup>
-
-    <!-- Content -->
-    <ItemGroup>
-        <Compile Update="Result.Equality.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.Errors.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.Failure.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.Failure`1.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.IsFailure.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.IsSuccess.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.Success.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.Success`1.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.ToString.cs">
-            <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.Cast.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.Equality.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.Errors.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.Failure.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.IsFailure.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.IsSuccess.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.Success.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.ToFailure.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result`1.ToString.cs">
-            <DependentUpon>Result`1.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Result.Cast.cs">
-          <DependentUpon>Result.cs</DependentUpon>
-        </Compile>
     </ItemGroup>
 
 </Project>
