@@ -6,12 +6,12 @@
         <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>preview</LangVersion>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <!-- Analysis -->
     <PropertyGroup>
-        <AnalysisLevel>latest-all</AnalysisLevel>
+        <AnalysisLevel>latest-All</AnalysisLevel>
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     </PropertyGroup>
 
@@ -37,7 +37,7 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>9.0.0-preview.16</Version>
+        <Version>9.0.0</Version>
         <AssemblyVersion>9.0.0.0</AssemblyVersion>
         <FileVersion>9.0.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
@@ -69,6 +69,7 @@
         <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false"/>
         <None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" Visible="false"/>
         <None Include="..\..\Icon.png" Pack="true" PackagePath="\" Visible="false"/>
+        <None Include="..\..\readme.txt" Pack="true" PackagePath="\" Visible="false"/>
     </ItemGroup>
 
 </Project>
