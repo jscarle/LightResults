@@ -12,7 +12,7 @@ public readonly struct Result : IEquatable<Result>,
 #endif
 {
     /// <inheritdoc/>
-    public IReadOnlyList<IError> Errors
+    public IReadOnlyCollection<IError> Errors
     {
         get
         {
@@ -73,128 +73,255 @@ public readonly struct Result : IEquatable<Result>,
         return _isSuccess;
     }
 
-    /// <summary>Creates a failed result.</summary>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result.</returns>
+    /// <summary>Creates a failure result.</summary>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result.</returns>
     public static Result Failure()
     {
         return FailureResult;
     }
 
-    /// <summary>Creates a failed result with the given error message.</summary>
+    /// <summary>Creates a failure result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message.</returns>
     public static Result Failure(string errorMessage)
     {
         var error = new Error(errorMessage);
         return new Result(error);
     }
 
-    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <summary>Creates a failure result with the given error message and metadata.</summary>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error message and metadata.</returns>
-    public static Result Failure(string errorMessage, (string Key, object Value) metadata)
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
+    public static Result Failure(string errorMessage, KeyValuePair<string, object> metadata)
     {
-        var error = new Error(errorMessage, metadata);
+        var dictionary = new Dictionary<string, object>(1)
+        {
+            { metadata.Key, metadata.Value },
+        };
+        var error = new Error(errorMessage, dictionary);
         return new Result(error);
     }
 
-    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <summary>Creates a failure result with the given error message and metadata.</summary>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
+    public static Result Failure(string errorMessage, (string Key, object Value) metadata)
+    {
+        var dictionary = new Dictionary<string, object>(1)
+        {
+            { metadata.Key, metadata.Value },
+        };
+        var error = new Error(errorMessage, dictionary);
+        return new Result(error);
+    }
+
+    /// <summary>Creates a failure result with the given error message and metadata.</summary>
+    /// <param name="metadata">The metadata associated with the failure.</param>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result Failure(string errorMessage, IReadOnlyDictionary<string, object> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result(error);
     }
 
-    /// <summary>Creates a failed result with the given error.</summary>
+    /// <summary>Creates a failure result with the given exception.</summary>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
+    /// <remarks>
+    /// The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that
+    /// of the exception.
+    /// </remarks>
+    public static Result Failure(Exception ex)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(ex);
+#else
+        if (ex is null)
+            throw new ArgumentNullException(nameof(ex));
+#endif
+        var metadata = new Dictionary<string, object>(1)
+        {
+            { "Exception", ex },
+        };
+        var error = new Error(ex.Message, metadata);
+        return new Result(error);
+    }
+
+    /// <summary>Creates a failure result with the given error message and exception.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    public static Result Failure(string errorMessage, Exception ex)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(ex);
+#else
+        if (ex is null)
+            throw new ArgumentNullException(nameof(ex));
+#endif
+
+        var metadata = new Dictionary<string, object>(1)
+        {
+            { "Exception", ex },
+        };
+        var error = new Error(errorMessage, metadata);
+        return new Result(error);
+    }
+
+    /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified error.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error.</returns>
     public static Result Failure(IError error)
     {
         return new Result(error);
     }
 
-    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified errors.</returns>
     public static Result Failure(IEnumerable<IError> errors)
     {
         return new Result(errors);
     }
 
-    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
-    /// <returns>A new instance of <see cref="Result"/> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified errors.</returns>
     public static Result Failure(IReadOnlyList<IError> errors)
     {
         return new Result(errors);
     }
 
-    /// <summary>Creates a failed result.</summary>
+    /// <summary>Creates a failure result.</summary>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result.</returns>
     public static Result<TValue> Failure<TValue>()
     {
         return Result<TValue>.FailureResult;
     }
 
-    /// <summary>Creates a failed result with the given error message.</summary>
+    /// <summary>Creates a failure result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage)
     {
         var error = new Error(errorMessage);
         return new Result<TValue>(error);
     }
 
-    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <summary>Creates a failure result with the given error message and metadata.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage, (string Key, object Value) metadata)
     {
-        var error = new Error(errorMessage, metadata);
+        var dictionary = new Dictionary<string, object>(1)
+        {
+            { metadata.Key, metadata.Value },
+        };
+        var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
 
-    /// <summary>Creates a failed result with the given error message and metadata.</summary>
+    /// <summary>Creates a failure result with the given error message and metadata.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error message and metadata.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
+    public static Result<TValue> Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)
+    {
+        var dictionary = new Dictionary<string, object>(1)
+        {
+            { metadata.Key, metadata.Value },
+        };
+        var error = new Error(errorMessage, dictionary);
+        return new Result<TValue>(error);
+    }
+
+    /// <summary>Creates a failure result with the given error message and metadata.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
+    /// <typeparam name="TValue">The type of the value of the result.</typeparam>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage, IReadOnlyDictionary<string, object> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
     }
 
-    /// <summary>Creates a failed result with the given error.</summary>
+    /// <summary>Creates a failure result with the given exception.</summary>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified exception.</returns>
+    /// <remarks>
+    /// The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that
+    /// of the exception.
+    /// </remarks>
+    public static Result<TValue> Failure<TValue>(Exception ex)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(ex);
+#else
+        if (ex is null)
+            throw new ArgumentNullException(nameof(ex));
+#endif
+        var metadata = new Dictionary<string, object>(1)
+        {
+            { "Exception", ex },
+        };
+        var error = new Error(ex.Message, metadata);
+        return new Result<TValue>(error);
+    }
+
+    /// <summary>Creates a failure result with the given error message and exception.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    public static Result<TValue> Failure<TValue>(string errorMessage, Exception ex)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(ex);
+#else
+        if (ex is null)
+            throw new ArgumentNullException(nameof(ex));
+#endif
+
+        var metadata = new Dictionary<string, object>(1)
+        {
+            { "Exception", ex },
+        };
+        var error = new Error(errorMessage, metadata);
+        return new Result<TValue>(error);
+    }
+
+    /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified error.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
     public static Result<TValue> Failure<TValue>(IError error)
     {
         return new Result<TValue>(error);
     }
 
-    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
     public static Result<TValue> Failure<TValue>(IEnumerable<IError> errors)
     {
         return new Result<TValue>(errors);
     }
 
-    /// <summary>Creates a failed result with the given errors.</summary>
+    /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
-    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failed result with the specified errors.</returns>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
     public static Result<TValue> Failure<TValue>(IReadOnlyList<IError> errors)
     {
         return new Result<TValue>(errors);

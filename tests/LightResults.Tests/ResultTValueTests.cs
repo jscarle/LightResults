@@ -961,7 +961,7 @@ public sealed class ResultTValueTests
                 .HaveElementAt(0, Error.Empty);
         }
     }
-    
+
     [Fact]
     public void ImplicitCast_ShouldCreateSuccessResultFromValue()
     {
@@ -1639,6 +1639,52 @@ public sealed class ResultTValueTests
         {
             const string errorMessage = "Sample error message";
             (string Key, object Value) metadata = ("Key", 0);
+            return TResult.Failure(errorMessage, metadata);
+        }
+
+        // Act
+        var result = Fail<int, Result<int>>();
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be("Sample error message");
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
+    public void InterfaceFailure_WithErrorMessageAndKeyValuePairMetadata_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        static Result<TValue> Fail<TValue, TResult>()
+            where TResult : IActionableResult<TValue, Result<TValue>>
+        {
+            const string errorMessage = "Sample error message";
+            var metadata = new KeyValuePair<string, object>("Key", 0);
             return TResult.Failure(errorMessage, metadata);
         }
 

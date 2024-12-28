@@ -39,87 +39,6 @@ public sealed class CustomErrorTests
     }
 
     [Fact]
-    public void ConstructorWithMetadataTuple_ShouldCreateErrorWithSingleMetadata()
-    {
-        // Arrange
-        var metadata = (Key: "Key", Value: "Value");
-
-        // Act
-        var error = new CustomError(metadata);
-
-        // Assert
-        error.Message
-            .Should()
-            .BeEmpty();
-        error.Metadata
-            .Should()
-            .ContainSingle();
-        error.Metadata
-            .First()
-            .Key
-            .Should()
-            .BeEquivalentTo(metadata.Key);
-        error.Metadata
-            .First()
-            .Value
-            .Should()
-            .BeEquivalentTo(metadata.Value);
-    }
-
-    [Fact]
-    public void ConstructorWithMetadataDictionary_ShouldCreateErrorWithMultipleMetadata()
-    {
-        // Arrange
-        var metadata = new Dictionary<string, object>
-        {
-            { "Key1", "Value1" },
-            { "Key2", 42 },
-        };
-
-        // Act
-        var error = new CustomError(metadata);
-
-        // Assert
-        error.Message
-            .Should()
-            .BeEmpty();
-        error.Metadata
-            .Should()
-            .HaveCount(2)
-            .And
-            .BeEquivalentTo(metadata);
-    }
-
-    [Fact]
-    public void ConstructorWithMessageAndMetadataTuple_ShouldCreateErrorWithMessageAndSingleMetadata()
-    {
-        // Arrange
-        const string errorMessage = "Sample error message";
-        var metadata = (Key: "Key", Value: "Value");
-
-        // Act
-        var error = new CustomError(errorMessage, metadata);
-
-        // Assert
-        error.Message
-            .Should()
-            .Be(errorMessage);
-        error.Metadata
-            .Should()
-            .ContainSingle();
-        error.Metadata
-            .First()
-            .Key
-            .Should()
-            .BeEquivalentTo(metadata.Key);
-        error.Metadata
-            .First()
-            .Value
-            .Should()
-            .BeEquivalentTo(metadata.Value);
-    }
-
-    [Fact]
     public void ConstructorWithMessageAndMetadataDictionary_ShouldCreateErrorWithMessageAndMultipleMetadata()
     {
         // Arrange
@@ -169,23 +88,8 @@ public sealed class CustomErrorTests
         {
         }
 
-        public CustomError(string errorMessage, (string Key, object Value) metadata)
-            : base(errorMessage, metadata)
-        {
-        }
-
-        public CustomError((string Key, object Value) metadata)
-            : base("", metadata)
-        {
-        }
-
         public CustomError(string errorMessage, IReadOnlyDictionary<string, object> metadata)
             : base(errorMessage, metadata)
-        {
-        }
-
-        public CustomError(IReadOnlyDictionary<string, object> metadata)
-            : base("", metadata)
         {
         }
     }

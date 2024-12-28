@@ -9,10 +9,10 @@ public class Error : IError
     public static IError Empty { get; } = new Error();
 
     /// <inheritdoc/>
-    public string Message { get; }
+    public string Message { get; init; }
 
     /// <inheritdoc/>
-    public IReadOnlyDictionary<string, object> Metadata { get; }
+    public IReadOnlyDictionary<string, object> Metadata { get; init; }
 
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
     internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
@@ -31,32 +31,6 @@ public class Error : IError
     {
         Message = message;
         Metadata = EmptyMetaData;
-    }
-
-    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified metadata.</summary>
-    /// <param name="metadata">The metadata associated with the error.</param>
-    public Error((string Key, object Value) metadata)
-        : this("", metadata)
-    {
-    }
-
-    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
-    /// <param name="message">The error message.</param>
-    /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(string message, (string Key, object Value) metadata)
-    {
-        Message = message;
-        Metadata = new Dictionary<string, object>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
-    }
-
-    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified metadata.</summary>
-    /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(IReadOnlyDictionary<string, object> metadata)
-        : this("", metadata)
-    {
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>

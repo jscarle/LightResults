@@ -11,15 +11,15 @@ public interface IResult<TValue> : IResult
     /// <returns><c>true</c> if the result was successful; otherwise, <c>false</c>.</returns>
     bool IsSuccess([MaybeNullWhen(false)] out TValue value);
 
-    /// <summary>Determines whether the result failed.</summary>
+    /// <summary>Determines whether the result failure.</summary>
     /// <param name="value">The value of the result.</param>
     /// <param name="error">The error of the result.</param>
     /// <returns><c>true</c> if the result was successful; otherwise, <c>false</c>.</returns>
     bool IsSuccess([MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(true)] out IError error);
 
-    /// <summary>Determines whether the result failed.</summary>
+    /// <summary>Determines whether the result failure.</summary>
     /// <param name="error">The error of the result.</param>
     /// <param name="value">The value of the result.</param>
-    /// <returns><c>true</c> if the result failed; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the result failure; otherwise, <c>false</c>.</returns>
     bool IsFailure([MaybeNullWhen(false)] out IError error, [MaybeNullWhen(true)] out TValue value);
 }

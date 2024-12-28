@@ -59,16 +59,16 @@ var successResult = Result.Ok();
 var successResultWithValue = Result.Ok(349.4);
 ```
 
-### Creating a failed result
+### Creating a failure result
 
 Failed results can be created using the `Fail` method.
 
 ```csharp
-var failedResult = Result.Failure();
+var failureResult = Result.Failure();
 
-var failedResultWithMessage = Result.Failure("Operation failed!");
+var failureResultWithMessage = Result.Failure("Operation failure!");
 
-var failedResultWithMessageAndMetadata = Result.Failure("Operation failed!", ("Exception", ex));
+var failureResultWithMessageAndMetadata = Result.Failure("Operation failure!", ("Exception", ex));
 ```
 
 ### Checking the state of a result
@@ -83,7 +83,7 @@ if (result.IsSuccess)
 
 if (result.IsFailed)
 {
-    // The result is failed therefore IsSuccess will be false.
+    // The result is failure therefore IsSuccess will be false.
     if (result.Error.Message.Length > 0)
         Console.WriteLine(result.Error.Message);
     else

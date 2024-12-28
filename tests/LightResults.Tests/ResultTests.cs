@@ -298,6 +298,44 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithErrorMessageAndKeyValuePairMetadata_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        var metadata = new KeyValuePair<string, object>("Key", 0);
+
+        // Act
+        var result = Result.Failure(errorMessage, metadata);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(errorMessage);
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
     public void Failure_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -336,6 +374,117 @@ public sealed class ResultTests
                 .Should()
                 .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
         }
+    }
+
+    [Fact]
+    public void Failure_WithException_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        const string exceptionMessage = "Sample exception message";
+        var exception = new InvalidOperationException(exceptionMessage);
+
+        // Act
+        var result = Result.Failure(exception);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(exceptionMessage);
+            var metadata = error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which;
+            metadata.Key
+                .Should()
+                .Be("Exception");
+            metadata.Value
+                .Should()
+                .Be(exception);
+        }
+    }
+
+    [Fact]
+    public void Failure_WithMessageAndException_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        const string exceptionMessage = "Sample exception message";
+        var exception = new InvalidOperationException(exceptionMessage);
+
+        // Act
+        var result = Result.Failure(errorMessage, exception);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(errorMessage);
+            var metadata = error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which;
+            metadata.Key
+                .Should()
+                .Be("Exception");
+            metadata.Value
+                .Should()
+                .Be(exception);
+        }
+    }
+
+    [Fact]
+    public void Failure_WithNullException_ShouldThrow()
+    {
+        // Arrange
+        Exception? exception = null;
+
+        // Act
+        var act = () => Result.Failure(exception!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Failure_WithMessageAndNullException_ShouldThrow()
+    {
+        // Arrange
+        Exception? exception = null;
+
+        // Act
+        var act = () => Result.Failure("", exception!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -541,6 +690,47 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void FailureTValue_WithErrorMessageAndKeyValuePairMetadata_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        var metadata = new KeyValuePair<string, object>("Key", 0);
+
+        // Act
+        var result = Result.Failure<object>(errorMessage, metadata);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsSuccess(out _)
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure(out _)
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(errorMessage);
+            error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which
+                .Should()
+                .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        }
+    }
+
+    [Fact]
     public void FailureTValue_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -582,6 +772,117 @@ public sealed class ResultTests
                 .Should()
                 .BeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
         }
+    }
+
+    [Fact]
+    public void FailureTValue_WithException_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        const string exceptionMessage = "Sample exception message";
+        var exception = new InvalidOperationException(exceptionMessage);
+
+        // Act
+        var result = Result.Failure<object>(exception);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(exceptionMessage);
+            var metadata = error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which;
+            metadata.Key
+                .Should()
+                .Be("Exception");
+            metadata.Value
+                .Should()
+                .Be(exception);
+        }
+    }
+
+    [Fact]
+    public void FailureTValue_WithMessageAndException_ShouldCreateFailureResultWithSingleError()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        const string exceptionMessage = "Sample exception message";
+        var exception = new InvalidOperationException(exceptionMessage);
+
+        // Act
+        var result = Result.Failure<object>(errorMessage, exception);
+
+        // Assert
+        using (new AssertionScope())
+        {
+            result.IsSuccess()
+                .Should()
+                .BeFalse();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            result.IsFailure()
+                .Should()
+                .BeTrue();
+            var error = result.Errors
+                .Should()
+                .ContainSingle()
+                .Which;
+            error.Message
+                .Should()
+                .Be(errorMessage);
+            var metadata = error.Metadata
+                .Should()
+                .ContainSingle()
+                .Which;
+            metadata.Key
+                .Should()
+                .Be("Exception");
+            metadata.Value
+                .Should()
+                .Be(exception);
+        }
+    }
+
+    [Fact]
+    public void FailureTValue_WithNullException_ShouldThrow()
+    {
+        // Arrange
+        Exception? exception = null;
+
+        // Act
+        var act = () => Result.Failure<object>(exception!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void FailureTValue_WithMessageAndNullException_ShouldThrow()
+    {
+        // Arrange
+        Exception? exception = null;
+
+        // Act
+        var act = () => Result.Failure<object>("", exception!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -896,6 +1197,34 @@ public sealed class ResultTests
         (result1 != result2).Should()
             .BeTrue();
     }
+
+    [Fact]
+    public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
+    {
+        // Arrange
+        var result = Result.Success();
+
+        // Assert
+        result.ToString()
+            .Should()
+            .Be("Result { IsSuccess = True }");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("An unknown error occured!")]
+    public void ToString_WhenFailure_ShouldReturnStringRepresentation(string errorMessage)
+    {
+        // Arrange
+        var result = Result.Failure(errorMessage);
+
+        // Assert
+        result.ToString()
+            .Should()
+            .Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
+    }
+
+    private class ValidationError(string errorMessage) : Error(errorMessage);
 
 #if NET7_0_OR_GREATER
     [Fact]
@@ -1212,32 +1541,4 @@ public sealed class ResultTests
         }
     }
 #endif
-
-    [Fact]
-    public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
-    {
-        // Arrange
-        var result = Result.Success();
-
-        // Assert
-        result.ToString()
-            .Should()
-            .Be("Result { IsSuccess = True }");
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("An unknown error occured!")]
-    public void ToString_WhenFailure_ShouldReturnStringRepresentation(string errorMessage)
-    {
-        // Arrange
-        var result = Result.Failure(errorMessage);
-
-        // Assert
-        result.ToString()
-            .Should()
-            .Be(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
-    }
-
-    private class ValidationError(string errorMessage) : Error(errorMessage);
 }
