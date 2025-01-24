@@ -1549,4 +1549,140 @@ public sealed class ResultTests
         }
     }
 #endif
+
+    [Fact]
+    public void Switch_WhenSuccess_ShouldInvokeOnSuccess()
+    {
+        // Arrange
+        var result = Result.Success();
+        var onSuccessCalled = false;
+        var onFailureCalled = false;
+        
+        // Act
+        result.Switch(() =>
+        {
+            onSuccessCalled = true;
+        }, _ =>
+        {
+            onFailureCalled = true;
+        });
+        
+        // Assert
+        onSuccessCalled.Should().BeTrue();
+        onFailureCalled.Should().BeFalse();
+    }
+    
+    [Fact]
+    public void Switch_WhenFailure_ShouldInvokeOnError()
+    {
+        // Arrange
+        var result = Result.Failure();
+        var onSuccessCalled = false;
+        var onFailureCalled = false;
+        
+        // Act
+        result.Switch(() =>
+        {
+            onSuccessCalled = true;
+        }, _ =>
+        {
+            onFailureCalled = true;
+        });
+        
+        // Assert
+        onSuccessCalled.Should().BeFalse();
+        onFailureCalled.Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task SwitchAsync_WhenSuccess_ShouldInvokeOnSuccess()
+    {
+        // Arrange
+        var result = Result.Success();
+        var onSuccessCalled = false;
+        var onFailureCalled = false;
+        
+        // Act
+        await result.SwitchAsync(() =>
+        {
+            onSuccessCalled = true;
+            return Task.CompletedTask;
+        }, _ =>
+        {
+            onFailureCalled = true;
+            return Task.CompletedTask;
+        });
+        
+        // Assert
+        onSuccessCalled.Should().BeTrue();
+        onFailureCalled.Should().BeFalse();
+    }
+    
+    [Fact]
+    public async Task SwitchAsync_WhenFailure_ShouldInvokeOnError()
+    {
+        // Arrange
+        var result = Result.Failure();
+        var onSuccessCalled = false;
+        var onFailureCalled = false;
+        
+        // Act
+        await result.SwitchAsync(() =>
+        {
+            onSuccessCalled = true;
+            return Task.CompletedTask;
+        }, _ =>
+        {
+            onFailureCalled = true;
+            return Task.CompletedTask;
+        });
+        
+        // Assert
+        onSuccessCalled.Should().BeFalse();
+        onFailureCalled.Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Match_WhenSuccess_ShouldInvokeOnSuccess()
+    {
+        // Arrange
+        var result = Result.Success();
+        
+        // Assert
+        result.Match(() => true, _ => false).Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Match_WhenFailure_ShouldInvokeOnError()
+    {
+        // Arrange
+        var result = Result.Failure();
+        
+        // Assert
+        result.Match(() => false, _ => true).Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task MatchAsync_WhenSuccess_ShouldInvokeOnSuccess()
+    {
+        // Arrange
+        var result = Result.Success();
+        
+        // Assert
+        var match = await result.MatchAsync(() => Task.FromResult(true), _ => Task.FromResult(false));
+
+        match.Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task MatchAsync_WhenFailure_ShouldInvokeOnError()
+    {
+        // Arrange
+        var result = Result.Failure();
+        
+        // Assert
+        var match = await result.MatchAsync(() => Task.FromResult(false), _ => Task.FromResult(true));
+
+        match.Should().BeTrue();
+    }
 }
