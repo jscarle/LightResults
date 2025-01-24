@@ -34,4 +34,38 @@ public interface IResult
     /// <returns><c>true</c> if an error of the specified type exists; otherwise, <c>false</c>.</returns>
     bool HasError<TError>([MaybeNullWhen(false)] out TError error)
         where TError : IError;
+
+    /// <summary>
+    /// Evaluate the result in style of a discriminated union.
+    /// </summary>
+    /// <param name="onSuccess">Invoked when result is a success</param>
+    /// <param name="onError">Invoked when result is a failure</param>
+    void Switch(Action onSuccess, Action<IError> onError);
+    
+    /// <summary>
+    /// Evaluate the result in style of a discriminated union.
+    /// </summary>
+    /// <param name="onSuccess">Invoked when result is a success</param>
+    /// <param name="onError">Invoked when result is a failure</param>
+    /// <returns>A task for the async operation</returns>
+    Task SwitchAsync(Func<Task> onSuccess, Func<IError, Task> onError);
+    
+    /// <summary>
+    /// Evaluate the result in style of a discriminated union. A result must be returned
+    /// </summary>
+    /// <param name="onSuccess">Invoked when result is a success</param>
+    /// <param name="onError">Invoked when result is a failure</param>
+    /// <typeparam name="TReturn">Type to be returned</typeparam>
+    /// <returns>The result of the operation</returns>
+    TReturn Match<TReturn>(Func<TReturn> onSuccess, Func<IError, TReturn> onError);
+
+    /// <summary>
+    /// Evaluate the result in style of a discriminated union. A result must be returned
+    /// </summary>
+    /// <param name="onSuccess">Invoked when result is a success</param>
+    /// <param name="onError">Invoked when result is a failure</param>
+    /// <typeparam name="TReturn">Type to be returned</typeparam>
+    /// <returns>The result of the operation</returns>
+    Task<TReturn> MatchAsync<TReturn>(Func<Task<TReturn>> onSuccess, 
+        Func<IError, Task<TReturn>> onError);
 }

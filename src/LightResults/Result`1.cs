@@ -126,6 +126,84 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         return !_isSuccess;
     }
 
+    /// <inheritdoc />
+    public void Switch(Action<TValue> onSuccess, Action<IError> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError, out var value))
+        {
+            onError(internalError);
+        }
+        else
+        {
+            onSuccess(value);
+        }
+    }
+
+    /// <inheritdoc />
+    public Task SwitchAsync(Func<TValue, Task> onSuccess, Func<IError, Task> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError, out var value))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess(value);
+    }
+
+    /// <inheritdoc />
+    public TReturn Match<TReturn>(Func<TValue, TReturn> onSuccess, Func<IError, TReturn> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError, out var value))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess(value);
+    }
+
+    /// <inheritdoc />
+    public Task<TReturn> MatchAsync<TReturn>(Func<TValue, Task<TReturn>> onSuccess, Func<IError, Task<TReturn>> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError, out var value))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess(value);
+    }
+
 #if NET7_0_OR_GREATER
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>
@@ -267,6 +345,80 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
         error = default;
         return false;
+    }
+
+    /// <inheritdoc />
+    public void Switch(Action onSuccess, Action<IError> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+            onError(internalError);
+        else
+            onSuccess();
+    }
+
+    /// <inheritdoc />
+    public Task SwitchAsync(Func<Task> onSuccess, Func<IError, Task> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess();
+    }
+
+    /// <inheritdoc />
+    public TReturn Match<TReturn>(Func<TReturn> onSuccess, Func<IError, TReturn> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess();
+    }
+
+    /// <inheritdoc />
+    public Task<TReturn> MatchAsync<TReturn>(Func<Task<TReturn>> onSuccess, Func<IError, Task<TReturn>> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess();
     }
 
     /// <summary>Implicitly converts a value to a success <see cref="Result{TValue}"/>.</summary>

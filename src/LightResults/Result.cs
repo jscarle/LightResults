@@ -403,6 +403,80 @@ public readonly struct Result : IEquatable<Result>,
         return false;
     }
 
+    /// <inheritdoc />
+    public void Switch(Action onSuccess, Action<IError> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+            onError(internalError);
+        else
+            onSuccess();
+    }
+
+    /// <inheritdoc />
+    public Task SwitchAsync(Func<Task> onSuccess, Func<IError, Task> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess();
+    }
+
+    /// <inheritdoc />
+    public TReturn Match<TReturn>(Func<TReturn> onSuccess, Func<IError, TReturn> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess();
+    }
+
+    /// <inheritdoc />
+    public Task<TReturn> MatchAsync<TReturn>(Func<Task<TReturn>> onSuccess, Func<IError, Task<TReturn>> onError)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onError);
+#else
+        if (onSuccess is null) throw new ArgumentNullException(nameof(onSuccess));
+        if (onError is null) throw new ArgumentNullException(nameof(onError));
+#endif
+        
+        if (IsFailure(out var internalError))
+        {
+            return onError(internalError);
+        }
+
+        return onSuccess();
+    }
+
     /// <summary>Implicitly converts an <see cref="Error"/> to a failure <see cref="Result{TValue}"/>.</summary>
     /// <param name="error">The error to convert into a failure result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
