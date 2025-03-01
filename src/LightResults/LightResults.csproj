@@ -22,12 +22,12 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0"/>
-        <PackageReference Include="System.Collections.Immutable" Version="9.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.2" />
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.4.0.108396">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace LightResults.Tests;
@@ -12,12 +12,8 @@ public sealed class ErrorTests
         var error = new Error();
 
         // Assert
-        error.Message
-            .Should()
-            .BeEmpty();
-        error.Metadata
-            .Should()
-            .BeEmpty();
+        error.Message.ShouldBeEmpty();
+        error.Metadata.ShouldBeEmpty();
     }
 
     [Fact]
@@ -30,12 +26,8 @@ public sealed class ErrorTests
         var error = new Error(errorMessage);
 
         // Assert
-        error.Message
-            .Should()
-            .Be(errorMessage);
-        error.Metadata
-            .Should()
-            .BeEmpty();
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.ShouldBeEmpty();
     }
 
     [Fact]
@@ -53,14 +45,9 @@ public sealed class ErrorTests
         var error = new Error(errorMessage, metadata);
 
         // Assert
-        error.Message
-            .Should()
-            .Be(errorMessage);
-        error.Metadata
-            .Should()
-            .HaveCount(2)
-            .And
-            .BeEquivalentTo(metadata);
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.Count.ShouldBe(2);
+        error.Metadata.ShouldBe(metadata);
     }
 
     [Fact]
@@ -74,12 +61,8 @@ public sealed class ErrorTests
         };
 
         // Assert
-        error.Message
-            .Should()
-            .Be(errorMessage);
-        error.Metadata
-            .Should()
-            .BeEmpty();
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.ShouldBeEmpty();
     }
 
     [Fact]
@@ -97,14 +80,9 @@ public sealed class ErrorTests
         };
 
         // Assert
-        error.Message
-            .Should()
-            .BeEmpty();
-        error.Metadata
-            .Should()
-            .HaveCount(2)
-            .And
-            .BeEquivalentTo(metadata);
+        error.Message.ShouldBeEmpty();
+        error.Metadata.Count.ShouldBe(2);
+        error.Metadata.ShouldBe(metadata);
     }
 
     [Theory]
@@ -116,8 +94,6 @@ public sealed class ErrorTests
         var error = new Error(errorMessage);
 
         // Assert
-        error.ToString()
-            .Should()
-            .Be(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
+        error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
     }
 }
