@@ -1,4 +1,4 @@
-name: Release
+name: Test
 
 on:
   push:
@@ -16,10 +16,6 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    
-    strategy:
-      fail-fast: false
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
