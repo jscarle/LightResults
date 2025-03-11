@@ -8,7 +8,7 @@ of an operation, whether it's successful or has encountered an error, in a more 
 structured manner. This project is heavily inspired by [Michael Altmann](https://github.com/altmann)'s
 excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
-[![main](https://img.shields.io/github/actions/workflow/status/jscarle/LightResults/main.yml?logo=github)](https://github.com/jscarle/LightResults)
+[![main](https://img.shields.io/github/actions/workflow/status/jscarle/LightResults/test.yml?logo=github)](https://github.com/jscarle/LightResults)
 [![nuget](https://img.shields.io/nuget/v/LightResults)](https://www.nuget.org/packages/LightResults)
 [![downloads](https://img.shields.io/nuget/dt/LightResults)](https://www.nuget.org/packages/LightResults)
 
