@@ -412,6 +412,27 @@ public readonly struct Result : IEquatable<Result>,
         return new Result(error);
     }
 
+    /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result"/>.</summary>
+    /// <returns>A new instance of <see cref="Result"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
+    public Result AsFailure()
+    {
+        if (_errors is not null)
+            return new Result(_errors);
+
+        return FailureResult;
+    }
+
+    /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result{TDestination}"/>.</summary>
+    /// <returns>A new instance of <see cref="Result{TDestination}"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
+    /// <typeparam name="TDestination">The type of the value of the failure result.</typeparam>
+    public Result<TDestination> AsFailure<TDestination>()
+    {
+        if (_errors is not null)
+            return new Result<TDestination>(_errors);
+
+        return Result<TDestination>.FailureResult;
+    }
+
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>

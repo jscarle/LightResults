@@ -674,6 +674,80 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void AsFailure_ShouldConvertResultToNonGenericResultWithSameErrors()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
+        var result = Result.Failure(errors);
+
+        // Act
+        var nonGenericResult = result.AsFailure();
+
+        // Assert
+        nonGenericResult.IsSuccess().ShouldBeFalse();
+        nonGenericResult.IsFailure().ShouldBeTrue();
+        nonGenericResult.Errors.Count.ShouldBe(2);
+        nonGenericResult.Errors.ShouldBe(errors);
+    }
+
+    [Fact]
+    public void AsFailure_ShouldConvertDefaultResultToNonGenericResult()
+    {
+        // Arrange
+        Result result = default;
+
+        // Act
+        var nonGenericResult = result.AsFailure();
+
+        // Assert
+        nonGenericResult.IsSuccess().ShouldBeFalse();
+        nonGenericResult.IsFailure().ShouldBeTrue();
+        nonGenericResult.Errors.ShouldHaveSingleItem();
+        nonGenericResult.Errors.Single().ShouldBeEquivalentTo(EmptyError);
+    }
+
+    [Fact]
+    public void AsFailure_ShouldConvertResultToGenericResultWithSameErrors()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
+        var result = Result.Failure(errors);
+
+        // Act
+        var genericResult = result.AsFailure<object>();
+
+        // Assert
+        genericResult.IsSuccess().ShouldBeFalse();
+        genericResult.IsFailure().ShouldBeTrue();
+        genericResult.Errors.Count.ShouldBe(2);
+        genericResult.Errors.ShouldBe(errors);
+    }
+
+    [Fact]
+    public void AsFailure_ShouldConvertDefaultResultToGenericResult()
+    {
+        // Arrange
+        Result result = default;
+
+        // Act
+        var genericResult = result.AsFailure<object>();
+
+        // Assert
+        genericResult.IsSuccess().ShouldBeFalse();
+        genericResult.IsFailure().ShouldBeTrue();
+        genericResult.Errors.ShouldHaveSingleItem();
+        genericResult.Errors.Single().ShouldBeEquivalentTo(EmptyError);
+    }
+
+    [Fact]
     public void ImplicitCast_ShouldCreateFailureResultFromError()
     {
         // Arrange
