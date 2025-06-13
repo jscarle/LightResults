@@ -33,6 +33,41 @@ public class Error : IError
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
+    public Error(string message, (string Key, object Value) metadata)
+    {
+        Message = message;
+        Metadata = new Dictionary<string, object>(1)
+        {
+            { metadata.Key, metadata.Value },
+        };
+    }
+
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="metadata">The metadata associated with the error.</param>
+    public Error(string message, KeyValuePair<string, object> metadata)
+    {
+        Message = message;
+        Metadata = new Dictionary<string, object>(1)
+        {
+            { metadata.Key, metadata.Value },
+        };
+    }
+
+#if NET6_0_OR_GREATER
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="metadata">The metadata associated with the error.</param>
+    public Error(string message, IEnumerable<KeyValuePair<string, object>> metadata)
+    {
+        Message = message;
+        Metadata = new Dictionary<string, object>(metadata);
+    }
+#endif
+
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="metadata">The metadata associated with the error.</param>
     public Error(string message, IReadOnlyDictionary<string, object> metadata)
     {
         Message = message;
