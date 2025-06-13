@@ -12,10 +12,10 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result" Version="10.1.0" />
-        <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.15.1" />
         <PackageReference Include="FluentResults" Version="3.16.0"/>
         <PackageReference Include="Rascal" Version="1.1.0"/>
-        <PackageReference Include="SimpleResults" Version="3.0.1" />
+        <PackageReference Include="SimpleResults" Version="4.0.0" />
     </ItemGroup>
 
     <ItemGroup>

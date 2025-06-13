@@ -1,5 +1,4 @@
 ﻿using Shouldly;
-using Xunit;
 #if NET7_0_OR_GREATER
 using LightResults.Common;
 #endif
