@@ -182,7 +182,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
+        var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -194,7 +194,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
+        var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
