@@ -30,6 +30,7 @@ public class Error : IError
         }
     }
 
+    private const string ErrorTypeName = nameof(Error);
     private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
     internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
@@ -95,8 +96,10 @@ public class Error : IError
     /// <inheritdoc/>
     public override string ToString()
     {
-        var errorType = GetType()
-            .Name;
+        var type = GetType();
+        var errorType = type == typeof(Error)
+            ? ErrorTypeName
+            : type.Name;
 
         if (Message.Length == 0)
             return errorType;
