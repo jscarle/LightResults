@@ -96,10 +96,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result Failure(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result(error);
     }
@@ -110,10 +107,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result Failure(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result(error);
     }
@@ -137,10 +131,7 @@ public readonly struct Result : IEquatable<Result>,
     /// </remarks>
     public static Result Failure(Exception? ex)
     {
-        var metadata = new Dictionary<string, object?>(1)
-        {
-            { ExceptionKey, ex },
-        };
+        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
         var message = ex?.Message ?? string.Empty;
         var error = new Error(message, metadata);
         return new Result(error);
@@ -153,10 +144,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
     public static Result Failure(string errorMessage, Exception? ex)
     {
-        var metadata = new Dictionary<string, object?>(1)
-        {
-            { ExceptionKey, ex },
-        };
+        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
         var error = new Error(errorMessage, metadata);
         return new Result(error);
     }
@@ -210,10 +198,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -225,10 +210,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -253,10 +235,7 @@ public readonly struct Result : IEquatable<Result>,
     /// </remarks>
     public static Result<TValue> Failure<TValue>(Exception? ex)
     {
-        var metadata = new Dictionary<string, object?>(1)
-        {
-            { ExceptionKey, ex },
-        };
+        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
         var message = ex?.Message ?? string.Empty;
         var error = new Error(message, metadata);
         return new Result<TValue>(error);
@@ -269,10 +248,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
     public static Result<TValue> Failure<TValue>(string errorMessage, Exception? ex)
     {
-        var metadata = new Dictionary<string, object?>(1)
-        {
-            { ExceptionKey, ex },
-        };
+        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
     }

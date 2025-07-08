@@ -55,10 +55,7 @@ public class Error : IError
     public Error(string message, (string Key, object? Value) metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        Metadata = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -67,10 +64,7 @@ public class Error : IError
     public Error(string message, KeyValuePair<string, object?> metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        Metadata = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
     }
 
 #if NET6_0_OR_GREATER
