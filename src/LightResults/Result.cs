@@ -30,6 +30,7 @@ public readonly struct Result : IEquatable<Result>,
     internal static readonly Result FailureResult = new(Error.Empty);
     private readonly bool _isSuccess = false;
     private readonly IReadOnlyList<IError>? _errors;
+    private const string ExceptionKey = "Exception";
 
     private Result(bool isSuccess)
     {
@@ -138,7 +139,7 @@ public readonly struct Result : IEquatable<Result>,
     {
         var metadata = new Dictionary<string, object?>(1)
         {
-            { "Exception", ex },
+            { ExceptionKey, ex },
         };
         var message = ex?.Message ?? string.Empty;
         var error = new Error(message, metadata);
@@ -154,7 +155,7 @@ public readonly struct Result : IEquatable<Result>,
     {
         var metadata = new Dictionary<string, object?>(1)
         {
-            { "Exception", ex },
+            { ExceptionKey, ex },
         };
         var error = new Error(errorMessage, metadata);
         return new Result(error);
@@ -254,7 +255,7 @@ public readonly struct Result : IEquatable<Result>,
     {
         var metadata = new Dictionary<string, object?>(1)
         {
-            { "Exception", ex },
+            { ExceptionKey, ex },
         };
         var message = ex?.Message ?? string.Empty;
         var error = new Error(message, metadata);
@@ -270,7 +271,7 @@ public readonly struct Result : IEquatable<Result>,
     {
         var metadata = new Dictionary<string, object?>(1)
         {
-            { "Exception", ex },
+            { ExceptionKey, ex },
         };
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
