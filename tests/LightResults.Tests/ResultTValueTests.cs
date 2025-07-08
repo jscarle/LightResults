@@ -1090,6 +1090,35 @@ public sealed class ResultTValueTests
         result.ToString().ShouldBe($"Result {{ {expected} }}");
     }
 
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 42", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
+    public void ToString_ShouldReturnProperRepresentationForCustomFormattable(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var value = new CustomFormattable(42);
+        var result = success ? Result.Success(value) : Result.Failure<CustomFormattable>(errorMessage);
+
+        // Assert
+        result.ToString().ShouldBe($"Result {{ {expected} }}");
+    }
+
+    private readonly struct CustomFormattable : IFormattable
+    {
+        private readonly int _value;
+
+        public CustomFormattable(int value)
+        {
+            _value = value;
+        }
+
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return _value.ToString(formatProvider);
+        }
+    }
+
     private class ValidationError(string errorMessage) : Error(errorMessage);
 
 #if NET7_0_OR_GREATER

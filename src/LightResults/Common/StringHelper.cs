@@ -64,9 +64,16 @@ internal static class StringHelper
                 return GetResultCharValueString(charValue.ToString());
             case string stringValue:
                 return GetResultStringValueString(stringValue);
+            case IFormattable formattableValue:
+                return GetResultValueString(formattableValue);
             default:
                 return "Result { IsSuccess = True }";
         }
+    }
+
+    public static string GetResultValueString(IFormattable value)
+    {
+        return GetResultValueValueString(value.ToString(null, CultureInfo.InvariantCulture));
     }
 
     private static string GetResultCharValueString(string valueString)
