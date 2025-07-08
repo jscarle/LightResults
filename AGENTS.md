@@ -38,8 +38,12 @@ The project uses the standard .NET SDK.  When a .NET environment is available yo
  dotnet build LightResults.sln
 
 # Run tests
- dotnet test tests/LightResults.Tests/LightResults.Tests.csproj
+ dotnet test tests/LightResults.Tests/LightResults.Tests.csproj -f net9.0
 ```
+
+The test project targets multiple frameworks. When `Mono` is not available (as
+in the Codex container) the `net481` target fails to start. Specify a supported
+framework like `net9.0` to run the unit tests successfully.
 
 However, building or testing is not required for simple documentation updates.  This repository currently does not include an automated setup script for installing the .NET SDK.
 
