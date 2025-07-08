@@ -30,6 +30,7 @@ public readonly struct Result : IEquatable<Result>,
     internal static readonly Result FailureResult = new(Error.Empty);
     private readonly bool _isSuccess = false;
     private readonly IReadOnlyList<IError>? _errors;
+    private const string ExceptionKey = "Exception";
 
     private Result(bool isSuccess)
     {
@@ -95,10 +96,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result Failure(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result(error);
     }
@@ -109,10 +107,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result Failure(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result(error);
     }
@@ -200,10 +195,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -215,10 +207,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
     public static Result<TValue> Failure<TValue>(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object?>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -394,9 +383,14 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>
-    public bool Equals(Result other)
+    public bool Equals(in Result other)
     {
         return Equals(_errors, other._errors);
+    }
+
+    bool IEquatable<Result>.Equals(Result other)
+    {
+        return Equals(in other);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -404,32 +398,32 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj)
     {
-        return obj is Result other && Equals(other);
+        return obj is Result other && Equals(in other);
     }
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
     public override int GetHashCode()
     {
-        return _errors?.GetHashCode() ?? 0;
+        return HashCode.Combine(_errors);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are equal; otherwise, <c>false</c>.</returns>
-    public static bool operator ==(Result left, Result right)
+    public static bool operator ==(in Result left, in Result right)
     {
-        return left.Equals(right);
+        return left.Equals(in right);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are not equal.</summary>
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are not equal; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(Result left, Result right)
+    public static bool operator !=(in Result left, in Result right)
     {
-        return !left.Equals(right);
+        return !left.Equals(in right);
     }
 
     /// <inheritdoc/>

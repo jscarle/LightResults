@@ -13,13 +13,13 @@ public interface IResult
     /// <returns><c>true</c> if the result was successful; otherwise, <c>false</c>.</returns>
     bool IsSuccess();
 
-    /// <summary>Determines whether the result failure.</summary>
-    /// <returns><c>true</c> if the result failure; otherwise, <c>false</c>.</returns>
+    /// <summary>Determines whether the result is a failure.</summary>
+    /// <returns><c>true</c> if the result is a failure; otherwise, <c>false</c>.</returns>
     bool IsFailure();
 
-    /// <summary>Determines whether the result failure.</summary>
+    /// <summary>Determines whether the result is a failure.</summary>
     /// <param name="error">The error of the result.</param>
-    /// <returns><c>true</c> if the result failure; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the result is a failure; otherwise, <c>false</c>.</returns>
     bool IsFailure([MaybeNullWhen(false)] out IError error);
 
     /// <summary>Checks if the result contains an error of the specified type.</summary>
