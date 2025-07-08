@@ -25,7 +25,7 @@ This library has no dependencies.
 - 🪶 Lightweight — Only contains what's necessary to implement the Result Pattern.
 - ⚙️ Extensible — Simple interfaces and base classes make it easy to adapt.
 - 🧱 Immutable — Results and errors are immutable and cannot be changed after being created.
-- 🧵 Thread-safe — Results expose read-only error and metadata collections that cannot be modified after creation.
+- 🧵 Thread-safe — Error and metadata collections are read-only.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
 - ❤️ Compatible — Available for dozens of versions of .NET as a
@@ -312,24 +312,24 @@ The following steps in the following order will reduce the amount of manual work
 ### New method overloads and property initializers
 
 - New overloads have been added for `KeyValuePair<string, object>` metadata.
-  - `Result.Failure(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
-  - `Result.Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
+    - `Result.Failure(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
+    - `Result.Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
 - New overloads have been added to simplify handling exceptions.
-  - `Result.Failure(Exception ex)` has been added.
-  - `Result.Failure(string errorMessage, Exception ex)` has been added.
-  - `Result.Failure<TValue>(Exception ex)` has been added.
-  - `Result.Failure<TValue>(string errorMessage, Exception ex)` has been added.
+    - `Result.Failure(Exception ex)` has been added.
+    - `Result.Failure(string errorMessage, Exception ex)` has been added.
+    - `Result.Failure<TValue>(Exception ex)` has been added.
+    - `Result.Failure<TValue>(string errorMessage, Exception ex)` has been added.
 - New overloads were added to access the value.
-  - `result.IsSuccess(out TValue value)` has been added.
-  - `result.IsFailure(out IError error, out TValue value)` has been added.
+    - `result.IsSuccess(out TValue value)` has been added.
+    - `result.IsFailure(out IError error, out TValue value)` has been added.
 - New overloads were added to access the first error.
-  - `result.IsFailure(out IError error)` has been added.
-  - `result.IsSuccess(out TValue value, out IError error)` has been added.
-  - `result.HasError<TError>(out TError error)` has been added.
+    - `result.IsFailure(out IError error)` has been added.
+    - `result.IsSuccess(out TValue value, out IError error)` has been added.
+    - `result.HasError<TError>(out TError error)` has been added.
 - New property initializers were added to `Error`.
-  - `Message { get; }` has changed to `Message { get; init; }`.
-  - `Metadata { get; }` has changed to `Metadata { get; init; }`.
-  - `Error(Exception exception)` has been added.
-  - `Error(string message, Exception exception)` has been added.
-  - `Error.Empty` is now publicly accessible.
-  - `Exception { get; }` has been added.
+    - `Message { get; }` has changed to `Message { get; init; }`.
+    - `Metadata { get; }` has changed to `Metadata { get; init; }`.
+    - `Error(Exception exception)` has been added.
+    - `Error(string message, Exception exception)` has been added.
+    - `Error.Empty` is now publicly accessible.
+    - `Exception { get; }` has been added.
