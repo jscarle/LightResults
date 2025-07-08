@@ -1,5 +1,3 @@
-Exceptions should be avoided whenever possible. When an operation might fail, return a `Result` from LightResults instead of throwing.
-
 # LightResults API Overview
 
 LightResults implements a lightweight Result Pattern for .NET. Use it to represent success or failure states without exceptions.
@@ -53,7 +51,7 @@ Constructors:
 - `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (only on .NET 6 or higher)
 - `Error(string message, IReadOnlyDictionary<string, object?> metadata)`
 
-Properties:
+Properties – available on both `Error` and `IError`:
 - `string Message`
 - `IReadOnlyDictionary<string, object?> Metadata`
 - `Exception? Exception` (if present in metadata)
@@ -62,7 +60,7 @@ Properties:
 Implements `IEquatable<Error>` with `==` and `!=` operators.
 
 ### Interfaces
-- `IError` – exposes `Message` and `Metadata`.
+- `IError` – exposes `Message`, `Metadata`, and `Exception`.
 - `IResult` – exposes `Errors`, `IsSuccess`, `IsFailure`, and `HasError` methods.
 - `IResult<T>` – adds overloads of `IsSuccess` and `IsFailure` to access the value.
 - `IActionableResult` / `IActionableResult<TValue, TResult>` (for .NET 7+) – interfaces with static abstract members so generic code can create results via `TResult.Success(...)`/`TResult.Failure(...)`.
