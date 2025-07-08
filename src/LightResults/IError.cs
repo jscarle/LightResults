@@ -7,6 +7,10 @@ public interface IError
     /// <returns>A <see cref="string"/> representing the error message.</returns>
     string Message { get; }
 
+    /// <summary>Gets the <see cref="Exception"/> associated with the error if one exists.</summary>
+    /// <returns>An <see cref="Exception"/> instance when the metadata contains an entry named <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.</returns>
+    Exception? Exception { get; }
+
     /// <summary>Gets the metadata associated with the error.</summary>
     /// <returns>An <see cref="IReadOnlyDictionary{TKey, TValue}"/> containing the metadata.</returns>
     /// <remarks>

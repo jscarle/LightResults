@@ -54,6 +54,10 @@ The following steps in the following order will reduce the amount of manual work
 - New property initializers where added to `Error`.
     - `Message { get; }` has changed to `Message { get; init; }`.
     - `Metadata { get; }` has changed to `Metadata { get; init; }`.
+    - `Error(Exception exception)` has been added.
+    - `Error(string message, Exception exception)` has been added.
+    - `Error.Empty` is now publicly accessible.
+    - `Exception { get; }` has been added to both `Error` and `IError`.
 - New helper methods were added to convert failed results.
     - `result.AsFailure()` and `result.AsFailure<T>()` convert an existing result into a failure result of another type.
 - Additional `Error` constructors were introduced for metadata collections.

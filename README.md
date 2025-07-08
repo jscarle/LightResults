@@ -146,6 +146,27 @@ var errorWithException = new Error(ex);
 var errorWithMessageAndException = new Error("Something went wrong!", ex);
 ```
 
+### Accessing the Exception property
+
+When an error contains an exception, it can be accessed through the `Exception` property available on both `Error` and `IError`.
+
+```csharp
+var ex = new InvalidOperationException("Something went wrong!");
+var error = new Error(ex);
+
+if (error.Exception != null)
+{
+    Console.WriteLine($"Exception: {error.Exception.Message}");
+}
+
+// Also works with IError interface
+IError interfaceError = error;
+if (interfaceError.Exception != null)
+{
+    Console.WriteLine($"Exception: {interfaceError.Exception.Message}");
+}
+```
+
 ### Custom errors
 
 The best way to represent specific errors is to make custom error classes that inherit from `Error`
@@ -347,7 +368,7 @@ The following steps in the following order will reduce the amount of manual work
     - `Error(Exception exception)` has been added.
     - `Error(string message, Exception exception)` has been added.
     - `Error.Empty` is now publicly accessible.
-    - `Exception { get; }` has been added.
+    - `Exception { get; }` has been added to both `Error` and `IError`.
 - New helper methods were added to convert failed results.
     - `result.AsFailure()` and `result.AsFailure<T>()` convert an existing result into a failure result of another type.
 - Additional `Error` constructors were introduced for metadata collections.
