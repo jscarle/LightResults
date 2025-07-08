@@ -8,7 +8,7 @@ of an operation, whether it's successful or has encountered an error, in a more 
 structured manner. This project is heavily inspired by [Michael Altmann](https://github.com/altmann)'s
 excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
-[![main](https://img.shields.io/github/actions/workflow/status/jscarle/LightResults/test.yml?logo=github)](https://github.com/jscarle/LightResults)
+[![test](https://img.shields.io/github/actions/workflow/status/jscarle/LightResults/test.yml?logo=github)](https://github.com/jscarle/LightResults)
 [![nuget](https://img.shields.io/nuget/v/LightResults)](https://www.nuget.org/packages/LightResults)
 [![downloads](https://img.shields.io/nuget/dt/LightResults)](https://www.nuget.org/packages/LightResults)
 
@@ -25,7 +25,7 @@ This library has no dependencies.
 - 🪶 Lightweight — Only contains what's necessary to implement the Result Pattern.
 - ⚙️ Extensible — Simple interfaces and base classes make it easy to adapt.
 - 🧱 Immutable — Results and errors are immutable and cannot be changed after being created.
-- 🧵 Thread-safe — The Error list and Metadata dictionary use Immutable classes for thread-safety.
+- 🧵 Thread-safe — Error and metadata collections are read-only.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
 - ❤️ Compatible — Available for dozens of versions of .NET as a
@@ -43,7 +43,7 @@ Make sure to [read the docs](https://jscarle.github.io/LightResults/) for the fu
 
 ## Getting Started
 
-LightResults consists of only three classes `Result`, `Result<TValue>`, and `Error`.
+LightResults consists of only three types: `Result`, `Result<TValue>`, and `Error`.
 
 - The `Result` class represents a generic result indicating success or failure.
 - The `Result<TValue>` class represents a success or failure result with a value.
@@ -75,7 +75,7 @@ var failureResultWithMessageAndException = Result.Failure("Operation failure!", 
 
 ### Checking the state of a result
 
-There are two methods used to check a result, `IsSuccess()` and `IsFailed()`. Both of which have several overloads to obtain the
+There are two methods used to check a result, `IsSuccess()` and `IsFailure()`. Both of which have several overloads to obtain the
 value and error.
 
 ```csharp
@@ -90,13 +90,13 @@ if (result.IsFailure(out var error))
     if (error.Message.Length > 0)
         Console.WriteLine(error.Message);
     else
-        Console.WriteLine("An unknown error occured!");
+        Console.WriteLine("An unknown error occurred!");
 }
 ```
 
 ### Getting the value
 
-The value from a successful result can be retrieved through the `out` parameter of the `Success()` method.
+The value from a successful result can be retrieved through the `out` parameter of the `IsSuccess()` method.
 
 ```csharp
 if (result.IsSuccess(out var value))
@@ -105,11 +105,24 @@ if (result.IsSuccess(out var value))
 }
 ```
 
+### Converting failed results
+
+A failed result can be converted to another result type using `AsFailure`.
+
+```csharp
+var result = Result.Failure("Invalid input");
+var typed = result.AsFailure<int>();
+var backToNonGeneric = typed.AsFailure();
+```
+
+
 ### Creating errors
 
 Errors can be created with or without a message.
 
 ```csharp
+var emptyError = Error.Empty;
+
 var errorWithoutMessage = new Error();
 
 var errorWithMessage = new Error("Something went wrong!");
@@ -122,6 +135,15 @@ var errorWithMetadataTuple = new Error("Something went wrong!", ("Key", "Value")
 
 var metadata = new Dictionary<string, object> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
+
+var errorWithMetadataKeyValuePair = new Error("Something went wrong!", new KeyValuePair<string, object>("Key", "Value"));
+
+var errorWithMetadataEnumerable = new Error("Something went wrong!", new[] { new KeyValuePair<string, object>("Key", "Value") });
+
+var ex = new InvalidOperationException();
+var errorWithException = new Error(ex);
+
+var errorWithMessageAndException = new Error("Something went wrong!", ex);
 ```
 
 ### Custom errors
@@ -166,26 +188,40 @@ This can be especially useful when combined with metadata that is related to a s
 public sealed class HttpError : Error
 {
     public HttpError(HttpStatusCode statusCode)
-        : base("An HTTP error occured.", ("StatusCode", statusCode))
+        : base("An HTTP error occurred.", ("StatusCode", statusCode))
     {
     }
+}
+```
+
+### Comparing errors
+
+`Error` implements `IEquatable<Error>` so instances with the same message and metadata are considered equal.
+
+```csharp
+var error1 = new Error("Invalid", ("Code", 42));
+var error2 = new Error("Invalid", ("Code", 42));
+
+if (error1 == error2)
+{
+    // Errors are equal
 }
 ```
 
 We can further simplify creating errors by creating an error factory.
 
 ```csharp
-public static AppError
+public static class AppError
 {
-    public Result NotFound()
+    public static Result NotFound()
     {
         var notFoundError = new NotFoundError();
         return Result.Failure(notFoundError);
     }
 
-    public Result HttpError(HttpStatusCode statusCode)
+    public static Result HttpError(HttpStatusCode statusCode)
     {
-        var httpError = new HttpError(statusCode)
+        var httpError = new HttpError(statusCode);
         return Result.Failure(httpError);
     }
 }
@@ -236,17 +272,17 @@ introduced in .NET 7.0 (C# 11.0), it is possible to use generics to obtain acces
 of the generic variant of the result. As such the error factory can be enhanced to take advantage of that.
 
 ```csharp
-public static AppError
+public static class AppError
 {
-    public Result NotFound()
+    public static Result NotFound()
     {
         var notFoundError = new NotFoundError();
         return Result.Failure(notFoundError);
     }
-    
-    public TResult NotFound<TResult>()
+
+    public static TResult NotFound<TResult>()
     {
-        var notFoundError = new NotFoundError(); 
+        var notFoundError = new NotFoundError();
         return TResult.Failure(notFoundError);
     }
 }
@@ -268,7 +304,7 @@ changes, detailed below, that developers must be aware of when upgrading from v8
     - `Result<TValue>.Fail()` has been renamed to `Result.Failure<TValue>()`.
 - The `Value` and `Error` properties have been removed.
     - `result.Value` has been replaced by `result.IsSuccess(out var value)`.
-    - `result.Error` has been replaced by `result.IsError(out var error)`.
+    - `result.Error` has been replaced by `result.IsFailure(out var error)`.
 - Several constructors of the `Error` type have been removed or have changed.
     - `Error((string Key, object Value) metadata)` has been removed.
     - `Error(IDictionary<string, object> metadata)` has been removed.
@@ -291,20 +327,29 @@ The following steps in the following order will reduce the amount of manual work
 ### New method overloads and property initializers
 
 - New overloads have been added for `KeyValuePair<string, object>` metadata.
-  - `Result.Failure(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
-  - `Result.Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
+    - `Result.Failure(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
+    - `Result.Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
 - New overloads have been added to simplify handling exceptions.
-  - `Result.Failure(Exception ex)` has been added.
-  - `Result.Failure(string errorMessage, Exception ex)` has been added.
-  - `Result.Failure<TValue>(Exception ex)` has been added.
-  - `Result.Failure<TValue>(string errorMessage, Exception ex)` has been added.
-- New overloads where added to access the value.
-  - `result.IsSuccess(out TValue value)` has been added.
-  - `result.IsFailure(out IError error, out TValue value)` has been added.
-- New overloads where added to access the first error.
-  - `result.IsFailure(out IError error)` has been added.
-  - `result.IsSuccess(out TValue value, out IError error)` has been added.
-  - `result.HasError<TError>(out IError error)` has been added.
-- New property initializers where added to `Error`.
-  - `Message { get; }` has changed to `Message { get; init; }`.
-  - `Metadata { get; }` has changed to `Metadata { get; init; }`.
+    - `Result.Failure(Exception ex)` has been added.
+    - `Result.Failure(string errorMessage, Exception ex)` has been added.
+    - `Result.Failure<TValue>(Exception ex)` has been added.
+    - `Result.Failure<TValue>(string errorMessage, Exception ex)` has been added.
+- New overloads were added to access the value.
+    - `result.IsSuccess(out TValue value)` has been added.
+    - `result.IsFailure(out IError error, out TValue value)` has been added.
+- New overloads were added to access the first error.
+    - `result.IsFailure(out IError error)` has been added.
+    - `result.IsSuccess(out TValue value, out IError error)` has been added.
+    - `result.HasError<TError>(out TError error)` has been added.
+- New property initializers were added to `Error`.
+    - `Message { get; }` has changed to `Message { get; init; }`.
+    - `Metadata { get; }` has changed to `Metadata { get; init; }`.
+    - `Error(Exception exception)` has been added.
+    - `Error(string message, Exception exception)` has been added.
+    - `Error.Empty` is now publicly accessible.
+    - `Exception { get; }` has been added.
+- New helper methods were added to convert failed results.
+    - `result.AsFailure()` and `result.AsFailure<T>()` convert an existing result into a failure result of another type.
+- Additional `Error` constructors were introduced for metadata collections.
+    - `Error(string message, KeyValuePair<string, object?> metadata)` has been added.
+    - `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` has been added.

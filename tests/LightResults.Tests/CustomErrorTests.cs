@@ -34,7 +34,7 @@ public sealed class CustomErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
@@ -51,14 +51,14 @@ public sealed class CustomErrorTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("An unknown error occured!")]
+    [InlineData("An unknown error occurred!")]
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
         var error = new CustomError(errorMessage);
 
         // Assert
-        error.ToString().ShouldBe(errorMessage.Length > 0 
+        error.ToString().ShouldBe(errorMessage.Length > 0
             ? $"CustomError {{ Message = \"{errorMessage}\" }}"
             : "CustomError");
     }
@@ -74,7 +74,7 @@ public sealed class CustomErrorTests
         {
         }
 
-        public CustomError(string errorMessage, IReadOnlyDictionary<string, object> metadata)
+        public CustomError(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
             : base(errorMessage, metadata)
         {
         }

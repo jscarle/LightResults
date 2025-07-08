@@ -17,5 +17,5 @@ public partial class Benchmarks
     public int Iterations { get; set; }
 
     private const int ResultValue = 0;
-    private const string ErrorMessage = "An unknown error occured.";
+    private const string ErrorMessage = "An unknown error occurred.";
 }

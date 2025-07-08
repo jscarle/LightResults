@@ -47,7 +47,7 @@ if (result.IsFailure(out var error))
     if (error.Message.Length > 0)
         Console.WriteLine(error.Message);
     else
-        Console.WriteLine("An unknown error occured!");
+        Console.WriteLine("An unknown error occurred!");
 }
 ```
 
@@ -61,6 +61,17 @@ if (result.IsSuccess(out var value))
     Console.WriteLine($"Value is {value}");
 }
 ```
+
+### Converting failed results
+
+A failed result can be converted to another result type using `AsFailure`.
+
+```csharp
+var result = Result.Failure("Invalid input");
+var typed = result.AsFailure<int>();
+var backToNonGeneric = typed.AsFailure();
+```
+
 
 ### Creating errors
 
@@ -79,6 +90,10 @@ var errorWithMetadataTuple = new Error("Something went wrong!", ("Key", "Value")
 
 var metadata = new Dictionary<string, object> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
+
+var errorWithMetadataKeyValuePair = new Error("Something went wrong!", new KeyValuePair<string, object>("Key", "Value"));
+
+var errorWithMetadataEnumerable = new Error("Something went wrong!", new[] { new KeyValuePair<string, object>("Key", "Value") });
 ```
 
 ### Custom errors
@@ -123,7 +138,7 @@ This can be especially useful when combined with metadata that is related to a s
 public sealed class HttpError : Error
 {
     public HttpError(HttpStatusCode statusCode)
-        : base("An HTTP error occured.", ("StatusCode", statusCode))
+        : base("An HTTP error occurred.", ("StatusCode", statusCode))
     {
     }
 }

@@ -16,7 +16,7 @@ public class Benchmarks
     public int Iterations { get; set; }
 
     private const int ResultValue = 0;
-    private const string ErrorMessage = "An unknown error occured.";
+    private const string ErrorMessage = "An unknown error occurred.";
     private static readonly Error EmptyError = new();
     private static readonly Error ErrorWithErrorMessage = new(ErrorMessage);
     private static readonly Result ResultSuccess = Result.Success();

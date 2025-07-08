@@ -14,7 +14,7 @@ of an operation, whether it's successful or has encountered an error, in a more 
 structured manner. This project is heavily inspired by [Michael Altmann](https://github.com/altmann)'s
 excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
-[![main](https://img.shields.io/github/actions/workflow/status/jscarle/LightResults/main.yml?logo=github)](https://github.com/jscarle/LightResults)
+[![test](https://img.shields.io/github/actions/workflow/status/jscarle/LightResults/test.yml?logo=github)](https://github.com/jscarle/LightResults)
 [![nuget](https://img.shields.io/nuget/v/LightResults)](https://www.nuget.org/packages/LightResults)
 [![downloads](https://img.shields.io/nuget/dt/LightResults)](https://www.nuget.org/packages/LightResults)
 
@@ -31,7 +31,7 @@ This library has no dependencies.
 - 🪶 Lightweight — Only contains what's necessary to implement the Result Pattern.
 - ⚙️ Extensible — Simple interfaces and base classes make it easy to adapt.
 - 🧱 Immutable — Results and errors are immutable and cannot be changed after being created.
-- 🧵 Thread-safe — The Error list and Metadata dictionary use Immutable classes for thread-safety.
+- 🧵 Thread-safe — Error and metadata collections are read-only.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
 - ❤️ Compatible — Available for dozens of versions of .NET as a [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.

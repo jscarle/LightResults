@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using Shouldly;
 
 namespace LightResults.Tests;
@@ -53,7 +55,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new KeyValuePair<string, object>("Key1", "Value1");
+        var metadata = new KeyValuePair<string, object?>("Key1", "Value1");
 
         // Act
         var error = new Error(errorMessage, metadata);
@@ -73,7 +75,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
@@ -94,7 +96,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
@@ -128,7 +130,7 @@ public sealed class ErrorTests
     public void MetadataPropertyInit_ShouldCreateErrorWithMetadata()
     {
         // Arrange
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
@@ -144,9 +146,44 @@ public sealed class ErrorTests
         error.Metadata.ShouldBe(metadata);
     }
 
+    [Fact]
+    public void ConstructorWithException_ShouldCreateErrorWithMessageAndMetadata()
+    {
+        // Arrange
+        var exception = new InvalidOperationException("ex message");
+
+        // Act
+        var error = new Error(exception);
+
+        // Assert
+        error.Message.ShouldBe(exception.Message);
+        error.Metadata.Count.ShouldBe(1);
+        var metadata = error.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ConstructorWithMessageAndException_ShouldCreateErrorWithMessageAndMetadata()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        var exception = new InvalidOperationException("ex message");
+
+        // Act
+        var error = new Error(errorMessage, exception);
+
+        // Assert
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.Count.ShouldBe(1);
+        var metadata = error.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
+    }
+
     [Theory]
     [InlineData("")]
-    [InlineData("An unknown error occured!")]
+    [InlineData("An unknown error occurred!")]
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
@@ -154,5 +191,135 @@ public sealed class ErrorTests
 
         // Assert
         error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
+    }
+
+    [Fact]
+    public void Equals_Error_ShouldReturnTrueForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        error1.Equals(error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_Error_ShouldReturnFalseForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        error1.Equals(error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_Object_ShouldReturnTrueForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        error1.Equals((object)error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_Object_ShouldReturnFalseForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        error1.Equals((object)error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_ShouldReturnSameHashCodeForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        error1.GetHashCode().ShouldBe(error2.GetHashCode());
+    }
+
+    [Fact]
+    public void op_Equality_Error_ShouldReturnTrueForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        (error1 == error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void op_Equality_Error_ShouldReturnFalseForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        (error1 == error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void op_Inequality_Error_ShouldReturnFalseForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        (error1 != error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void op_Inequality_Error_ShouldReturnTrueForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        (error1 != error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnExceptionWhenMetadataContainsException()
+    {
+        // Arrange
+        var exception = new InvalidOperationException();
+        var error = new Error("", ("Exception", exception));
+
+        // Assert
+        error.Exception.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenMetadataDoesNotContainException()
+    {
+        // Arrange
+        var error = new Error();
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenMetadataIsNotException()
+    {
+        // Arrange
+        var error = new Error("", ("Exception", "not exception"));
+
+        // Assert
+        error.Exception.ShouldBeNull();
     }
 }

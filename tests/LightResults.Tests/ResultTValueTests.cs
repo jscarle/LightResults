@@ -9,7 +9,7 @@ namespace LightResults.Tests;
 
 public sealed class ResultTValueTests
 {
-    private static readonly Error EmptyError = new();
+    private static readonly IError EmptyError = Error.Empty;
 
     [Fact]
     public void DefaultStruct_ShouldBeFailureResultWithDefaultValue()
@@ -368,7 +368,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.Single();
         error.Message.ShouldBe(errorMessage);
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -376,7 +376,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
         {
             { "Key", 0 },
         };
@@ -393,7 +393,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.Single();
         error.Message.ShouldBe(errorMessage);
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -434,6 +434,23 @@ public sealed class ResultTValueTests
         result.IsFailure(out _).ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
+    }
+
+    [Fact]
+    public void Failure_WithErrorsEnumerable_ShouldReuseListInstance()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
+
+        // Act
+        var result = Result.Failure<int>(errors.AsEnumerable());
+
+        // Assert
+        result.Errors.ShouldBeSameAs(errors);
     }
 
     [Fact]
@@ -852,10 +869,54 @@ public sealed class ResultTValueTests
         (result1 != result2).ShouldBeTrue();
     }
 
+    [Fact]
+    public void Equals_Result_DefaultResults_ShouldReturnTrue()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        Result<int> result2 = default;
+
+        // Assert
+        result1.Equals(result2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultResults_ShouldReturnSameHashCode()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        Result<int> result2 = default;
+
+        // Assert
+        result1.GetHashCode().ShouldBe(result2.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_Result_DefaultAndFailure_ShouldReturnFalse()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        var result2 = Result.Failure<int>();
+
+        // Assert
+        result1.Equals(result2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndFailure_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        var result2 = Result.Failure<int>();
+
+        // Assert
+        result1.GetHashCode().ShouldNotBe(result2.GetHashCode());
+    }
+
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = True", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForBoolean(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -868,7 +929,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForSByte(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -881,7 +942,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForByte(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -894,7 +955,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForInt16(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -907,7 +968,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForUInt16(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -920,7 +981,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForInt32(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -933,7 +994,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForUInt32(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -946,7 +1007,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForInt64(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -959,7 +1020,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForUInt64(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -972,7 +1033,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForDecimal(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -985,7 +1046,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForFloat(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -998,7 +1059,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1.1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForDouble(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1011,7 +1072,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"2024-04-05T12:30:00Z\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForDateTime(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1026,7 +1087,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"2024-04-05T12:30:00+00:00\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForDateTimeOffset(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1041,7 +1102,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 'c'", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForChar(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1054,7 +1115,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"StringValue\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForString(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1067,7 +1128,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForObject(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1080,7 +1141,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForNullableValueTypes(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1088,6 +1149,35 @@ public sealed class ResultTValueTests
 
         // Assert
         result.ToString().ShouldBe($"Result {{ {expected} }}");
+    }
+
+    [Theory]
+    [InlineData(true, "IsSuccess = True, Value = 42", "")]
+    [InlineData(false, "IsSuccess = False", "")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
+    public void ToString_ShouldReturnProperRepresentationForCustomFormattable(bool success, string expected, string errorMessage)
+    {
+        // Arrange
+        var value = new CustomFormattable(42);
+        var result = success ? Result.Success(value) : Result.Failure<CustomFormattable>(errorMessage);
+
+        // Assert
+        result.ToString().ShouldBe($"Result {{ {expected} }}");
+    }
+
+    private readonly struct CustomFormattable : IFormattable
+    {
+        private readonly int _value;
+
+        public CustomFormattable(int value)
+        {
+            _value = value;
+        }
+
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return _value.ToString(formatProvider);
+        }
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
@@ -1186,7 +1276,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.ShouldHaveSingleItem();
         error.Message.ShouldBe("Sample error message");
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1197,7 +1287,7 @@ public sealed class ResultTValueTests
             where TResult : IActionableResult<TValue, Result<TValue>>
         {
             const string errorMessage = "Sample error message";
-            var metadata = new KeyValuePair<string, object>("Key", 0);
+            var metadata = new KeyValuePair<string, object?>("Key", 0);
             return TResult.Failure(errorMessage, metadata);
         }
 
@@ -1212,7 +1302,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.ShouldHaveSingleItem();
         error.Message.ShouldBe("Sample error message");
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1223,7 +1313,7 @@ public sealed class ResultTValueTests
             where TResult : IActionableResult<TValue, Result<TValue>>
         {
             const string errorMessage = "Sample error message";
-            IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+            IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
             {
                 { "Key", 0 },
             };
@@ -1241,7 +1331,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.ShouldHaveSingleItem();
         error.Message.ShouldBe("Sample error message");
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1271,7 +1361,7 @@ public sealed class ResultTValueTests
     public void InterfaceFailure_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
-        static Result<TValue> Fail<TValue, TResult>()
+        static (Result<TValue> Result, List<IError> Errors) Fail<TValue, TResult>()
             where TResult : IActionableResult<TValue, Result<TValue>>
         {
             var errors = new List<IError>
@@ -1279,11 +1369,11 @@ public sealed class ResultTValueTests
                 new Error("Error 1"),
                 new Error("Error 2"),
             };
-            return TResult.Failure(errors.AsEnumerable());
+            return (TResult.Failure(errors.AsEnumerable()), errors);
         }
 
         // Act
-        var result = Fail<int, Result<int>>();
+        var (result, errors) = Fail<int, Result<int>>();
 
         // Assert
         result.IsSuccess().ShouldBeFalse();
@@ -1291,11 +1381,7 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeTrue();
         result.IsFailure(out _).ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBeEquivalentTo(new List<IError>
-        {
-            new Error("Error 1"),
-            new Error("Error 2"),
-        }.ToArray());
+        result.Errors.ShouldBeSameAs(errors);
     }
 
     [Fact]
@@ -1334,7 +1420,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"2024-04-05\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForDateOnly(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1347,7 +1433,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"12:30:00\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForTimeOnly(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1362,7 +1448,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForInt128(bool success, string expected, string errorMessage)
     {
         // Arrange
@@ -1375,7 +1461,7 @@ public sealed class ResultTValueTests
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
-    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occured!\"", "An unknown error occured!")]
+    [InlineData(false, "IsSuccess = False, Error = \"An unknown error occurred!\"", "An unknown error occurred!")]
     public void ToString_ShouldReturnProperRepresentationForUInt128(bool success, string expected, string errorMessage)
     {
         // Arrange

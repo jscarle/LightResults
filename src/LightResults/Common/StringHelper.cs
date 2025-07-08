@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace LightResults.Common;
 
@@ -15,7 +16,8 @@ internal static class StringHelper
     private const string PostResultStr = " }";
     private const string PreMessageStr = " { Message = \"";
     private const string PostMessageStr = "\" }";
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetResultValueString<T>(T value)
     {
         switch (value)
@@ -64,11 +66,20 @@ internal static class StringHelper
                 return GetResultCharValueString(charValue.ToString());
             case string stringValue:
                 return GetResultStringValueString(stringValue);
+            case IFormattable formattableValue:
+                return GetResultValueString(formattableValue);
             default:
                 return "Result { IsSuccess = True }";
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string GetResultValueString(IFormattable value)
+    {
+        return GetResultValueValueString(value.ToString(null, CultureInfo.InvariantCulture));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetResultCharValueString(string valueString)
     {
 #if NET6_0_OR_GREATER
@@ -85,6 +96,7 @@ internal static class StringHelper
 #endif
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetResultStringValueString(string valueString)
     {
 #if NET6_0_OR_GREATER
@@ -101,6 +113,7 @@ internal static class StringHelper
 #endif
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetResultValueValueString(string valueString)
     {
 #if NET6_0_OR_GREATER
@@ -111,6 +124,7 @@ internal static class StringHelper
 #endif
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetResultErrorString(string errorMessage)
     {
 #if NET6_0_OR_GREATER
@@ -121,6 +135,7 @@ internal static class StringHelper
 #endif
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetErrorString(string type, string message)
     {
 #if NET6_0_OR_GREATER
@@ -144,6 +159,7 @@ internal static class StringHelper
     private const int PreMessageStrLength = 14;
     private const int PostMessageStrLength = 3;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetResultValueSpan(Span<char> span, string state)
     {
         PreResultStr.AsSpan()
@@ -162,6 +178,7 @@ internal static class StringHelper
             .CopyTo(span);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetResultValueCharSpan(Span<char> span, string state)
     {
         PreResultStr.AsSpan()
@@ -186,6 +203,7 @@ internal static class StringHelper
             .CopyTo(span);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetResultValueStringSpan(Span<char> span, string state)
     {
         PreResultStr.AsSpan()
@@ -210,6 +228,7 @@ internal static class StringHelper
             .CopyTo(span);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetResultErrorSpan(Span<char> span, string state)
     {
         PreResultStr.AsSpan()
@@ -231,6 +250,7 @@ internal static class StringHelper
             .CopyTo(span);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetErrorSpan(Span<char> span, (string errorType, string errorMessage) state)
     {
         state.errorType

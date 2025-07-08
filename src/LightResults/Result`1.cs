@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using LightResults.Common;
 
 namespace LightResults;
@@ -46,6 +47,20 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     internal Result(IEnumerable<IError> errors)
     {
+        if (errors is IReadOnlyList<IError> list)
+        {
+            _errors = list;
+            return;
+        }
+
+        if (errors is ICollection<IError> collection)
+        {
+            var array = new IError[collection.Count];
+            collection.CopyTo(array, 0);
+            _errors = array;
+            return;
+        }
+
         _errors = errors.ToArray();
     }
 
@@ -55,12 +70,14 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess()
     {
         return _isSuccess;
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value)
     {
         value = _valueOrDefault;
@@ -68,6 +85,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(true)] out IError error)
     {
         if (_isSuccess)
@@ -88,12 +106,14 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure()
     {
         return !_isSuccess;
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure([MaybeNullWhen(false)] out IError error)
     {
         if (_isSuccess)
@@ -107,6 +127,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure([MaybeNullWhen(false)] out IError error, [MaybeNullWhen(true)] out TValue value)
     {
         if (_isSuccess)
@@ -130,6 +151,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Success(TValue value)
     {
         return new Result<TValue>(value);
@@ -137,6 +159,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     /// <summary>Creates a failure result.</summary>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure()
     {
         return FailureResult;
@@ -145,6 +168,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a failure result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage)
     {
         var error = new Error(errorMessage);
@@ -155,12 +179,10 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object Value) metadata)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -169,12 +191,10 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object> metadata)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -183,7 +203,8 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object> metadata)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
@@ -192,6 +213,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IError error)
     {
         return new Result<TValue>(error);
@@ -200,6 +222,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IEnumerable<IError> errors)
     {
         return new Result<TValue>(errors);
@@ -208,6 +231,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IReadOnlyList<IError> errors)
     {
         return new Result<TValue>(errors);
@@ -215,6 +239,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 #endif
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasError<TError>()
         where TError : IError
     {
@@ -236,6 +261,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasError<TError>([MaybeNullWhen(false)] out TError error)
         where TError : IError
     {
@@ -273,6 +299,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="value">The value to convert into a success result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
     [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = "We don't want to expose named alternates in this case.")]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Result<TValue>(TValue value)
     {
         return new Result<TValue>(value);
@@ -282,6 +309,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="error">The error to convert into a failure result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
     [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = "We don't want to expose named alternates in this case.")]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Result<TValue>(Error error)
     {
         return new Result<TValue>(error);
@@ -289,6 +317,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result"/>.</summary>
     /// <returns>A new instance of <see cref="Result"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Result AsFailure()
     {
         if (_errors is not null)
@@ -300,6 +329,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result{TDestination}"/>.</summary>
     /// <returns>A new instance of <see cref="Result{TDestination}"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
     /// <typeparam name="TDestination">The type of the value of the failure result.</typeparam>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Result<TDestination> AsFailure<TDestination>()
     {
         if (_errors is not null)
@@ -311,7 +341,8 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result{TValue}"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> is equal to this instance; otherwise, <c>false</c>.</returns>
-    public bool Equals(Result<TValue> other)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(in Result<TValue> other)
     {
         return Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
     }
@@ -319,13 +350,22 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? obj)
     {
-        return obj is Result<TValue> other && Equals(other);
+        return obj is Result<TValue> other && Equals(in other);
+    }
+
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    bool IEquatable<Result<TValue>>.Equals(Result<TValue> other)
+    {
+        return Equals(in other);
     }
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
         return HashCode.Combine(_errors, _valueOrDefault);
@@ -335,21 +375,24 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="left">The first <see cref="Result{TValue}"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result{TValue}"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> instances are equal; otherwise, <c>false</c>.</returns>
-    public static bool operator ==(Result<TValue> left, Result<TValue> right)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(in Result<TValue> left, in Result<TValue> right)
     {
-        return left.Equals(right);
+        return left.Equals(in right);
     }
 
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are not equal.</summary>
     /// <param name="left">The first <see cref="Result{TValue}"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result{TValue}"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> instances are not equal; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(Result<TValue> left, Result<TValue> right)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(in Result<TValue> left, in Result<TValue> right)
     {
-        return !left.Equals(right);
+        return !left.Equals(in right);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         if (_isSuccess)
