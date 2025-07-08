@@ -186,7 +186,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -194,7 +194,7 @@ public sealed class ResultTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new KeyValuePair<string, object>("Key", 0);
+        var metadata = new KeyValuePair<string, object?>("Key", 0);
 
         // Act
         var result = Result.Failure(errorMessage, metadata);
@@ -208,7 +208,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public sealed class ResultTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
         {
             { "Key", 0 },
         };
@@ -233,7 +233,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -286,29 +286,46 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Failure_WithNullException_ShouldThrow()
+    public void Failure_WithNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         Exception? exception = null;
 
         // Act
-        Func<object?> act = () => Result.Failure(exception!);
+        var result = Result.Failure(exception);
 
         // Assert
-        Should.Throw<ArgumentNullException>(act);
+        result.IsSuccess().ShouldBeFalse();
+        result.IsFailure().ShouldBeTrue();
+
+        var singleError = result.Errors.ShouldHaveSingleItem();
+        singleError.Message.ShouldBe("");
+        singleError.Metadata.Count.ShouldBe(1);
+        var metadata = singleError.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
     }
 
     [Fact]
-    public void Failure_WithMessageAndNullException_ShouldThrow()
+    public void Failure_WithMessageAndNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
+        const string errorMessage = "Sample error message";
         Exception? exception = null;
 
         // Act
-        Func<object?> act = () => Result.Failure("", exception!);
+        var result = Result.Failure(errorMessage, exception);
 
         // Assert
-        Should.Throw<ArgumentNullException>(act);
+        result.IsSuccess().ShouldBeFalse();
+        result.IsFailure().ShouldBeTrue();
+
+        var singleError = result.Errors.ShouldHaveSingleItem();
+        singleError.Message.ShouldBe(errorMessage);
+        singleError.Metadata.Count.ShouldBe(1);
+        var metadata = singleError.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
     }
 
     [Fact]
@@ -426,7 +443,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -434,7 +451,7 @@ public sealed class ResultTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new KeyValuePair<string, object>("Key", 0);
+        var metadata = new KeyValuePair<string, object?>("Key", 0);
 
         // Act
         var result = Result.Failure<object>(errorMessage, metadata);
@@ -449,7 +466,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -457,7 +474,7 @@ public sealed class ResultTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
         {
             { "Key", 0 },
         };
@@ -475,7 +492,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -528,29 +545,46 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void FailureTValue_WithNullException_ShouldThrow()
+    public void FailureTValue_WithNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
         Exception? exception = null;
 
         // Act
-        Func<object?> act = () => Result.Failure<object>(exception!);
+        var result = Result.Failure<object>(exception);
 
         // Assert
-        Should.Throw<ArgumentNullException>(act);
+        result.IsSuccess().ShouldBeFalse();
+        result.IsFailure().ShouldBeTrue();
+
+        var singleError = result.Errors.ShouldHaveSingleItem();
+        singleError.Message.ShouldBe("");
+        singleError.Metadata.Count.ShouldBe(1);
+        var metadata = singleError.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
     }
 
     [Fact]
-    public void FailureTValue_WithMessageAndNullException_ShouldThrow()
+    public void FailureTValue_WithMessageAndNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
+        const string errorMessage = "Sample error message";
         Exception? exception = null;
 
         // Act
-        Func<object?> act = () => Result.Failure<object>("", exception!);
+        var result = Result.Failure<object>(errorMessage, exception);
 
         // Assert
-        Should.Throw<ArgumentNullException>(act);
+        result.IsSuccess().ShouldBeFalse();
+        result.IsFailure().ShouldBeTrue();
+
+        var singleError = result.Errors.ShouldHaveSingleItem();
+        singleError.Message.ShouldBe(errorMessage);
+        singleError.Metadata.Count.ShouldBe(1);
+        var metadata = singleError.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
     }
 
     [Fact]
@@ -983,7 +1017,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe("Sample error message");
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -994,7 +1028,7 @@ public sealed class ResultTests
             where TResult : IActionableResult<Result>
         {
             const string errorMessage = "Sample error message";
-            IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+            IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
             {
                 { "Key", 0 },
             };
@@ -1013,7 +1047,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe("Sample error message");
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object>("Key", 0));
+        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]

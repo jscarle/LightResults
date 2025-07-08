@@ -53,7 +53,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new KeyValuePair<string, object>("Key1", "Value1");
+        var metadata = new KeyValuePair<string, object?>("Key1", "Value1");
 
         // Act
         var error = new Error(errorMessage, metadata);
@@ -73,7 +73,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
@@ -94,7 +94,7 @@ public sealed class ErrorTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
@@ -128,7 +128,7 @@ public sealed class ErrorTests
     public void MetadataPropertyInit_ShouldCreateErrorWithMetadata()
     {
         // Arrange
-        var metadata = new Dictionary<string, object>
+        var metadata = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },

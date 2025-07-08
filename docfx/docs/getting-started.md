@@ -77,7 +77,7 @@ Or with a message and metadata.
 ```csharp
 var errorWithMetadataTuple = new Error("Something went wrong!", ("Key", "Value"));
 
-var metadata = new Dictionary<string, object> { { "Key", "Value" } };
+var metadata = new Dictionary<string, object?> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
 ```
 

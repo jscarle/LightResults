@@ -93,9 +93,9 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result Failure(string errorMessage, (string Key, object Value) metadata)
+    public static Result Failure(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object>(1)
+        var dictionary = new Dictionary<string, object?>(1)
         {
             { metadata.Key, metadata.Value },
         };
@@ -107,9 +107,9 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result Failure(string errorMessage, KeyValuePair<string, object> metadata)
+    public static Result Failure(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object>(1)
+        var dictionary = new Dictionary<string, object?>(1)
         {
             { metadata.Key, metadata.Value },
         };
@@ -121,50 +121,38 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result Failure(string errorMessage, IReadOnlyDictionary<string, object> metadata)
+    public static Result Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result(error);
     }
 
     /// <summary>Creates a failure result with the given exception.</summary>
-    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
     /// <remarks>
     /// The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that
     /// of the exception.
     /// </remarks>
-    public static Result Failure(Exception ex)
+    public static Result Failure(Exception? ex)
     {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(ex);
-#else
-        if (ex is null)
-            throw new ArgumentNullException(nameof(ex));
-#endif
-        var metadata = new Dictionary<string, object>(1)
+        var metadata = new Dictionary<string, object?>(1)
         {
             { "Exception", ex },
         };
-        var error = new Error(ex.Message, metadata);
+        var message = ex?.Message ?? string.Empty;
+        var error = new Error(message, metadata);
         return new Result(error);
     }
 
     /// <summary>Creates a failure result with the given error message and exception.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and exception.</returns>
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
-    public static Result Failure(string errorMessage, Exception ex)
+    public static Result Failure(string errorMessage, Exception? ex)
     {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(ex);
-#else
-        if (ex is null)
-            throw new ArgumentNullException(nameof(ex));
-#endif
-
-        var metadata = new Dictionary<string, object>(1)
+        var metadata = new Dictionary<string, object?>(1)
         {
             { "Exception", ex },
         };
@@ -219,9 +207,9 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result<TValue> Failure<TValue>(string errorMessage, (string Key, object Value) metadata)
+    public static Result<TValue> Failure<TValue>(string errorMessage, (string Key, object? Value) metadata)
     {
-        var dictionary = new Dictionary<string, object>(1)
+        var dictionary = new Dictionary<string, object?>(1)
         {
             { metadata.Key, metadata.Value },
         };
@@ -234,9 +222,9 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result<TValue> Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)
+    public static Result<TValue> Failure<TValue>(string errorMessage, KeyValuePair<string, object?> metadata)
     {
-        var dictionary = new Dictionary<string, object>(1)
+        var dictionary = new Dictionary<string, object?>(1)
         {
             { metadata.Key, metadata.Value },
         };
@@ -249,50 +237,38 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
-    public static Result<TValue> Failure<TValue>(string errorMessage, IReadOnlyDictionary<string, object> metadata)
+    public static Result<TValue> Failure<TValue>(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
     }
 
     /// <summary>Creates a failure result with the given exception.</summary>
-    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified exception.</returns>
     /// <remarks>
     /// The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that
     /// of the exception.
     /// </remarks>
-    public static Result<TValue> Failure<TValue>(Exception ex)
+    public static Result<TValue> Failure<TValue>(Exception? ex)
     {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(ex);
-#else
-        if (ex is null)
-            throw new ArgumentNullException(nameof(ex));
-#endif
-        var metadata = new Dictionary<string, object>(1)
+        var metadata = new Dictionary<string, object?>(1)
         {
             { "Exception", ex },
         };
-        var error = new Error(ex.Message, metadata);
+        var message = ex?.Message ?? string.Empty;
+        var error = new Error(message, metadata);
         return new Result<TValue>(error);
     }
 
     /// <summary>Creates a failure result with the given error message and exception.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
-    /// <param name="ex">The <see cref="Exception"/> associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and exception.</returns>
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
-    public static Result<TValue> Failure<TValue>(string errorMessage, Exception ex)
+    public static Result<TValue> Failure<TValue>(string errorMessage, Exception? ex)
     {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(ex);
-#else
-        if (ex is null)
-            throw new ArgumentNullException(nameof(ex));
-#endif
-
-        var metadata = new Dictionary<string, object>(1)
+        var metadata = new Dictionary<string, object?>(1)
         {
             { "Exception", ex },
         };

@@ -16,10 +16,10 @@ changes, detailed below, that developers must be aware of when upgrading from v8
     - `result.Value` has been replaced by `result.IsSuccess(out var value)`.
     - `result.Error` has been replaced by `result.IsError(out var error)`.
 - Several constructors of the `Error` type have been removed or have changed.
-    - `Error((string Key, object Value) metadata)` has been removed.
-    - `Error(IDictionary<string, object> metadata)` has been removed.
-    - `Error(string message, IDictionary<string, object> metadata)` has been changed to
-      `Error(string message, IReadOnlyDictionary<string, object> metadata)`.
+    - `Error((string Key, object? Value) metadata)` has been removed.
+    - `Error(IDictionary<string, object?> metadata)` has been removed.
+    - `Error(string message, IDictionary<string, object?> metadata)` has been changed to
+      `Error(string message, IReadOnlyDictionary<string, object?> metadata)`.
 
 ### Migrating
 
@@ -36,9 +36,9 @@ The following steps in the following order will reduce the amount of manual work
 
 ### New method overloads and property initializers
 
-- New overloads have been added for `KeyValuePair<string, object>` metadata.
-    - `Result.Failure(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
-    - `Result.Failure<TValue>(string errorMessage, KeyValuePair<string, object> metadata)` has been added.
+- New overloads have been added for `KeyValuePair<string, object?>` metadata.
+    - `Result.Failure(string errorMessage, KeyValuePair<string, object?> metadata)` has been added.
+    - `Result.Failure<TValue>(string errorMessage, KeyValuePair<string, object?> metadata)` has been added.
 - New overloads have been added to simplify handling exceptions.
     - `Result.Failure(Exception ex)` has been added.
     - `Result.Failure(string errorMessage, Exception ex)` has been added.
