@@ -30,6 +30,34 @@ public class Error : IError
         Metadata = EmptyMetaData;
     }
 
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified exception.</summary>
+    /// <param name="exception">The <see cref="Exception"/> associated with the error.</param>
+    /// <remarks>
+    /// The <paramref name="exception"/> is added to <see cref="Metadata"/> under the key of
+    /// "Exception" and the <see cref="Message"/> is set to the exception message if present.
+    /// </remarks>
+    public Error(Exception? exception)
+    {
+        Message = exception?.Message ?? string.Empty;
+        Metadata = new Dictionary<string, object?>(1)
+        {
+            { "Exception", exception },
+        };
+    }
+
+    /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and exception.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="exception">The <see cref="Exception"/> associated with the error.</param>
+    /// <remarks>The <paramref name="exception"/> is added to <see cref="Metadata"/> under the key of "Exception".</remarks>
+    public Error(string message, Exception? exception)
+    {
+        Message = message;
+        Metadata = new Dictionary<string, object?>(1)
+        {
+            { "Exception", exception },
+        };
+    }
+
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>

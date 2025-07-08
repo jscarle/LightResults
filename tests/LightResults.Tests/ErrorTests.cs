@@ -146,6 +146,41 @@ public sealed class ErrorTests
         error.Metadata.ShouldBe(metadata);
     }
 
+    [Fact]
+    public void ConstructorWithException_ShouldCreateErrorWithMessageAndMetadata()
+    {
+        // Arrange
+        var exception = new InvalidOperationException("ex message");
+
+        // Act
+        var error = new Error(exception);
+
+        // Assert
+        error.Message.ShouldBe(exception.Message);
+        error.Metadata.Count.ShouldBe(1);
+        var metadata = error.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ConstructorWithMessageAndException_ShouldCreateErrorWithMessageAndMetadata()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+        var exception = new InvalidOperationException("ex message");
+
+        // Act
+        var error = new Error(errorMessage, exception);
+
+        // Assert
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.Count.ShouldBe(1);
+        var metadata = error.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("An unknown error occurred!")]
@@ -155,5 +190,5 @@ public sealed class ErrorTests
         var error = new Error(errorMessage);
 
         // Assert
-        error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
-    }}
+        error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");    }
+}
