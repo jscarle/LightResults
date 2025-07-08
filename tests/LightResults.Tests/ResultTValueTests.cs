@@ -852,6 +852,50 @@ public sealed class ResultTValueTests
         (result1 != result2).ShouldBeTrue();
     }
 
+    [Fact]
+    public void Equals_Result_DefaultResults_ShouldReturnTrue()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        Result<int> result2 = default;
+
+        // Assert
+        result1.Equals(result2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultResults_ShouldReturnSameHashCode()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        Result<int> result2 = default;
+
+        // Assert
+        result1.GetHashCode().ShouldBe(result2.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_Result_DefaultAndFailure_ShouldReturnFalse()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        var result2 = Result.Failure<int>();
+
+        // Assert
+        result1.Equals(result2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndFailure_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        var result2 = Result.Failure<int>();
+
+        // Assert
+        result1.GetHashCode().ShouldNotBe(result2.GetHashCode());
+    }
+
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = True", "")]
     [InlineData(false, "IsSuccess = False", "")]
