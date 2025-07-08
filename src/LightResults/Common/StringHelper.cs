@@ -15,7 +15,7 @@ internal static class StringHelper
     private const string PostResultStr = " }";
     private const string PreMessageStr = " { Message = \"";
     private const string PostMessageStr = "\" }";
-    
+
     public static string GetResultValueString<T>(T value)
     {
         switch (value)

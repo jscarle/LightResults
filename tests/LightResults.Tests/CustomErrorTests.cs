@@ -58,7 +58,7 @@ public sealed class CustomErrorTests
         var error = new CustomError(errorMessage);
 
         // Assert
-        error.ToString().ShouldBe(errorMessage.Length > 0 
+        error.ToString().ShouldBe(errorMessage.Length > 0
             ? $"CustomError {{ Message = \"{errorMessage}\" }}"
             : "CustomError");
     }
