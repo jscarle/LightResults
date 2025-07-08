@@ -1,4 +1,5 @@
 ﻿using LightResults.Common;
+using System.Collections.Immutable;
 
 namespace LightResults;
 
@@ -11,10 +12,10 @@ public class Error : IError
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
-    internal static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
+    internal static IError Empty { get; } = new Error("", ImmutableDictionary<string, object?>.Empty);
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", new Dictionary<string, object?>())];
-    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", ImmutableDictionary<string, object?>.Empty)];
+    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = ImmutableDictionary<string, object?>.Empty;
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
