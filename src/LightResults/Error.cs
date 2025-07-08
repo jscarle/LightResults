@@ -9,12 +9,12 @@ public class Error : IError
     public string Message { get; init; }
 
     /// <inheritdoc/>
-    public IReadOnlyDictionary<string, object> Metadata { get; init; }
+    public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
-    internal static IError Empty { get; } = new Error("", new Dictionary<string, object>());
+    internal static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", new Dictionary<string, object>())];
-    private static readonly IReadOnlyDictionary<string, object> EmptyMetaData = new Dictionary<string, object>();
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", new Dictionary<string, object?>())];
+    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
@@ -33,10 +33,10 @@ public class Error : IError
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(string message, (string Key, object Value) metadata)
+    public Error(string message, (string Key, object? Value) metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object>(1)
+        Metadata = new Dictionary<string, object?>(1)
         {
             { metadata.Key, metadata.Value },
         };
@@ -45,10 +45,10 @@ public class Error : IError
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(string message, KeyValuePair<string, object> metadata)
+    public Error(string message, KeyValuePair<string, object?> metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object>(1)
+        Metadata = new Dictionary<string, object?>(1)
         {
             { metadata.Key, metadata.Value },
         };
@@ -58,17 +58,17 @@ public class Error : IError
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(string message, IEnumerable<KeyValuePair<string, object>> metadata)
+    public Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object>(metadata);
+        Metadata = new Dictionary<string, object?>(metadata);
     }
 #endif
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
-    public Error(string message, IReadOnlyDictionary<string, object> metadata)
+    public Error(string message, IReadOnlyDictionary<string, object?> metadata)
     {
         Message = message;
         Metadata = metadata;

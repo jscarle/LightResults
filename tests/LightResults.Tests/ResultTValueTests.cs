@@ -368,7 +368,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.Single();
         error.Message.ShouldBe(errorMessage);
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -376,7 +376,7 @@ public sealed class ResultTValueTests
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
         {
             { "Key", 0 },
         };
@@ -393,7 +393,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.Single();
         error.Message.ShouldBe(errorMessage);
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1186,7 +1186,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.ShouldHaveSingleItem();
         error.Message.ShouldBe("Sample error message");
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1197,7 +1197,7 @@ public sealed class ResultTValueTests
             where TResult : IActionableResult<TValue, Result<TValue>>
         {
             const string errorMessage = "Sample error message";
-            var metadata = new KeyValuePair<string, object>("Key", 0);
+            var metadata = new KeyValuePair<string, object?>("Key", 0);
             return TResult.Failure(errorMessage, metadata);
         }
 
@@ -1212,7 +1212,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.ShouldHaveSingleItem();
         error.Message.ShouldBe("Sample error message");
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1223,7 +1223,7 @@ public sealed class ResultTValueTests
             where TResult : IActionableResult<TValue, Result<TValue>>
         {
             const string errorMessage = "Sample error message";
-            IReadOnlyDictionary<string, object> metadata = new Dictionary<string, object>
+            IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
             {
                 { "Key", 0 },
             };
@@ -1241,7 +1241,7 @@ public sealed class ResultTValueTests
         var error = result.Errors.ShouldHaveSingleItem();
         error.Message.ShouldBe("Sample error message");
         error.Metadata.ShouldHaveSingleItem();
-        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object>("Key", 0));
+        error.Metadata.Single().ShouldBeEquivalentTo(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]

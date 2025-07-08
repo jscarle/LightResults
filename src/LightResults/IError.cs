@@ -11,7 +11,7 @@ public interface IError
     /// <returns>An <see cref="IReadOnlyDictionary{TKey, TValue}"/> containing the metadata.</returns>
     /// <remarks>
     /// The metadata is represented as a read-only dictionary of key-value pairs, where the keys are <see cref="string"/> and the values are
-    /// <see cref="object"/>.
+    /// <see cref="object"/> which may be <see langword="null"/>.
     /// </remarks>
-    IReadOnlyDictionary<string, object> Metadata { get; }
+    IReadOnlyDictionary<string, object?> Metadata { get; }
 }
