@@ -11,8 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="LightResults" Version="9.0.2" />
-        <PackageReference Include="BenchmarkDotNet" Version="0.15.1" />
+        <PackageReference Include="LightResults" Version="9.0.3" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
     </ItemGroup>
 
 </Project>
