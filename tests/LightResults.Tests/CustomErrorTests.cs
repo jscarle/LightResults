@@ -51,7 +51,7 @@ public sealed class CustomErrorTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("An unknown error occured!")]
+    [InlineData("An unknown error occurred!")]
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange

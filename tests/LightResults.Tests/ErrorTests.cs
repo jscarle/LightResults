@@ -146,7 +146,7 @@ public sealed class ErrorTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("An unknown error occured!")]
+    [InlineData("An unknown error occurred!")]
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
@@ -154,5 +154,4 @@ public sealed class ErrorTests
 
         // Assert
         error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
-    }
-}
+    }}
