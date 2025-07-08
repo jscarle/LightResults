@@ -110,6 +110,8 @@ if (result.IsSuccess(out var value))
 Errors can be created with or without a message.
 
 ```csharp
+var emptyError = Error.Empty;
+
 var errorWithoutMessage = new Error();
 
 var errorWithMessage = new Error("Something went wrong!");
@@ -308,4 +310,5 @@ The following steps in the following order will reduce the amount of manual work
 - New property initializers were added to `Error`.
   - `Message { get; }` has changed to `Message { get; init; }`.
   - `Metadata { get; }` has changed to `Metadata { get; init; }`.
+  - `Error.Empty` is now publicly accessible.
   - `Exception { get; }` has been added.
