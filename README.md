@@ -75,7 +75,7 @@ var failureResultWithMessageAndException = Result.Failure("Operation failure!", 
 
 ### Checking the state of a result
 
-There are two methods used to check a result, `IsSuccess()` and `IsFailed()`. Both of which have several overloads to obtain the
+There are two methods used to check a result, `IsSuccess()` and `IsFailure()`. Both of which have several overloads to obtain the
 value and error.
 
 ```csharp
@@ -90,13 +90,13 @@ if (result.IsFailure(out var error))
     if (error.Message.Length > 0)
         Console.WriteLine(error.Message);
     else
-        Console.WriteLine("An unknown error occured!");
+        Console.WriteLine("An unknown error occurred!");
 }
 ```
 
 ### Getting the value
 
-The value from a successful result can be retrieved through the `out` parameter of the `Success()` method.
+The value from a successful result can be retrieved through the `out` parameter of the `IsSuccess()` method.
 
 ```csharp
 if (result.IsSuccess(out var value))
@@ -166,7 +166,7 @@ This can be especially useful when combined with metadata that is related to a s
 public sealed class HttpError : Error
 {
     public HttpError(HttpStatusCode statusCode)
-        : base("An HTTP error occured.", ("StatusCode", statusCode))
+        : base("An HTTP error occurred.", ("StatusCode", statusCode))
     {
     }
 }
@@ -175,17 +175,17 @@ public sealed class HttpError : Error
 We can further simplify creating errors by creating an error factory.
 
 ```csharp
-public static AppError
+public static class AppError
 {
-    public Result NotFound()
+    public static Result NotFound()
     {
         var notFoundError = new NotFoundError();
         return Result.Failure(notFoundError);
     }
 
-    public Result HttpError(HttpStatusCode statusCode)
+    public static Result HttpError(HttpStatusCode statusCode)
     {
-        var httpError = new HttpError(statusCode)
+        var httpError = new HttpError(statusCode);
         return Result.Failure(httpError);
     }
 }
@@ -236,17 +236,17 @@ introduced in .NET 7.0 (C# 11.0), it is possible to use generics to obtain acces
 of the generic variant of the result. As such the error factory can be enhanced to take advantage of that.
 
 ```csharp
-public static AppError
+public static class AppError
 {
-    public Result NotFound()
+    public static Result NotFound()
     {
         var notFoundError = new NotFoundError();
         return Result.Failure(notFoundError);
     }
-    
-    public TResult NotFound<TResult>()
+
+    public static TResult NotFound<TResult>()
     {
-        var notFoundError = new NotFoundError(); 
+        var notFoundError = new NotFoundError();
         return TResult.Failure(notFoundError);
     }
 }
@@ -268,7 +268,7 @@ changes, detailed below, that developers must be aware of when upgrading from v8
     - `Result<TValue>.Fail()` has been renamed to `Result.Failure<TValue>()`.
 - The `Value` and `Error` properties have been removed.
     - `result.Value` has been replaced by `result.IsSuccess(out var value)`.
-    - `result.Error` has been replaced by `result.IsError(out var error)`.
+    - `result.Error` has been replaced by `result.IsFailure(out var error)`.
 - Several constructors of the `Error` type have been removed or have changed.
     - `Error((string Key, object Value) metadata)` has been removed.
     - `Error(IDictionary<string, object> metadata)` has been removed.
@@ -298,13 +298,13 @@ The following steps in the following order will reduce the amount of manual work
   - `Result.Failure(string errorMessage, Exception ex)` has been added.
   - `Result.Failure<TValue>(Exception ex)` has been added.
   - `Result.Failure<TValue>(string errorMessage, Exception ex)` has been added.
-- New overloads where added to access the value.
+- New overloads were added to access the value.
   - `result.IsSuccess(out TValue value)` has been added.
   - `result.IsFailure(out IError error, out TValue value)` has been added.
-- New overloads where added to access the first error.
+- New overloads were added to access the first error.
   - `result.IsFailure(out IError error)` has been added.
   - `result.IsSuccess(out TValue value, out IError error)` has been added.
   - `result.HasError<TError>(out IError error)` has been added.
-- New property initializers where added to `Error`.
+- New property initializers were added to `Error`.
   - `Message { get; }` has changed to `Message { get; init; }`.
   - `Metadata { get; }` has changed to `Metadata { get; init; }`.
