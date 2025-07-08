@@ -24,27 +24,21 @@ The comparison implementations used the following package versions:
 
 - **FluentResults** 4.0.0
 - **Ardalis.Result** 10.1.0
-- **SimpleResults** 4.0.0
-- **Rascal** 1.1.0
 ### Returning results
 
 #### Returning a successful result
 | Method                            |      Mean | Ratio | Allocated |
 |-----------------------------------|----------:|------:|----------:|
-| LightResults: `Result.Success()`  |   2.382 ns |   1.00 |         - |
-| FluentResults: `Result.Ok()`      |  46.564 ns |  19.55 |     560 B |
-| ArdalisResult: `Result.Success()` |  42.761 ns |  17.96 |     720 B |
-| SimpleResults: `Result.Ok()`      | 653.851 ns | 274.58 |     400 B |
-| Rascal: `Result.Ok()`             |   2.309 ns |   0.97 |         - |
+| LightResults: `Result.Success()`  |  2.382 ns |  1.00 |         - |
+| FluentResults: `Result.Ok()`      | 46.564 ns | 19.55 |     560 B |
+| ArdalisResult: `Result.Success()` | 42.761 ns | 17.96 |     720 B |
 
 #### Returning a successful value result
-| Method                                    |        Mean | Ratio | Allocated |
-|-------------------------------------------|------------:|------:|----------:|
-| LightResults: `Result.Success<T>(value)`  |   2.308 ns |   1.00 |         - |
-| FluentResults: `Result.Ok<T>(value)`      | 148.860 ns |  64.50 |    1120 B |
-| ArdalisResult: `Result<T>.Success(value)` |  41.865 ns |  18.14 |     640 B |
-| SimpleResults: `Result.Ok<T>(value)`      | 663.615 ns | 287.53 |     480 B |
-| Rascal: `Result.Ok(value)`                |   2.284 ns |   0.99 |         - |
+| Method                                    |       Mean | Ratio | Allocated |
+|-------------------------------------------|-----------:|------:|----------:|
+| LightResults: `Result.Success<T>(value)`  |   2.308 ns |  1.00 |         - |
+| FluentResults: `Result.Ok<T>(value)`      | 148.860 ns | 64.50 |    1120 B |
+| ArdalisResult: `Result<T>.Success(value)` |  41.865 ns | 18.14 |     640 B |
 
 #### Returning a failed result
 | Method                           |       Mean |  Ratio | Allocated |
@@ -52,8 +46,6 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure()` |   2.099 ns |   1.00 |         - |
 | FluentResults: `Result.Fail("")` | 282.372 ns | 134.55 |    2640 B |
 | ArdalisResult: `Result.Error()`  |  47.295 ns |  22.54 |     720 B |
-| SimpleResults: `Result.Fail()`   | 664.395 ns | 316.58 |     400 B |
-| Rascal: `Result.Fail()`          |  13.535 ns |   6.45 |     240 B |
 
 #### Returning a failed result with an error message
 | Method                                       |       Mean | Ratio | Allocated | Alloc Ratio |
@@ -61,8 +53,6 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure(errorMessage)` |  21.614 ns |  1.00 |     240 B |        1.00 |
 | FluentResults: `Result.Fail(errorMessage)`   | 120.913 ns |  5.60 |    1120 B |        4.67 |
 | ArdalisResult: `Result.Error(errorMessage)`  |  64.953 ns |  3.01 |    1040 B |        4.33 |
-| SimpleResults: `Result.Fail(errorMessage)`   | 349.507 ns | 16.17 |     400 B |        1.67 |
-| Rascal: `Result.Fail(errorMessage)`          |   2.267 ns |  0.10 |         - |        0.00 |
 
 #### Returning a failed value result
 | Method                              |       Mean |  Ratio | Allocated |
@@ -70,8 +60,6 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure<T>()` |   2.500 ns |   1.00 |         - |
 | FluentResults: `Result.Fail<T>("")` | 285.110 ns | 114.06 |    2720 B |
 | ArdalisResult: `Result<T>.Error()`  |  53.565 ns |  21.43 |     640 B |
-| SimpleResults: `Result.Fail<T>()`   | 1,034.395 ns | 413.82 |     880 B |
-| Rascal: `Result.Fail<T>()`          |  13.408 ns |   5.36 |     240 B |
 
 #### Returning a failed value result with an error message
 | Method                                          |       Mean | Ratio | Allocated | Alloc Ratio |
@@ -79,28 +67,22 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure<T>(errorMessage)` |  18.487 ns |  1.00 |     240 B |        1.00 |
 | FluentResults: `Result.Fail<T>(errorMessage)`   | 122.375 ns |  6.62 |    1200 B |        5.00 |
 | ArdalisResult: `Result<T>.Error(errorMessage)`  |  61.796 ns |  3.34 |     960 B |        4.00 |
-| SimpleResults: `Result.Fail<T>(errorMessage)`   | 714.894 ns | 38.69 |     880 B |        3.67 |
-| Rascal: `Result.Fail<T>(errorMessage)`          |   2.275 ns |  0.12 |         - |        0.00 |
 
 ### Checking results
 
 #### Determining if a result is successful
-| Method                             |      Mean | Ratio | Allocated |
-|------------------------------------|----------:|------:|----------:|
-| LightResults: `result.IsSuccess()` |  2.219 ns |  1.00 |         - |
+| Method                             |       Mean | Ratio | Allocated |
+|------------------------------------|-----------:|------:|----------:|
+| LightResults: `result.IsSuccess()` |   2.219 ns |  1.00 |         - |
 | FluentResults: `result.IsSuccess`  | 102.670 ns | 46.29 |     480 B |
-| ArdalisResult: `result.IsSuccess`  |  2.383 ns |  1.07 |         - |
-| SimpleResults: `result.IsSuccess`  |  2.363 ns |  1.07 |         - |
-| Rascal: `result.IsSuccess`         |  2.230 ns |  1.01 |         - |
+| ArdalisResult: `result.IsSuccess`  |   2.383 ns |  1.07 |         - |
 
 #### Retrieving the value
 | Method                                          |      Mean | Ratio | Allocated |
 |-------------------------------------------------|----------:|------:|----------:|
-| LightResults: `result.IsSuccess(out var value)` |  2.238 ns |  1.00 | - |
+| LightResults: `result.IsSuccess(out var value)` |  2.238 ns |  1.00 |         - |
 | FluentResults: `result.Value`                   | 95.136 ns | 42.52 |     480 B |
-| ArdalisResult: `result.Value`                   |  2.240 ns |  1.00 | - |
-| SimpleResults: `result.Value`                   |  2.230 ns |  1.00 | - |
-| Rascal: `result.Value`                          |  2.299 ns |  1.03 | - |
+| ArdalisResult: `result.Value`                   |  2.240 ns |  1.00 |         - |
 
 #### Determining if a result is failed
 | Method                             |       Mean | Ratio | Allocated |
@@ -108,17 +90,13 @@ The comparison implementations used the following package versions:
 | LightResults: `result.IsFailure()` |   2.196 ns |  1.00 |         - |
 | FluentResults: `result.IsFailed`   | 148.292 ns | 67.55 |     880 B |
 | ArdalisResult: `!result.IsSuccess` |   2.334 ns |  1.06 |         - |
-| SimpleResults: `result.IsFailed`   |   2.258 ns |  1.03 |         - |
-| Rascal: `result.IsFailed`          |   2.312 ns |  1.05 |         - |
 
 #### Determining if a result contains a specific error
-| Method | Mean | Ratio | Allocated |
-|----------------------------------------------|----------:|------:|----------:|
-| LightResults: `result.HasError<T>()` |  12.887 ns |  1.00 |         - |
-| FluentResults: `result.HasError<T>()` | 789.100 ns | 61.23 |    3840 B |
+| Method                                                                                |       Mean | Ratio | Allocated |
+|---------------------------------------------------------------------------------------|-----------:|------:|----------:|
+| LightResults: `result.HasError<T>()`                                                  |  12.887 ns |  1.00 |         - |
+| FluentResults: `result.HasError<T>()`                                                 | 789.100 ns | 61.23 |    3840 B |
 | ArdalisResult: `result.Errors.Any(errorMessage => errorMessage.Equals(ErrorMessage))` |  20.733 ns |  1.61 |         - |
-| SimpleResults: `result.HasError<T>()` |   2.380 ns |  0.18 |         - |
-| Rascal: `result.HasError<T>()` |   3.855 ns |  0.30 |         - |
 
 #### Retrieving the first error
 | Method                                 |       Mean |  Ratio | Allocated |
@@ -126,8 +104,6 @@ The comparison implementations used the following package versions:
 | LightResults: `result.Error`           |   3.817 ns |   1.00 |         - |
 | FluentResults: `result.Errors[0]`      | 325.418 ns |  85.25 |    1760 B |
 | ArdalisResult: `result.Errors.First()` |  94.840 ns |  24.85 |         - |
-| SimpleResults: `result.Errors.First()` |  60.191 ns |  15.77 |         - |
-| Rascal: `result.Error`                 |   3.846 ns |   1.01 |         - |
 
 ### Getting results as strings
 
@@ -137,26 +113,20 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Success().ToString()`  |   2.595 ns |   1.00 |         - |
 | FluentResults: `Result.Ok().ToString()`      | 329.141 ns | 126.82 |    1200 B |
 | ArdalisResult: `Result.Success().ToString()` |  14.724 ns |   5.67 |         - |
-| SimpleResults: `Result.Ok().ToString()`      |  14.771 ns |   5.69 |         - |
-| Rascal: `Result.Ok().ToString()`             | 178.386 ns |  68.73 |     480 B |
 
 #### String representation of a successful value result
 | Method                                               |       Mean | Ratio | Allocated | Alloc Ratio |
 |------------------------------------------------------|-----------:|------:|----------:|------------:|
-| LightResults: `Result.Success<T>(value).ToString()`  |  98.429 ns |  1.00 | 1040 B |        1.00 |
-| FluentResults: `Result.Ok<T>(value).ToString()`      | 557.393 ns |  5.66 | 2800 B |        2.69 |
-| ArdalisResult: `Result<T>.Success(value).ToString()` |  14.593 ns |  0.15 |      - |        0.00 |
-| SimpleResults: `Result.Ok<T>(value).ToString()`      |  14.626 ns |  0.15 |      - |        0.00 |
-| Rascal: `Result.Ok(value).ToString()`                | 149.376 ns |  1.52 |  400 B |        0.38 |
+| LightResults: `Result.Success<T>(value).ToString()`  |  98.429 ns |  1.00 |    1040 B |        1.00 |
+| FluentResults: `Result.Ok<T>(value).ToString()`      | 557.393 ns |  5.66 |    2800 B |        2.69 |
+| ArdalisResult: `Result<T>.Success(value).ToString()` |  14.593 ns |  0.15 |         - |        0.00 |
 
 #### String representation of a failed result
-| Method                                      |         Mean |  Ratio | Allocated |
-|---------------------------------------------|-------------:|-------:|----------:|
-| LightResults: `Result.Failure().ToString()` |     5.324 ns |   1.00 | - |
-| FluentResults: `Result.Fail("").ToString()` |   957.111 ns | 179.76 |    3600 B |
-| ArdalisResult: `Result.Error().ToString()`  |    15.269 ns |   2.87 | - |
-| SimpleResults: `Result.Fail().ToString()`   |    15.120 ns |   2.84 | - |
-| Rascal: `Result.Fail().ToString()`          |   162.970 ns |  30.61 |     480 B |
+| Method                                      |       Mean |  Ratio | Allocated |
+|---------------------------------------------|-----------:|-------:|----------:|
+| LightResults: `Result.Failure().ToString()` |   5.324 ns |   1.00 |         - |
+| FluentResults: `Result.Fail("").ToString()` | 957.111 ns | 179.76 |    3600 B |
+| ArdalisResult: `Result.Error().ToString()`  |  15.269 ns |   2.87 |         - |
 
 #### String representation of a failed result with an error message
 | Method                                                  |         Mean | Ratio | Allocated | Alloc Ratio |
@@ -164,8 +134,6 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure(errorMessage).ToString()` |   108.405 ns |  1.00 |    1600 B |        1.00 |
 | FluentResults: `Result.Fail(errorMessage).ToString()`   | 1,417.229 ns | 13.08 |    9120 B |        5.70 |
 | ArdalisResult: `Result.Error(errorMessage).ToString()`  |    14.672 ns |  0.14 |         - |        0.00 |
-| SimpleResults: `Result.Fail(errorMessage).ToString()`   |    14.881 ns |  0.14 |         - |        0.00 |
-| Rascal: `Result.Fail(errorMessage).ToString()`          |   188.120 ns |  1.74 |     960 B |        0.60 |
 
 #### String representation of a failed value result
 | Method                                         |         Mean |  Ratio | Allocated |
@@ -173,8 +141,6 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure<T>().ToString()` |     5.331 ns |   1.00 |         - |
 | FluentResults: `Result.Fail<T>("").ToString()` | 1,177.864 ns | 220.96 |    5520 B |
 | ArdalisResult: `Result<T>.Error().ToString()`  |    15.082 ns |   2.83 |         - |
-| SimpleResults: `Result.Fail<T>().ToString()`   |    14.761 ns |   2.77 |         - |
-| Rascal: `Result.Fail<T>().ToString()`          |   170.691 ns |  32.02 |     480 B |
 
 #### String representation of a failed value result with an error message
 | Method                                                     |         Mean | Ratio | Allocated | Alloc Ratio |
@@ -182,5 +148,3 @@ The comparison implementations used the following package versions:
 | LightResults: `Result.Failure<T>(errorMessage).ToString()` |   105.022 ns |  1.00 |    1600 B |        1.00 |
 | FluentResults: `Result<T>.Error(errorMessage).ToString()`  | 1,720.919 ns | 16.39 |   11920 B |        7.45 |
 | ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`   |    14.643 ns |  0.14 |         - |        0.00 |
-| SimpleResults: `Result.Fail<T>(errorMessage).ToString()`   |    14.923 ns |  0.14 |         - |        0.00 |
-| Rascal: `Result.Fail<T>(errorMessage).ToString()`          |   187.226 ns |  1.78 |     960 B |        0.60 |
