@@ -10,7 +10,7 @@ for exceptional performance by intentionally simplifying its API.
 Below are comparisons of LightResults against other result pattern implementations.
 
 ```
-BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2605)
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.2605)
 13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
 .NET SDK 9.0.101
   [Host]   : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
@@ -18,128 +18,169 @@ BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2605)
 
 Job=.NET 9.0  Runtime=.NET 9.0  IterationTime=250ms
 Iterations=10
-``` 
+```
+These results were produced using **LightResults 9.0.3** and **BenchmarkDotNet 0.15.2**.
+The comparison implementations used the following package versions:
+
+- **FluentResults** 4.0.0
+- **Ardalis.Result** 10.1.0
+- **SimpleResults** 4.0.0
+- **Rascal** 1.1.0
 ### Returning results
 
 #### Returning a successful result
 | Method                            |      Mean | Ratio | Allocated |
 |-----------------------------------|----------:|------:|----------:|
-| LightResults: `Result.Success()`  |  2.229 ns |  1.00 |         - |
-| FluentResults: `Result.Ok()`      | 46.144 ns | 20.70 |     560 B |
-| ArdalisResult: `Result.Success()` | 43.977 ns | 19.73 |     720 B |
+| LightResults: `Result.Success()`  |   2.382 ns |   1.00 |         - |
+| FluentResults: `Result.Ok()`      |  46.564 ns |  19.55 |     560 B |
+| ArdalisResult: `Result.Success()` |  42.761 ns |  17.96 |     720 B |
+| SimpleResults: `Result.Ok()`      | 653.851 ns | 274.58 |     400 B |
+| Rascal: `Result.Ok()`             |   2.309 ns |   0.97 |         - |
 
 #### Returning a successful value result
 | Method                                    |        Mean | Ratio | Allocated |
 |-------------------------------------------|------------:|------:|----------:|
-| LightResults: `Result.Success<T>(value)`  |    2.279 ns |  1.00 |         - |
-| FluentResults: `Result.Ok<T>(value)`      |  146.461 ns | 64.28 |    1120 B |
-| ArdalisResult: `Result<T>.Success(value)` |   40.390 ns | 17.73 |     640 B |
+| LightResults: `Result.Success<T>(value)`  |   2.308 ns |   1.00 |         - |
+| FluentResults: `Result.Ok<T>(value)`      | 148.860 ns |  64.50 |    1120 B |
+| ArdalisResult: `Result<T>.Success(value)` |  41.865 ns |  18.14 |     640 B |
+| SimpleResults: `Result.Ok<T>(value)`      | 663.615 ns | 287.53 |     480 B |
+| Rascal: `Result.Ok(value)`                |   2.284 ns |   0.99 |         - |
 
 #### Returning a failed result
 | Method                           |       Mean |  Ratio | Allocated |
 |----------------------------------|-----------:|-------:|----------:|
-| LightResults: `Result.Failure()` |   2.171 ns |   1.00 |         - |
-| FluentResults: `Result.Fail("")` | 245.472 ns | 113.05 |    2640 B |
-| ArdalisResult: `Result.Error()`  |  44.872 ns |  20.66 |     720 B |
+| LightResults: `Result.Failure()` |   2.099 ns |   1.00 |         - |
+| FluentResults: `Result.Fail("")` | 282.372 ns | 134.55 |    2640 B |
+| ArdalisResult: `Result.Error()`  |  47.295 ns |  22.54 |     720 B |
+| SimpleResults: `Result.Fail()`   | 664.395 ns | 316.58 |     400 B |
+| Rascal: `Result.Fail()`          |  13.535 ns |   6.45 |     240 B |
 
 #### Returning a failed result with an error message
 | Method                                       |       Mean | Ratio | Allocated | Alloc Ratio |
 |----------------------------------------------|-----------:|------:|----------:|------------:|
-| LightResults: `Result.Failure(errorMessage)` |  17.455 ns |  1.00 |     240 B |        1.00 |
-| FluentResults: `Result.Fail(errorMessage)`   | 119.614 ns |  5.89 |    1120 B |        4.67 |
-| ArdalisResult: `Result.Error(errorMessage)`  |  63.892 ns |  3.12 |    1040 B |        4.33 |
+| LightResults: `Result.Failure(errorMessage)` |  21.614 ns |  1.00 |     240 B |        1.00 |
+| FluentResults: `Result.Fail(errorMessage)`   | 120.913 ns |  5.60 |    1120 B |        4.67 |
+| ArdalisResult: `Result.Error(errorMessage)`  |  64.953 ns |  3.01 |    1040 B |        4.33 |
+| SimpleResults: `Result.Fail(errorMessage)`   | 349.507 ns | 16.17 |     400 B |        1.67 |
+| Rascal: `Result.Fail(errorMessage)`          |   2.267 ns |  0.10 |         - |        0.00 |
 
 #### Returning a failed value result
 | Method                              |       Mean |  Ratio | Allocated |
 |-------------------------------------|-----------:|-------:|----------:|
-| LightResults: `Result.Failure<T>()` |   2.462 ns |   1.00 |         - |
-| FluentResults: `Result.Fail<T>("")` | 247.613 ns | 100.62 |    2720 B |
-| ArdalisResult: `Result<T>.Error()`  |  44.701 ns |  18.16 |     640 B |
+| LightResults: `Result.Failure<T>()` |   2.500 ns |   1.00 |         - |
+| FluentResults: `Result.Fail<T>("")` | 285.110 ns | 114.06 |    2720 B |
+| ArdalisResult: `Result<T>.Error()`  |  53.565 ns |  21.43 |     640 B |
+| SimpleResults: `Result.Fail<T>()`   | 1,034.395 ns | 413.82 |     880 B |
+| Rascal: `Result.Fail<T>()`          |  13.408 ns |   5.36 |     240 B |
 
 #### Returning a failed value result with an error message
 | Method                                          |       Mean | Ratio | Allocated | Alloc Ratio |
 |-------------------------------------------------|-----------:|------:|----------:|------------:|
-| LightResults: `Result.Failure<T>(errorMessage)` |  21.735 ns |  1.00 |     240 B |        1.00 |
-| FluentResults: `Result.Fail<T>(errorMessage)`   | 120.527 ns |  5.55 |    1200 B |        5.00 |
-| ArdalisResult: `Result<T>.Error(errorMessage)`  |  58.888 ns |  2.71 |     960 B |        4.00 |
+| LightResults: `Result.Failure<T>(errorMessage)` |  18.487 ns |  1.00 |     240 B |        1.00 |
+| FluentResults: `Result.Fail<T>(errorMessage)`   | 122.375 ns |  6.62 |    1200 B |        5.00 |
+| ArdalisResult: `Result<T>.Error(errorMessage)`  |  61.796 ns |  3.34 |     960 B |        4.00 |
+| SimpleResults: `Result.Fail<T>(errorMessage)`   | 714.894 ns | 38.69 |     880 B |        3.67 |
+| Rascal: `Result.Fail<T>(errorMessage)`          |   2.275 ns |  0.12 |         - |        0.00 |
 
 ### Checking results
 
 #### Determining if a result is successful
 | Method                             |      Mean | Ratio | Allocated |
 |------------------------------------|----------:|------:|----------:|
-| LightResults: `result.IsSuccess()` |  2.759 ns |  1.00 |         - |
-| FluentResults: `result.IsSuccess`  | 95.084 ns | 34.47 |     480 B |
-| ArdalisResult: `result.IsSuccess`  |  2.299 ns |  0.83 |         - |
+| LightResults: `result.IsSuccess()` |  2.219 ns |  1.00 |         - |
+| FluentResults: `result.IsSuccess`  | 102.670 ns | 46.29 |     480 B |
+| ArdalisResult: `result.IsSuccess`  |  2.383 ns |  1.07 |         - |
+| SimpleResults: `result.IsSuccess`  |  2.363 ns |  1.07 |         - |
+| Rascal: `result.IsSuccess`         |  2.230 ns |  1.01 |         - |
 
 #### Retrieving the value
 | Method                                          |      Mean | Ratio | Allocated |
 |-------------------------------------------------|----------:|------:|----------:|
-| LightResults: `result.IsSuccess(out var value)` |  2.276 ns |  1.00 |         - |
-| FluentResults: `result.Value`                   | 92.877 ns | 40.81 |     480 B |
-| ArdalisResult: `result.Value`                   |  2.769 ns |  1.22 |         - |
+| LightResults: `result.IsSuccess(out var value)` |  2.238 ns |  1.00 | - |
+| FluentResults: `result.Value`                   | 95.136 ns | 42.52 |     480 B |
+| ArdalisResult: `result.Value`                   |  2.240 ns |  1.00 | - |
+| SimpleResults: `result.Value`                   |  2.230 ns |  1.00 | - |
+| Rascal: `result.Value`                          |  2.299 ns |  1.03 | - |
 
 #### Determining if a result is failed
 | Method                             |       Mean | Ratio | Allocated |
 |------------------------------------|-----------:|------:|----------:|
-| LightResults: `result.IsFailure()` |   2.771 ns |  1.00 |         - |
-| FluentResults: `result.IsFailed`   | 144.895 ns | 52.28 |     880 B |
-| ArdalisResult: `!result.IsSuccess` |   2.288 ns |  0.83 |         - |
+| LightResults: `result.IsFailure()` |   2.196 ns |  1.00 |         - |
+| FluentResults: `result.IsFailed`   | 148.292 ns | 67.55 |     880 B |
+| ArdalisResult: `!result.IsSuccess` |   2.334 ns |  1.06 |         - |
+| SimpleResults: `result.IsFailed`   |   2.258 ns |  1.03 |         - |
+| Rascal: `result.IsFailed`          |   2.312 ns |  1.05 |         - |
 
 #### Determining if a result contains a specific error
-| Method                                                                                |       Mean | Ratio | Allocated |
-|---------------------------------------------------------------------------------------|-----------:|------:|----------:|
-| LightResults: `result.HasError<T>()`                                                  |  11.698 ns |  1.00 |         - |
-| FluentResults: `result.HasError<T>()`                                                 | 735.001 ns | 62.83 |    3600 B |
-| ArdalisResult: `result.Errors.Any(errorMessage => errorMessage.Equals(ErrorMessage))` |  20.135 ns |  1.72 |         - |
+| Method | Mean | Ratio | Allocated |
+|----------------------------------------------|----------:|------:|----------:|
+| LightResults: `result.HasError<T>()` |  12.887 ns |  1.00 |         - |
+| FluentResults: `result.HasError<T>()` | 789.100 ns | 61.23 |    3840 B |
+| ArdalisResult: `result.Errors.Any(errorMessage => errorMessage.Equals(ErrorMessage))` |  20.733 ns |  1.61 |         - |
+| SimpleResults: `result.HasError<T>()` |   2.380 ns |  0.18 |         - |
+| Rascal: `result.HasError<T>()` |   3.855 ns |  0.30 |         - |
 
 #### Retrieving the first error
 | Method                                 |       Mean |  Ratio | Allocated |
 |----------------------------------------|-----------:|-------:|----------:|
-| LightResults: `result.Error`           |   2.484 ns |   1.00 |         - |
-| FluentResults: `result.Errors[0]`      | 249.327 ns | 100.36 |    1520 B |
-| ArdalisResult: `result.Errors.First()` |  95.526 ns |  38.45 |         - |
+| LightResults: `result.Error`           |   3.817 ns |   1.00 |         - |
+| FluentResults: `result.Errors[0]`      | 325.418 ns |  85.25 |    1760 B |
+| ArdalisResult: `result.Errors.First()` |  94.840 ns |  24.85 |         - |
+| SimpleResults: `result.Errors.First()` |  60.191 ns |  15.77 |         - |
+| Rascal: `result.Error`                 |   3.846 ns |   1.01 |         - |
 
 ### Getting results as strings
 
 #### String representation of a successful result
 | Method                                       |       Mean |  Ratio | Allocated |
 |----------------------------------------------|-----------:|-------:|----------:|
-| LightResults: `Result.Success().ToString()`  |   2.336 ns |   1.00 |         - |
-| FluentResults: `Result.Ok().ToString()`      | 457.159 ns | 195.72 |    1440 B |
-| ArdalisResult: `Result.Success().ToString()` |  12.930 ns |   5.54 |         - |
+| LightResults: `Result.Success().ToString()`  |   2.595 ns |   1.00 |         - |
+| FluentResults: `Result.Ok().ToString()`      | 329.141 ns | 126.82 |    1200 B |
+| ArdalisResult: `Result.Success().ToString()` |  14.724 ns |   5.67 |         - |
+| SimpleResults: `Result.Ok().ToString()`      |  14.771 ns |   5.69 |         - |
+| Rascal: `Result.Ok().ToString()`             | 178.386 ns |  68.73 |     480 B |
 
 #### String representation of a successful value result
 | Method                                               |       Mean | Ratio | Allocated | Alloc Ratio |
 |------------------------------------------------------|-----------:|------:|----------:|------------:|
-| LightResults: `Result.Success<T>(value).ToString()`  |  94.038 ns |  1.00 |    1040 B |        1.00 |
-| FluentResults: `Result.Ok<T>(value).ToString()`      | 672.014 ns | 17.15 |    3040 B |        2.92 |
-| ArdalisResult: `Result<T>.Success(value).ToString()` |  12.597 ns |  0.13 |         - |        0.00 |
+| LightResults: `Result.Success<T>(value).ToString()`  |  98.429 ns |  1.00 | 1040 B |        1.00 |
+| FluentResults: `Result.Ok<T>(value).ToString()`      | 557.393 ns |  5.66 | 2800 B |        2.69 |
+| ArdalisResult: `Result<T>.Success(value).ToString()` |  14.593 ns |  0.15 |      - |        0.00 |
+| SimpleResults: `Result.Ok<T>(value).ToString()`      |  14.626 ns |  0.15 |      - |        0.00 |
+| Rascal: `Result.Ok(value).ToString()`                | 149.376 ns |  1.52 |  400 B |        0.38 |
 
 #### String representation of a failed result
 | Method                                      |         Mean |  Ratio | Allocated |
 |---------------------------------------------|-------------:|-------:|----------:|
-| LightResults: `Result.Failure().ToString()` |     4.965 ns |   1.00 |         - |
-| FluentResults: `Result.Fail("").ToString()` | 1,000.265 ns | 201.46 |    3840 B |
-| ArdalisResult: `Result.Error().ToString()`  |    12.659 ns |   2.55 |         - |
+| LightResults: `Result.Failure().ToString()` |     5.324 ns |   1.00 | - |
+| FluentResults: `Result.Fail("").ToString()` |   957.111 ns | 179.76 |    3600 B |
+| ArdalisResult: `Result.Error().ToString()`  |    15.269 ns |   2.87 | - |
+| SimpleResults: `Result.Fail().ToString()`   |    15.120 ns |   2.84 | - |
+| Rascal: `Result.Fail().ToString()`          |   162.970 ns |  30.61 |     480 B |
 
 #### String representation of a failed result with an error message
 | Method                                                  |         Mean | Ratio | Allocated | Alloc Ratio |
 |---------------------------------------------------------|-------------:|------:|----------:|------------:|
-| LightResults: `Result.Failure(errorMessage).ToString()` |   100.338 ns |  1.00 |    1520 B |        1.00 |
-| FluentResults: `Result.Fail(errorMessage).ToString()`   | 1,564.981 ns | 15.60 |    9280 B |        6.11 |
-| ArdalisResult: `Result.Error(errorMessage).ToString()`  |    12.787 ns |  0.13 |         - |        0.00 |
+| LightResults: `Result.Failure(errorMessage).ToString()` |   108.405 ns |  1.00 |    1600 B |        1.00 |
+| FluentResults: `Result.Fail(errorMessage).ToString()`   | 1,417.229 ns | 13.08 |    9120 B |        5.70 |
+| ArdalisResult: `Result.Error(errorMessage).ToString()`  |    14.672 ns |  0.14 |         - |        0.00 |
+| SimpleResults: `Result.Fail(errorMessage).ToString()`   |    14.881 ns |  0.14 |         - |        0.00 |
+| Rascal: `Result.Fail(errorMessage).ToString()`          |   188.120 ns |  1.74 |     960 B |        0.60 |
 
 #### String representation of a failed value result
 | Method                                         |         Mean |  Ratio | Allocated |
 |------------------------------------------------|-------------:|-------:|----------:|
-| LightResults: `Result.Failure<T>().ToString()` |     5.016 ns |   1.00 |         - |
-| FluentResults: `Result.Fail<T>("").ToString()` | 1,302.858 ns | 259.72 |    5760 B |
-| ArdalisResult: `Result<T>.Error().ToString()`  |    12.742 ns |   2.54 |         - |
+| LightResults: `Result.Failure<T>().ToString()` |     5.331 ns |   1.00 |         - |
+| FluentResults: `Result.Fail<T>("").ToString()` | 1,177.864 ns | 220.96 |    5520 B |
+| ArdalisResult: `Result<T>.Error().ToString()`  |    15.082 ns |   2.83 |         - |
+| SimpleResults: `Result.Fail<T>().ToString()`   |    14.761 ns |   2.77 |         - |
+| Rascal: `Result.Fail<T>().ToString()`          |   170.691 ns |  32.02 |     480 B |
 
 #### String representation of a failed value result with an error message
 | Method                                                     |         Mean | Ratio | Allocated | Alloc Ratio |
 |------------------------------------------------------------|-------------:|------:|----------:|------------:|
-| LightResults: `Result.Failure<T>(errorMessage).ToString()` |   101.344 ns |  1.00 |    1520 B |        1.00 |
-| FluentResults: `Result<T>.Error(errorMessage).ToString()`  | 1,789.207 ns | 17.65 |   12080 B |        7.95 |
-| ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`   |    12.848 ns |  0.13 |         - |        0.00 |
+| LightResults: `Result.Failure<T>(errorMessage).ToString()` |   105.022 ns |  1.00 |    1600 B |        1.00 |
+| FluentResults: `Result<T>.Error(errorMessage).ToString()`  | 1,720.919 ns | 16.39 |   11920 B |        7.45 |
+| ArdalisResult: `Result.Fail<T>(errorMessage).ToString()`   |    14.643 ns |  0.14 |         - |        0.00 |
+| SimpleResults: `Result.Fail<T>(errorMessage).ToString()`   |    14.923 ns |  0.14 |         - |        0.00 |
+| Rascal: `Result.Fail<T>(errorMessage).ToString()`          |   187.226 ns |  1.78 |     960 B |        0.60 |
