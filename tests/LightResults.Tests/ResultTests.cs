@@ -899,6 +899,50 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Equals_Result_DefaultResults_ShouldReturnTrue()
+    {
+        // Arrange
+        Result result1 = default;
+        Result result2 = default;
+
+        // Assert
+        result1.Equals(result2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultResults_ShouldReturnSameHashCode()
+    {
+        // Arrange
+        Result result1 = default;
+        Result result2 = default;
+
+        // Assert
+        result1.GetHashCode().ShouldBe(result2.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_Result_DefaultAndFailure_ShouldReturnFalse()
+    {
+        // Arrange
+        Result result1 = default;
+        var result2 = Result.Failure();
+
+        // Assert
+        result1.Equals(result2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndFailure_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result result1 = default;
+        var result2 = Result.Failure();
+
+        // Assert
+        result1.GetHashCode().ShouldNotBe(result2.GetHashCode());
+    }
+
+    [Fact]
     public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
     {
         // Arrange
