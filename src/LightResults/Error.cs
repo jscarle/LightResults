@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using LightResults.Common;
 
 namespace LightResults;
@@ -16,6 +17,7 @@ public class Error : IError, IEquatable<Error>
     /// <returns>An <see cref="Exception"/> instance when the metadata contains an entry named <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.</returns>
     public Exception? Exception
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
             if (Metadata.TryGetValue(ExceptionKey, out var value) && value is Exception ex)
@@ -118,6 +120,7 @@ public class Error : IError, IEquatable<Error>
     /// <summary>Determines whether the specified <see cref="Error"/> is equal to this instance.</summary>
     /// <param name="other">The <see cref="Error"/> to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Error"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(Error? other)
     {
         if (ReferenceEquals(null, other))
@@ -145,12 +148,14 @@ public class Error : IError, IEquatable<Error>
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? obj)
     {
         return obj is Error other && Equals(other);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
         var hash = new HashCode();
@@ -168,6 +173,7 @@ public class Error : IError, IEquatable<Error>
     /// <param name="left">The first <see cref="Error"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Error"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Error"/> instances are equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Error? left, Error? right)
     {
         if (left is null)
@@ -180,12 +186,14 @@ public class Error : IError, IEquatable<Error>
     /// <param name="left">The first <see cref="Error"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Error"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Error"/> instances are not equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(Error? left, Error? right)
     {
         return !(left == right);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         var type = GetType();

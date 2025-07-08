@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace LightResults.Common;
 
@@ -22,11 +23,13 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
 
     IEnumerable<object?> IReadOnlyDictionary<string, object?>.Values => new ValueEnumerable(_value);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ContainsKey(string key)
     {
         return string.Equals(key, _key, StringComparison.Ordinal);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(string key, out object? value)
     {
         if (ContainsKey(key))
@@ -39,16 +42,19 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
         return false;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Enumerator GetEnumerator()
     {
         return new Enumerator(_key, _value);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator()
     {
         return GetEnumerator();
@@ -62,6 +68,7 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
 
         object IEnumerator.Current => Current;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
             if (_moved)
@@ -71,11 +78,13 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             _moved = false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
         }
@@ -85,11 +94,13 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
     {
         private bool _moved;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator<string> IEnumerable<string>.GetEnumerator()
         {
             return this;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;
@@ -99,6 +110,7 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
 
         object IEnumerator.Current => key;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
             if (_moved)
@@ -108,11 +120,13 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             _moved = false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
         }
@@ -122,11 +136,13 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
     {
         private bool _moved;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator<object?> IEnumerable<object?>.GetEnumerator()
         {
             return this;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;
@@ -136,6 +152,7 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
 
         object IEnumerator.Current => value!;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
             if (_moved)
@@ -145,11 +162,13 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             _moved = false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
         }

@@ -299,6 +299,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="value">The value to convert into a success result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
     [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = "We don't want to expose named alternates in this case.")]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Result<TValue>(TValue value)
     {
         return new Result<TValue>(value);
@@ -308,6 +309,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="error">The error to convert into a failure result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
     [SuppressMessage("Usage", "CA2225: Operator overloads have named alternates", Justification = "We don't want to expose named alternates in this case.")]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Result<TValue>(Error error)
     {
         return new Result<TValue>(error);
@@ -339,6 +341,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result{TValue}"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(in Result<TValue> other)
     {
         return Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
@@ -347,12 +350,14 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? obj)
     {
         return obj is Result<TValue> other && Equals(in other);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     bool IEquatable<Result<TValue>>.Equals(Result<TValue> other)
     {
         return Equals(in other);
@@ -360,6 +365,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
         return HashCode.Combine(_errors, _valueOrDefault);
@@ -369,6 +375,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="left">The first <see cref="Result{TValue}"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result{TValue}"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> instances are equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(in Result<TValue> left, in Result<TValue> right)
     {
         return left.Equals(in right);
@@ -378,12 +385,14 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="left">The first <see cref="Result{TValue}"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result{TValue}"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> instances are not equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(in Result<TValue> left, in Result<TValue> right)
     {
         return !left.Equals(in right);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         if (_isSuccess)

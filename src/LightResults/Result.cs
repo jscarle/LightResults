@@ -68,6 +68,7 @@ public readonly struct Result : IEquatable<Result>,
 
     /// <summary>Creates a success result.</summary>
     /// <returns>A new instance of <see cref="Result"/> representing a success result with the specified value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Success()
     {
         return SuccessResult;
@@ -77,6 +78,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="value">The value to include in the result.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Success<TValue>(TValue value)
     {
         return new Result<TValue>(value);
@@ -91,6 +93,7 @@ public readonly struct Result : IEquatable<Result>,
 
     /// <summary>Creates a failure result.</summary>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure()
     {
         return FailureResult;
@@ -99,6 +102,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage)
     {
         var error = new Error(errorMessage);
@@ -109,6 +113,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, (string Key, object? Value) metadata)
     {
         var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
@@ -120,6 +125,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, KeyValuePair<string, object?> metadata)
     {
         var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
@@ -131,6 +137,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -141,6 +148,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(Exception? ex)
     {
         var error = new Error(ex);
@@ -152,6 +160,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and exception.</returns>
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, Exception? ex)
     {
         var error = new Error(errorMessage, ex);
@@ -161,6 +170,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(IError error)
     {
         return new Result(error);
@@ -169,6 +179,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(IEnumerable<IError> errors)
     {
         return new Result(errors);
@@ -177,6 +188,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(IReadOnlyList<IError> errors)
     {
         return new Result(errors);
@@ -185,6 +197,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result.</summary>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>()
     {
         return Result<TValue>.FailureResult;
@@ -194,6 +207,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(string errorMessage)
     {
         var error = new Error(errorMessage);
@@ -205,6 +219,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(string errorMessage, (string Key, object? Value) metadata)
     {
         var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
@@ -217,6 +232,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(string errorMessage, KeyValuePair<string, object?> metadata)
     {
         var dictionary = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
@@ -229,6 +245,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -239,6 +256,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified exception.</returns>
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(Exception? ex)
     {
         var error = new Error(ex);
@@ -250,6 +268,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and exception.</returns>
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(string errorMessage, Exception? ex)
     {
         var error = new Error(errorMessage, ex);
@@ -260,6 +279,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="error">The error associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(IError error)
     {
         return new Result<TValue>(error);
@@ -269,6 +289,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(IEnumerable<IError> errors)
     {
         return new Result<TValue>(errors);
@@ -278,6 +299,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <typeparam name="TValue">The type of the value of the result.</typeparam>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue> Failure<TValue>(IReadOnlyList<IError> errors)
     {
         return new Result<TValue>(errors);
@@ -398,6 +420,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(in Result other)
     {
         return Equals(_errors, other._errors);
@@ -406,12 +429,14 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? obj)
     {
         return obj is Result other && Equals(in other);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     bool IEquatable<Result>.Equals(Result other)
     {
         return Equals(in other);
@@ -419,6 +444,7 @@ public readonly struct Result : IEquatable<Result>,
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
         return HashCode.Combine(_errors);
@@ -428,6 +454,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(in Result left, in Result right)
     {
         return left.Equals(in right);
@@ -437,12 +464,14 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are not equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(in Result left, in Result right)
     {
         return !left.Equals(in right);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         if (_isSuccess)
