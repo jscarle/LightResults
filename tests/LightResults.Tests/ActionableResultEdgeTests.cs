@@ -1,4 +1,5 @@
 #if NET7_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
 using LightResults;
 using LightResults.Common;
 using Shouldly;
@@ -67,11 +68,11 @@ public sealed class ActionableResultEdgeTests
 
         public bool IsFailure() => _inner.IsFailure();
 
-        public bool IsFailure(out IError error) => _inner.IsFailure(out error);
+        public bool IsFailure([MaybeNullWhen(false)] out IError error) => _inner.IsFailure(out error);
 
         public bool HasError<TError>() where TError : IError => _inner.HasError<TError>();
 
-        public bool HasError<TError>(out TError error) where TError : IError => _inner.HasError(out error);
+        public bool HasError<TError>([MaybeNullWhen(false)] out TError error) where TError : IError => _inner.HasError(out error);
     }
 
     [Fact]
