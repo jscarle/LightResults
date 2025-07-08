@@ -25,7 +25,7 @@ This library has no dependencies.
 - 🪶 Lightweight — Only contains what's necessary to implement the Result Pattern.
 - ⚙️ Extensible — Simple interfaces and base classes make it easy to adapt.
 - 🧱 Immutable — Results and errors are immutable and cannot be changed after being created.
-- 🧵 Thread-safe — The Error list and Metadata dictionary use Immutable classes for thread-safety.
+- 🧵 Thread-safe — Results expose read-only error and metadata collections that cannot be modified after creation.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
 - ❤️ Compatible — Available for dozens of versions of .NET as a
@@ -43,7 +43,7 @@ Make sure to [read the docs](https://jscarle.github.io/LightResults/) for the fu
 
 ## Getting Started
 
-LightResults consists of only three classes `Result`, `Result<TValue>`, and `Error`.
+LightResults consists of only three types: `Result`, `Result<TValue>`, and `Error`.
 
 - The `Result` class represents a generic result indicating success or failure.
 - The `Result<TValue>` class represents a success or failure result with a value.
