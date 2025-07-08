@@ -1,16 +1,15 @@
 # Guidance for AI contributors
 
-This repository contains **LightResults**, a very small but highly-optimized .NET library that implements the Result Pattern.  The code is intended to be used in performance critical paths of applications that handle millions of requests per second.  The current version targets multiple frameworks (netstandard2.0 and net6.0–net9.0) and relies heavily on low allocation techniques.
-
-**Important:** Never update the `docfx` documentation or files under the `docfx/` directory. The docs are generated automatically in CI and manual changes will be discarded.
+This repository contains **LightResults**, a very small but highly-optimized .NET library that implements the Result Pattern. The code is intended to be used in performance critical paths of applications that handle millions of requests per
+second. The current version targets multiple frameworks (netstandard2.0 and net6.0–net9.0) and relies heavily on low allocation techniques.
 
 ## Repository layout
 
 - `src/LightResults` – Main library.
-  - `Result.cs` / `Result\`1.cs` – immutable `readonly struct` implementations.
-  - `Error.cs` – immutable error type.
-  - `IResult.cs`, `IResult\`1.cs`, `IError.cs` – API contracts.
-  - `Common/` – helper utilities and optional interfaces when targeting newer frameworks.
+    - `Result.cs` / `Result\`1.cs` – immutable `readonly struct` implementations.
+    - `Error.cs` – immutable error type.
+    - `IResult.cs`, `IResult\`1.cs`, `IError.cs` – API contracts.
+    - `Common/` – helper utilities and optional interfaces when targeting newer frameworks.
 - `tests/LightResults.Tests` – xUnit tests for the library.
 - `docfx/` – documentation generation config.
 - `LightResults.sln` – solution file.
@@ -19,21 +18,21 @@ This repository contains **LightResults**, a very small but highly-optimized .NE
 
 - C# files use 4 space indentation and braces on the next line.
 - Private fields are named with leading underscores (`_errors`, `_isSuccess`).
-- Public APIs use PascalCase.  Generic type parameters use the `TValue` naming convention.
+- Public APIs use PascalCase. Generic type parameters use the `TValue` naming convention.
 - Avoid LINQ in hot paths – explicit `for` loops are used instead to reduce allocations.
 - The library prefers `readonly struct` and `init` properties to keep allocations to a minimum and maintain immutability.
 - String formatting is performance oriented (`string.Create` with pre-computed lengths) – follow existing patterns in `StringHelper.cs`.
 
 ## Performance considerations
 
-- Do not introduce allocations inside frequently executed methods.  Use `readonly` collections and structs when possible.
-- Exceptions should not be part of normal control flow.  Factory methods like `Result.Failure(Exception ex)` wrap exceptions into metadata instead of throwing.
+- Do not introduce allocations inside frequently executed methods. Use `readonly` collections and structs when possible.
+- Exceptions should not be part of normal control flow. Factory methods like `Result.Failure(Exception ex)` wrap exceptions into metadata instead of throwing.
 - When iterating through errors, prefer `for` loops and avoid `foreach`/LINQ which allocate enumerators.
 - The code is AOT compatible and compiled with optimizations enabled; keep new code trim-friendly.
 
 ## Building and testing
 
-The project uses the standard .NET SDK.  When a .NET environment is available you can run:
+The project uses the standard .NET SDK. When a .NET environment is available you can run:
 
 ```bash
 # Restore and build
@@ -47,7 +46,7 @@ The test project targets multiple frameworks. When `Mono` is not available (as
 in the Codex container) the `net481` target fails to start. Specify a supported
 framework like `net9.0` to run the unit tests successfully.
 
-However, building or testing is not required for simple documentation updates.  This repository currently does not include an automated setup script for installing the .NET SDK.
+However, building or testing is not required for simple documentation updates. This repository currently does not include an automated setup script for installing the .NET SDK.
 
 Do not restore, run, or build performance benchmarks found in `tools`.
 
@@ -56,8 +55,8 @@ Do not restore, run, or build performance benchmarks found in `tools`.
 1. Maintain API surface stability—public members are part of a widely used library.
 2. Keep the implementation allocation free when possible and favour explicit loops and array usage.
 3. Include or update unit tests under `tests/LightResults.Tests` when modifying behaviour.
-4. **Never update the `docfx` documentation or configuration.** The site is built automatically by `.github/workflows/docs.yml` and manual changes will be ignored.
-5. Always make sure the README.md is up to date and matches the public API.
+4. The public documentation site is built automatically by `.github/workflows/docs.yml` from the `docfx` directory.
+5. Always make sure the `README.md` and `docfx` is up to date and matches the public API.
 
 ## Useful references
 
