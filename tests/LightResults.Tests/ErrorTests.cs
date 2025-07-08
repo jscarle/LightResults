@@ -155,5 +155,104 @@ public sealed class ErrorTests
         var error = new Error(errorMessage);
 
         // Assert
-        error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
-    }}
+        error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");    }
+
+    [Fact]
+    public void Equals_Error_ShouldReturnTrueForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        error1.Equals(error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_Error_ShouldReturnFalseForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        error1.Equals(error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_Object_ShouldReturnTrueForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        error1.Equals((object)error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Equals_Object_ShouldReturnFalseForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        error1.Equals((object)error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_ShouldReturnSameHashCodeForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        error1.GetHashCode().ShouldBe(error2.GetHashCode());
+    }
+
+    [Fact]
+    public void op_Equality_Error_ShouldReturnTrueForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        (error1 == error2).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void op_Equality_Error_ShouldReturnFalseForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        (error1 == error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void op_Inequality_Error_ShouldReturnFalseForEqualErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 1));
+
+        // Assert
+        (error1 != error2).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void op_Inequality_Error_ShouldReturnTrueForUnequalErrors()
+    {
+        // Arrange
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", ("Key", 2));
+
+        // Assert
+        (error1 != error2).ShouldBeTrue();
+    }
+}
