@@ -13,8 +13,10 @@ public class Error : IError, IEquatable<Error>
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
     public static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
 
-    /// <summary>Gets the <see cref="Exception"/> associated with the error if one exists.</summary>
-    /// <returns>An <see cref="Exception"/> instance when the metadata contains an entry named <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.</returns>
+    /// <inheritdoc/>
+    public string Message { get; init; }
+
+    /// <inheritdoc/>
     public Exception? Exception
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -26,9 +28,6 @@ public class Error : IError, IEquatable<Error>
             return null;
         }
     }
-
-    /// <inheritdoc/>
-    public string Message { get; init; }
 
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }

@@ -94,6 +94,32 @@ var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
 var errorWithMetadataKeyValuePair = new Error("Something went wrong!", new KeyValuePair<string, object>("Key", "Value"));
 
 var errorWithMetadataEnumerable = new Error("Something went wrong!", new[] { new KeyValuePair<string, object>("Key", "Value") });
+
+var ex = new InvalidOperationException();
+var errorWithException = new Error(ex);
+
+var errorWithMessageAndException = new Error("Something went wrong!", ex);
+```
+
+### Accessing the Exception property
+
+When an error contains an exception, it can be accessed through the `Exception` property available on both `Error` and `IError`.
+
+```csharp
+var ex = new InvalidOperationException("Something went wrong!");
+var error = new Error(ex);
+
+if (error.Exception != null)
+{
+    Console.WriteLine($"Exception: {error.Exception.Message}");
+}
+
+// Also works with IError interface
+IError interfaceError = error;
+if (interfaceError.Exception != null)
+{
+    Console.WriteLine($"Exception: {interfaceError.Exception.Message}");
+}
 ```
 
 ### Custom errors
