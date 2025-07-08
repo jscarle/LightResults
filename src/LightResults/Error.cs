@@ -5,17 +5,34 @@ namespace LightResults;
 /// <summary>Represents an error with a message and associated metadata.</summary>
 public class Error : IError
 {
+    /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
+    public static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
+
     /// <inheritdoc/>
     public string Message { get; init; }
 
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
-    /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
-    public static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
-    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", new Dictionary<string, object?>())];
+    /// <summary>Gets the <see cref="Exception"/> associated with the error if one exists.</summary>
+    /// <returns>
+    /// An <see cref="Exception"/> instance when the metadata contains an entry named
+    /// <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.
+    /// </returns>
+    public Exception? Exception
+    {
+        get
+        {
+            if (Metadata.TryGetValue("Exception", out var value) && value is Exception ex)
+                return ex;
+
+            return null;
+        }
+    }
+
     private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
+    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
