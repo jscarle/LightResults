@@ -876,7 +876,7 @@ public sealed class ResultTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("An unknown error occured!")]
+    [InlineData("An unknown error occurred!")]
     public void ToString_WhenFailure_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange

@@ -90,7 +90,7 @@ if (result.IsFailure(out var error))
     if (error.Message.Length > 0)
         Console.WriteLine(error.Message);
     else
-        Console.WriteLine("An unknown error occured!");
+        Console.WriteLine("An unknown error occurred!");
 }
 ```
 
@@ -166,7 +166,7 @@ This can be especially useful when combined with metadata that is related to a s
 public sealed class HttpError : Error
 {
     public HttpError(HttpStatusCode statusCode)
-        : base("An HTTP error occured.", ("StatusCode", statusCode))
+        : base("An HTTP error occurred.", ("StatusCode", statusCode))
     {
     }
 }
