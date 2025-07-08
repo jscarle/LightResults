@@ -1,6 +1,5 @@
 #if NET7_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-using LightResults;
 using LightResults.Common;
 using Shouldly;
 

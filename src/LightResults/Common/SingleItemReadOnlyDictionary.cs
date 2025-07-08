@@ -91,7 +91,7 @@ internal sealed class SingleItemReadOnlyDictionary<TKey, TValue>(TKey itemKey, T
 
         public TKey Current => key;
 
-        object IEnumerator.Current => key!;
+        object IEnumerator.Current => key;
 
         public bool MoveNext()
         {
