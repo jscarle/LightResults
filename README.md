@@ -124,6 +124,11 @@ var errorWithMetadataTuple = new Error("Something went wrong!", ("Key", "Value")
 
 var metadata = new Dictionary<string, object> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
+
+var ex = new InvalidOperationException();
+var errorWithException = new Error(ex);
+
+var errorWithMessageAndException = new Error("Something went wrong!", ex);
 ```
 
 ### Custom errors
@@ -324,5 +329,7 @@ The following steps in the following order will reduce the amount of manual work
 - New property initializers were added to `Error`.
   - `Message { get; }` has changed to `Message { get; init; }`.
   - `Metadata { get; }` has changed to `Metadata { get; init; }`.
+  - `Error(Exception exception)` has been added.
+  - `Error(string message, Exception exception)` has been added.
   - `Error.Empty` is now publicly accessible.
   - `Exception { get; }` has been added.

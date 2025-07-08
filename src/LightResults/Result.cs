@@ -131,9 +131,7 @@ public readonly struct Result : IEquatable<Result>,
     /// </remarks>
     public static Result Failure(Exception? ex)
     {
-        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
-        var message = ex?.Message ?? string.Empty;
-        var error = new Error(message, metadata);
+        var error = new Error(ex);
         return new Result(error);
     }
 
@@ -144,8 +142,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
     public static Result Failure(string errorMessage, Exception? ex)
     {
-        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
-        var error = new Error(errorMessage, metadata);
+        var error = new Error(errorMessage, ex);
         return new Result(error);
     }
 
@@ -235,9 +232,7 @@ public readonly struct Result : IEquatable<Result>,
     /// </remarks>
     public static Result<TValue> Failure<TValue>(Exception? ex)
     {
-        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
-        var message = ex?.Message ?? string.Empty;
-        var error = new Error(message, metadata);
+        var error = new Error(ex);
         return new Result<TValue>(error);
     }
 
@@ -248,8 +243,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
     public static Result<TValue> Failure<TValue>(string errorMessage, Exception? ex)
     {
-        var metadata = new SingleItemReadOnlyDictionary<string, object?>(ExceptionKey, ex);
-        var error = new Error(errorMessage, metadata);
+        var error = new Error(errorMessage, ex);
         return new Result<TValue>(error);
     }
 
