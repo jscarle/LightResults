@@ -27,10 +27,10 @@ public class Error : IError
         }
     }
 
-    internal static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
-    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [new Error("", new Dictionary<string, object?>())];
     private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
+    internal static IError Empty { get; } = new Error(string.Empty, EmptyMetaData);
+    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
