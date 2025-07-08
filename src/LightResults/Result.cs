@@ -429,7 +429,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns>A 32-bit signed integer hash code.</returns>
     public override int GetHashCode()
     {
-        return _errors?.GetHashCode() ?? 0;
+        return HashCode.Combine(_errors);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
