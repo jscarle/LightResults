@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
+using System.Runtime.CompilerServices;
 
 namespace LightResults;
 
@@ -55,12 +56,14 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess()
     {
         return _isSuccess;
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value)
     {
         value = _valueOrDefault;
@@ -68,6 +71,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess([MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(true)] out IError error)
     {
         if (_isSuccess)
@@ -88,12 +92,14 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure()
     {
         return !_isSuccess;
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure([MaybeNullWhen(false)] out IError error)
     {
         if (_isSuccess)
@@ -107,6 +113,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure([MaybeNullWhen(false)] out IError error, [MaybeNullWhen(true)] out TValue value)
     {
         if (_isSuccess)
@@ -130,6 +137,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Success(TValue value)
     {
         return new Result<TValue>(value);
@@ -137,6 +145,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     /// <summary>Creates a failure result.</summary>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure()
     {
         return FailureResult;
@@ -145,6 +154,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <summary>Creates a failure result with the given error message.</summary>
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage)
     {
         var error = new Error(errorMessage);
@@ -155,6 +165,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
 static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
 {
     var dictionary = new Dictionary<string, object?>(1)
@@ -169,6 +180,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
 static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
 {
     var dictionary = new Dictionary<string, object?>(1)
@@ -183,6 +195,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
 static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
@@ -192,6 +205,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IError error)
     {
         return new Result<TValue>(error);
@@ -200,6 +214,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IEnumerable<IError> errors)
     {
         return new Result<TValue>(errors);
@@ -208,6 +223,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <summary>Creates a failure result with the given errors.</summary>
     /// <param name="errors">A collection of errors associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified errors.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IReadOnlyList<IError> errors)
     {
         return new Result<TValue>(errors);
@@ -215,6 +231,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
 #endif
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasError<TError>()
         where TError : IError
     {
@@ -236,6 +253,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasError<TError>([MaybeNullWhen(false)] out TError error)
         where TError : IError
     {
@@ -289,6 +307,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
 
     /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result"/>.</summary>
     /// <returns>A new instance of <see cref="Result"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Result AsFailure()
     {
         if (_errors is not null)
@@ -300,6 +319,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result{TDestination}"/>.</summary>
     /// <returns>A new instance of <see cref="Result{TDestination}"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
     /// <typeparam name="TDestination">The type of the value of the failure result.</typeparam>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Result<TDestination> AsFailure<TDestination>()
     {
         if (_errors is not null)

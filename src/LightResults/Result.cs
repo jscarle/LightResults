@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using LightResults.Common;
 
 namespace LightResults;
@@ -68,6 +69,7 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsSuccess()
     {
         return _isSuccess;
@@ -304,12 +306,14 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure()
     {
         return !_isSuccess;
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsFailure([MaybeNullWhen(false)] out IError error)
     {
         // ReSharper disable once PreferConcreteValueOverDefault
@@ -325,6 +329,7 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasError<TError>()
         where TError : IError
     {
@@ -346,6 +351,7 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool HasError<TError>([MaybeNullWhen(false)] out TError error)
         where TError : IError
     {
@@ -390,6 +396,7 @@ public readonly struct Result : IEquatable<Result>,
 
     /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result"/>.</summary>
     /// <returns>A new instance of <see cref="Result"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Result AsFailure()
     {
         if (_errors is not null)
@@ -401,6 +408,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Converts the current <see cref="Result{TValue}"/> to a failure <see cref="Result{TDestination}"/>.</summary>
     /// <returns>A new instance of <see cref="Result{TDestination}"/> containing the same error as the <see cref="Result{TValue}"/>, if any.</returns>
     /// <typeparam name="TDestination">The type of the value of the failure result.</typeparam>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Result<TDestination> AsFailure<TDestination>()
     {
         if (_errors is not null)
