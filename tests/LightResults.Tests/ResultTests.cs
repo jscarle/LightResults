@@ -368,6 +368,23 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithErrorsEnumerable_ShouldReuseListInstance()
+    {
+        // Arrange
+        var errors = new List<IError>
+        {
+            new Error("Error 1"),
+            new Error("Error 2"),
+        };
+
+        // Act
+        var result = Result.Failure(errors.AsEnumerable());
+
+        // Assert
+        result.Errors.ShouldBeSameAs(errors);
+    }
+
+    [Fact]
     public void Failure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
@@ -1077,7 +1094,7 @@ public sealed class ResultTests
     public void InterfaceFailure_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
-        static Result Fail<TResult>()
+        static (Result Result, List<IError> Errors) Fail<TResult>()
             where TResult : IActionableResult<Result>
         {
             var errors = new List<IError>
@@ -1085,11 +1102,11 @@ public sealed class ResultTests
                 new Error("Error 1"),
                 new Error("Error 2"),
             };
-            return TResult.Failure(errors.AsEnumerable());
+            return (TResult.Failure(errors.AsEnumerable()), errors);
         }
 
         // Act
-        var result = Fail<Result>();
+        var (result, errors) = Fail<Result>();
 
         // Assert
         result.IsSuccess().ShouldBeFalse();
@@ -1097,11 +1114,7 @@ public sealed class ResultTests
         result.IsFailure(out _).ShouldBeTrue();
 
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBeEquivalentTo(new List<IError>
-        {
-            new Error("Error 1"),
-            new Error("Error 2"),
-        }.ToArray());
+        result.Errors.ShouldBeSameAs(errors);
     }
 
     [Fact]

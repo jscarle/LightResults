@@ -46,6 +46,20 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     internal Result(IEnumerable<IError> errors)
     {
+        if (errors is IReadOnlyList<IError> list)
+        {
+            _errors = list;
+            return;
+        }
+
+        if (errors is ICollection<IError> collection)
+        {
+            var array = new IError[collection.Count];
+            collection.CopyTo(array, 0);
+            _errors = array;
+            return;
+        }
+
         _errors = errors.ToArray();
     }
 
