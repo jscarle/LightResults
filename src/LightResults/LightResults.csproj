@@ -36,9 +36,9 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>9.0.4</Version>
-        <AssemblyVersion>9.0.4.0</AssemblyVersion>
-        <FileVersion>9.0.4.0</FileVersion>
+        <Version>9.0.5</Version>
+        <AssemblyVersion>9.0.5.0</AssemblyVersion>
+        <FileVersion>9.0.5.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Optimize>true</Optimize>
         <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
