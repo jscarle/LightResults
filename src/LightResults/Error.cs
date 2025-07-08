@@ -161,11 +161,12 @@ public class Error : IError, IEquatable<Error>
         var hash = new HashCode();
         hash.Add(Message, StringComparer.Ordinal);
 
-        var metadataHash = 0;
         foreach (var kvp in Metadata)
-            metadataHash ^= HashCode.Combine(kvp.Key, kvp.Value);
+        {
+            hash.Add(kvp.Key, StringComparer.Ordinal);
+            hash.Add(kvp.Value);
+        }
 
-        hash.Add(metadataHash);
         return hash.ToHashCode();
     }
 
