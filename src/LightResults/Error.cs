@@ -197,39 +197,3 @@ public class Error : IError, IEquatable<Error>
         return StringHelper.GetErrorString(errorType, Message);
     }
 }
-
-/// <summary>Provides an equality comparer for <see cref="Error"/> instances.</summary>
-public sealed class ErrorEqualityComparer : IEqualityComparer<Error>
-{
-    /// <summary>Gets a singleton instance of <see cref="ErrorEqualityComparer"/>.</summary>
-    public static readonly ErrorEqualityComparer Instance = new();
-
-    /// <summary>Determines whether the specified <see cref="Error"/> instances are equal.</summary>
-    /// <param name="x">The first <see cref="Error"/> to compare.</param>
-    /// <param name="y">The second <see cref="Error"/> to compare.</param>
-    /// <returns><c>true</c> if the specified <see cref="Error"/> instances are equal; otherwise, <c>false</c>.</returns>
-    public bool Equals(Error? x, Error? y)
-    {
-        if (ReferenceEquals(x, y))
-            return true;
-        if (x is null || y is null)
-            return false;
-        return x.Equals(y);
-    }
-
-    /// <summary>Returns a hash code for the specified <see cref="Error"/>.</summary>
-    /// <param name="obj">The <see cref="Error"/> for which a hash code is to be returned.</param>
-    /// <returns>A hash code for the specified <see cref="Error"/>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="obj"/> is <c>null</c>.</exception>
-    public int GetHashCode(Error obj)
-    {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(obj);
-#else
-        if (obj is null)
-            throw new ArgumentNullException(nameof(obj));
-#endif
-
-        return obj.GetHashCode();
-    }
-}
