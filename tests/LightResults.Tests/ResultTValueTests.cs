@@ -9,7 +9,7 @@ namespace LightResults.Tests;
 
 public sealed class ResultTValueTests
 {
-    private static readonly Error EmptyError = new();
+    private static readonly IError EmptyError = Error.Empty;
 
     [Fact]
     public void DefaultStruct_ShouldBeFailureResultWithDefaultValue()

@@ -157,10 +157,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
 static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
 {
-    var dictionary = new Dictionary<string, object?>(1)
-    {
-        { metadata.Key, metadata.Value },
-    };
+    var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -171,10 +168,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
 static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
 {
-    var dictionary = new Dictionary<string, object?>(1)
-    {
-        { metadata.Key, metadata.Value },
-    };
+    var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -311,9 +305,14 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result{TValue}"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> is equal to this instance; otherwise, <c>false</c>.</returns>
-    public bool Equals(Result<TValue> other)
+    public bool Equals(in Result<TValue> other)
     {
         return Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
+    }
+
+    bool IEquatable<Result<TValue>>.Equals(Result<TValue> other)
+    {
+        return Equals(in other);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -321,7 +320,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj)
     {
-        return obj is Result<TValue> other && Equals(other);
+        return obj is Result<TValue> other && Equals(in other);
     }
 
     /// <summary>Returns the hash code for this instance.</summary>
@@ -335,18 +334,18 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <param name="left">The first <see cref="Result{TValue}"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result{TValue}"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> instances are equal; otherwise, <c>false</c>.</returns>
-    public static bool operator ==(Result<TValue> left, Result<TValue> right)
+    public static bool operator ==(in Result<TValue> left, in Result<TValue> right)
     {
-        return left.Equals(right);
+        return left.Equals(in right);
     }
 
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are not equal.</summary>
     /// <param name="left">The first <see cref="Result{TValue}"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result{TValue}"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result{TValue}"/> instances are not equal; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(Result<TValue> left, Result<TValue> right)
+    public static bool operator !=(in Result<TValue> left, in Result<TValue> right)
     {
-        return !left.Equals(right);
+        return !left.Equals(in right);
     }
 
     /// <inheritdoc/>

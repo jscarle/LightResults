@@ -255,4 +255,35 @@ public sealed class ErrorTests
         // Assert
         (error1 != error2).ShouldBeTrue();
     }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnExceptionWhenMetadataContainsException()
+    {
+        // Arrange
+        var exception = new InvalidOperationException();
+        var error = new Error("", ("Exception", exception));
+
+        // Assert
+        error.Exception.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenMetadataDoesNotContainException()
+    {
+        // Arrange
+        var error = new Error();
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenMetadataIsNotException()
+    {
+        // Arrange
+        var error = new Error("", ("Exception", "not exception"));
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
 }
