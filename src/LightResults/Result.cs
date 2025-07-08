@@ -412,9 +412,14 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>
-    public bool Equals(Result other)
+    public bool Equals(in Result other)
     {
         return Equals(_errors, other._errors);
+    }
+
+    bool IEquatable<Result>.Equals(Result other)
+    {
+        return Equals(in other);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -422,7 +427,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj)
     {
-        return obj is Result other && Equals(other);
+        return obj is Result other && Equals(in other);
     }
 
     /// <summary>Returns the hash code for this instance.</summary>
@@ -436,18 +441,18 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are equal; otherwise, <c>false</c>.</returns>
-    public static bool operator ==(Result left, Result right)
+    public static bool operator ==(in Result left, in Result right)
     {
-        return left.Equals(right);
+        return left.Equals(in right);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are not equal.</summary>
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are not equal; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(Result left, Result right)
+    public static bool operator !=(in Result left, in Result right)
     {
-        return !left.Equals(right);
+        return !left.Equals(in right);
     }
 
     /// <inheritdoc/>
