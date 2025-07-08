@@ -67,7 +67,7 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <summary>Creates a success result.</summary>
-    /// <returns>A new instance of <see cref="Result"/> representing a success result with the specified value.</returns>
+    /// <returns>A new instance of <see cref="Result"/> representing a success result.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Success()
     {
@@ -110,8 +110,8 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <summary>Creates a failure result with the given error message and metadata.</summary>
-    /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, (string Key, object? Value) metadata)
@@ -122,8 +122,8 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <summary>Creates a failure result with the given error message and metadata.</summary>
-    /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, KeyValuePair<string, object?> metadata)
@@ -134,8 +134,8 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     /// <summary>Creates a failure result with the given error message and metadata.</summary>
-    /// <param name="metadata">The metadata associated with the failure.</param>
     /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and metadata.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
