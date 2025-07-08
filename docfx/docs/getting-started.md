@@ -62,6 +62,17 @@ if (result.IsSuccess(out var value))
 }
 ```
 
+### Converting failed results
+
+A failed result can be converted to another result type using `AsFailure`.
+
+```csharp
+var result = Result.Failure("Invalid input");
+var typed = result.AsFailure<int>();
+var backToNonGeneric = typed.AsFailure();
+```
+
+
 ### Creating errors
 
 Errors can be created with or without a message.
@@ -79,6 +90,10 @@ var errorWithMetadataTuple = new Error("Something went wrong!", ("Key", "Value")
 
 var metadata = new Dictionary<string, object> { { "Key", "Value" } };
 var errorWithMetadataDictionary = new Error("Something went wrong!", metadata);
+
+var errorWithMetadataKeyValuePair = new Error("Something went wrong!", new KeyValuePair<string, object>("Key", "Value"));
+
+var errorWithMetadataEnumerable = new Error("Something went wrong!", new[] { new KeyValuePair<string, object>("Key", "Value") });
 ```
 
 ### Custom errors
