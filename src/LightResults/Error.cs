@@ -11,6 +11,22 @@ public class Error : IError
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
+    /// <summary>Gets the <see cref="Exception"/> associated with the error if one exists.</summary>
+    /// <returns>
+    /// An <see cref="Exception"/> instance when the metadata contains an entry named
+    /// <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.
+    /// </returns>
+    public Exception? Exception
+    {
+        get
+        {
+            if (Metadata.TryGetValue("Exception", out var value) && value is Exception ex)
+                return ex;
+
+            return null;
+        }
+    }
+
     private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
     internal static IError Empty { get; } = new Error(string.Empty, EmptyMetaData);
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
