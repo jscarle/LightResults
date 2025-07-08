@@ -1,4 +1,5 @@
 ﻿using LightResults.Common;
+using System.Runtime.CompilerServices;
 
 namespace LightResults;
 
@@ -75,6 +76,7 @@ public class Error : IError
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         var errorType = GetType()

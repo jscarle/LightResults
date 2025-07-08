@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using LightResults.Common;
 
 namespace LightResults;
@@ -436,6 +437,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
     /// <param name="other">The <see cref="Result"/> instance to compare with this instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(Result other)
     {
         return Equals(_errors, other._errors);
@@ -444,6 +446,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? obj)
     {
         return obj is Result other && Equals(other);
@@ -451,6 +454,7 @@ public readonly struct Result : IEquatable<Result>,
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
         return _errors?.GetHashCode() ?? 0;
@@ -460,6 +464,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Result left, Result right)
     {
         return left.Equals(right);
@@ -469,12 +474,14 @@ public readonly struct Result : IEquatable<Result>,
     /// <param name="left">The first <see cref="Result"/> instance to compare.</param>
     /// <param name="right">The second <see cref="Result"/> instance to compare.</param>
     /// <returns><c>true</c> if the specified <see cref="Result"/> instances are not equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(Result left, Result right)
     {
         return !left.Equals(right);
     }
 
     /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
     {
         if (_isSuccess)
