@@ -155,12 +155,12 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object Value) metadata)
+static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
+{
+    var dictionary = new Dictionary<string, object?>(1)
     {
-        var dictionary = new Dictionary<string, object>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        { metadata.Key, metadata.Value },
+    };
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -169,12 +169,12 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object> metadata)
+static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
+{
+    var dictionary = new Dictionary<string, object?>(1)
     {
-        var dictionary = new Dictionary<string, object>(1)
-        {
-            { metadata.Key, metadata.Value },
-        };
+        { metadata.Key, metadata.Value },
+    };
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -183,7 +183,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="errorMessage">The error message associated with the failure.</param>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
-    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object> metadata)
+static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
