@@ -304,7 +304,7 @@ The following steps in the following order will reduce the amount of manual work
 - New overloads were added to access the first error.
   - `result.IsFailure(out IError error)` has been added.
   - `result.IsSuccess(out TValue value, out IError error)` has been added.
-  - `result.HasError<TError>(out IError error)` has been added.
+  - `result.HasError<TError>(out TError error)` has been added.
 - New property initializers were added to `Error`.
   - `Message { get; }` has changed to `Message { get; init; }`.
   - `Metadata { get; }` has changed to `Metadata { get; init; }`.
