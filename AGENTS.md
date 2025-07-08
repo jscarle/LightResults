@@ -2,6 +2,8 @@
 
 This repository contains **LightResults**, a very small but highly-optimized .NET library that implements the Result Pattern.  The code is intended to be used in performance critical paths of applications that handle millions of requests per second.  The current version targets multiple frameworks (netstandard2.0 and net6.0–net9.0) and relies heavily on low allocation techniques.
 
+**Important:** Never update the `docfx` documentation or files under the `docfx/` directory. The docs are generated automatically in CI and manual changes will be discarded.
+
 ## Repository layout
 
 - `src/LightResults` – Main library.
@@ -54,7 +56,7 @@ Do not restore, run, or build performance benchmarks found in `tools`.
 1. Maintain API surface stability—public members are part of a widely used library.
 2. Keep the implementation allocation free when possible and favour explicit loops and array usage.
 3. Include or update unit tests under `tests/LightResults.Tests` when modifying behaviour.
-4. The general documentation (`docfx` site) should not be updated manually, it is built using a GitHub Action `.github/workflows/docs.yml`.
+4. **Never update the `docfx` documentation or configuration.** The site is built automatically by `.github/workflows/docs.yml` and manual changes will be ignored.
 5. Always make sure the README.md is up to date and matches the public API.
 
 ## Useful references
