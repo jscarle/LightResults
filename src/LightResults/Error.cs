@@ -1,13 +1,29 @@
-using System;
+using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 
 namespace LightResults;
 
 /// <summary>Represents an error with a message and associated metadata.</summary>
+[SuppressMessage("Major Code Smell", "S4035:Classes implementing \"IEquatable<T>\" should be sealed",
+    Justification = "This class is not sealed to allow for inheritance."
+)]
 public class Error : IError, IEquatable<Error>
 {
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
     public static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
+
+    /// <summary>Gets the <see cref="Exception"/> associated with the error if one exists.</summary>
+    /// <returns>An <see cref="Exception"/> instance when the metadata contains an entry named <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.</returns>
+    public Exception? Exception
+    {
+        get
+        {
+            if (Metadata.TryGetValue(ExceptionKey, out var value) && value is Exception ex)
+                return ex;
+
+            return null;
+        }
+    }
 
     /// <inheritdoc/>
     public string Message { get; init; }
@@ -15,26 +31,12 @@ public class Error : IError, IEquatable<Error>
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
-    /// <summary>Gets the <see cref="Exception"/> associated with the error if one exists.</summary>
-    /// <returns>
-    /// An <see cref="Exception"/> instance when the metadata contains an entry named
-    /// <c>"Exception"</c> with a value of type <see cref="Exception"/>; otherwise, <see langword="null"/>.
-    /// </returns>
-    public Exception? Exception
-    {
-        get
-        {
-            if (Metadata.TryGetValue("Exception", out var value) && value is Exception ex)
-                return ex;
-
-            return null;
-        }
-    }
-
-    private const string ErrorTypeName = nameof(Error);
-    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
     internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
     internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
+
+    private const string ErrorTypeName = nameof(Error);
+    private const string ExceptionKey = "Exception";
+    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
@@ -52,10 +54,7 @@ public class Error : IError, IEquatable<Error>
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified exception.</summary>
     /// <param name="exception">The <see cref="Exception"/> associated with the error.</param>
-    /// <remarks>
-    /// The <paramref name="exception"/> is added to <see cref="Metadata"/> under the key of
-    /// "Exception" and the <see cref="Message"/> is set to the exception message if present.
-    /// </remarks>
+    /// <remarks>The <paramref name="exception"/> is added to <see cref="Metadata"/> under the key of "Exception" and the <see cref="Message"/> is set to the exception message if present.</remarks>
     public Error(Exception? exception)
     {
         Message = exception?.Message ?? string.Empty;
@@ -74,7 +73,7 @@ public class Error : IError, IEquatable<Error>
         Message = message;
         Metadata = new Dictionary<string, object?>(1)
         {
-            { "Exception", exception },
+            { ExceptionKey, exception },
         };
     }
 
@@ -159,9 +158,7 @@ public class Error : IError, IEquatable<Error>
 
         var metadataHash = 0;
         foreach (var kvp in Metadata)
-        {
             metadataHash ^= HashCode.Combine(kvp.Key, kvp.Value);
-        }
 
         hash.Add(metadataHash);
         return hash.ToHashCode();
@@ -192,13 +189,47 @@ public class Error : IError, IEquatable<Error>
     public override string ToString()
     {
         var type = GetType();
-        var errorType = type == typeof(Error)
-            ? ErrorTypeName
-            : type.Name;
+        var errorType = type == typeof(Error) ? ErrorTypeName : type.Name;
 
         if (Message.Length == 0)
             return errorType;
 
         return StringHelper.GetErrorString(errorType, Message);
+    }
+}
+
+/// <summary>Provides an equality comparer for <see cref="Error"/> instances.</summary>
+public sealed class ErrorEqualityComparer : IEqualityComparer<Error>
+{
+    /// <summary>Gets a singleton instance of <see cref="ErrorEqualityComparer"/>.</summary>
+    public static readonly ErrorEqualityComparer Instance = new();
+
+    /// <summary>Determines whether the specified <see cref="Error"/> instances are equal.</summary>
+    /// <param name="x">The first <see cref="Error"/> to compare.</param>
+    /// <param name="y">The second <see cref="Error"/> to compare.</param>
+    /// <returns><c>true</c> if the specified <see cref="Error"/> instances are equal; otherwise, <c>false</c>.</returns>
+    public bool Equals(Error? x, Error? y)
+    {
+        if (ReferenceEquals(x, y))
+            return true;
+        if (x is null || y is null)
+            return false;
+        return x.Equals(y);
+    }
+
+    /// <summary>Returns a hash code for the specified <see cref="Error"/>.</summary>
+    /// <param name="obj">The <see cref="Error"/> for which a hash code is to be returned.</param>
+    /// <returns>A hash code for the specified <see cref="Error"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="obj"/> is <c>null</c>.</exception>
+    public int GetHashCode(Error obj)
+    {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(obj);
+#else
+        if (obj is null)
+            throw new ArgumentNullException(nameof(obj));
+#endif
+
+        return obj.GetHashCode();
     }
 }

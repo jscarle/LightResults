@@ -31,7 +31,6 @@ public readonly struct Result : IEquatable<Result>,
     internal static readonly Result FailureResult = new(Error.Empty);
     private readonly bool _isSuccess = false;
     private readonly IReadOnlyList<IError>? _errors;
-    private const string ExceptionKey = "Exception";
 
     private Result(bool isSuccess)
     {
@@ -141,10 +140,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result with the given exception.</summary>
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
-    /// <remarks>
-    /// The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that
-    /// of the exception.
-    /// </remarks>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
     public static Result Failure(Exception? ex)
     {
         var error = new Error(ex);
@@ -242,10 +238,7 @@ public readonly struct Result : IEquatable<Result>,
     /// <summary>Creates a failure result with the given exception.</summary>
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified exception.</returns>
-    /// <remarks>
-    /// The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that
-    /// of the exception.
-    /// </remarks>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
     public static Result<TValue> Failure<TValue>(Exception? ex)
     {
         var error = new Error(ex);
@@ -410,17 +403,18 @@ public readonly struct Result : IEquatable<Result>,
         return Equals(_errors, other._errors);
     }
 
-    bool IEquatable<Result>.Equals(Result other)
-    {
-        return Equals(in other);
-    }
-
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj)
     {
         return obj is Result other && Equals(in other);
+    }
+
+    /// <inheritdoc/>
+    bool IEquatable<Result>.Equals(Result other)
+    {
+        return Equals(in other);
     }
 
     /// <summary>Returns the hash code for this instance.</summary>

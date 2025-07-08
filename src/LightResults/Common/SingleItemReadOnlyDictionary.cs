@@ -1,38 +1,31 @@
 using System.Collections;
-using System.Collections.Generic;
 
 namespace LightResults.Common;
 
-/// <summary>
-/// A minimal read-only dictionary optimized for a single key/value pair.
-/// </summary>
+/// <summary>A minimal read-only dictionary optimized for a single key/value pair.</summary>
 /// <typeparam name="TKey">Dictionary key type.</typeparam>
 /// <typeparam name="TValue">Dictionary value type.</typeparam>
-internal sealed class SingleItemReadOnlyDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
+internal sealed class SingleItemReadOnlyDictionary<TKey, TValue>(TKey itemKey, TValue itemValue) : IReadOnlyDictionary<TKey, TValue>
     where TKey : notnull
 {
-    private readonly TKey _key;
-    private readonly TValue _value;
-
-    public SingleItemReadOnlyDictionary(TKey key, TValue value)
-    {
-        _key = key;
-        _value = value;
-    }
-
-    public TValue this[TKey key] => EqualityComparer<TKey>.Default.Equals(key, _key)
-        ? _value
-        : throw new KeyNotFoundException();
-
     public int Count => 1;
 
-    public bool ContainsKey(TKey key) => EqualityComparer<TKey>.Default.Equals(key, _key);
+    public TValue this[TKey key] => EqualityComparer<TKey>.Default.Equals(key, itemKey) ? itemValue : throw new KeyNotFoundException();
+
+    IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => new KeyEnumerable(itemKey);
+
+    IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => new ValueEnumerable(itemValue);
+
+    public bool ContainsKey(TKey key)
+    {
+        return EqualityComparer<TKey>.Default.Equals(key, itemKey);
+    }
 
     public bool TryGetValue(TKey key, out TValue value)
     {
         if (ContainsKey(key))
         {
-            value = _value;
+            value = itemValue;
             return true;
         }
 
@@ -40,30 +33,28 @@ internal sealed class SingleItemReadOnlyDictionary<TKey, TValue> : IReadOnlyDict
         return false;
     }
 
-    public Enumerator GetEnumerator() => new(_key, _value);
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => GetEnumerator();
-
-    IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => new KeyEnumerable(_key);
-
-    IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => new ValueEnumerable(_value);
-
-    internal struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+    private Enumerator GetEnumerator()
     {
-        private readonly KeyValuePair<TKey, TValue> _pair;
-        private bool _moved;
+        return new Enumerator(itemKey, itemValue);
+    }
 
-        public Enumerator(TKey key, TValue value)
-        {
-            _pair = new KeyValuePair<TKey, TValue>(key, value);
-            _moved = false;
-        }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
-        public KeyValuePair<TKey, TValue> Current => _pair;
+    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
-        object IEnumerator.Current => _pair;
+    private struct Enumerator(TKey key, TValue value) : IEnumerator<KeyValuePair<TKey, TValue>>
+    {
+        private bool _moved = false;
+
+        public KeyValuePair<TKey, TValue> Current { get; } = new(key, value);
+
+        object IEnumerator.Current => Current;
 
         public bool MoveNext()
         {
@@ -74,33 +65,33 @@ internal sealed class SingleItemReadOnlyDictionary<TKey, TValue> : IReadOnlyDict
             return true;
         }
 
-        public void Reset() => _moved = false;
+        public void Reset()
+        {
+            _moved = false;
+        }
 
         public void Dispose()
         {
         }
     }
 
-    private struct KeyEnumerable : IEnumerable<TKey>, IEnumerator<TKey>
+    private struct KeyEnumerable(TKey key) : IEnumerable<TKey>, IEnumerator<TKey>
     {
-        private readonly TKey _key;
-        private bool _moved;
+        private bool _moved = false;
 
-        public KeyEnumerable(TKey key)
+        IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator()
         {
-            _key = key;
-            _moved = false;
+            return this;
         }
 
-        public KeyEnumerable GetEnumerator() => this;
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this;
+        }
 
-        IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator() => this;
+        public TKey Current => key;
 
-        IEnumerator IEnumerable.GetEnumerator() => this;
-
-        public TKey Current => _key;
-
-        object IEnumerator.Current => _key!;
+        object IEnumerator.Current => key!;
 
         public bool MoveNext()
         {
@@ -111,33 +102,33 @@ internal sealed class SingleItemReadOnlyDictionary<TKey, TValue> : IReadOnlyDict
             return true;
         }
 
-        public void Reset() => _moved = false;
+        public void Reset()
+        {
+            _moved = false;
+        }
 
         public void Dispose()
         {
         }
     }
 
-    private struct ValueEnumerable : IEnumerable<TValue>, IEnumerator<TValue>
+    private struct ValueEnumerable(TValue value) : IEnumerable<TValue>, IEnumerator<TValue>
     {
-        private readonly TValue _value;
-        private bool _moved;
+        private bool _moved = false;
 
-        public ValueEnumerable(TValue value)
+        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
         {
-            _value = value;
-            _moved = false;
+            return this;
         }
 
-        public ValueEnumerable GetEnumerator() => this;
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this;
+        }
 
-        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() => this;
+        public TValue Current => value;
 
-        IEnumerator IEnumerable.GetEnumerator() => this;
-
-        public TValue Current => _value;
-
-        object IEnumerator.Current => _value!;
+        object IEnumerator.Current => value!;
 
         public bool MoveNext()
         {
@@ -148,7 +139,10 @@ internal sealed class SingleItemReadOnlyDictionary<TKey, TValue> : IReadOnlyDict
             return true;
         }
 
-        public void Reset() => _moved = false;
+        public void Reset()
+        {
+            _moved = false;
+        }
 
         public void Dispose()
         {

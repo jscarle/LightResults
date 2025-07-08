@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using LightResults.Common;
 using System.Runtime.CompilerServices;
+using LightResults.Common;
 
 namespace LightResults;
 
@@ -180,9 +180,9 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
-{
-    var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, (string Key, object? Value) metadata)
+    {
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -192,9 +192,9 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
-{
-    var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, KeyValuePair<string, object?> metadata)
+    {
+        var dictionary = new SingleItemReadOnlyDictionary<string, object?>(metadata.Key, metadata.Value);
         var error = new Error(errorMessage, dictionary);
         return new Result<TValue>(error);
     }
@@ -204,7 +204,7 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)
     {
         var error = new Error(errorMessage, metadata);
         return new Result<TValue>(error);
@@ -344,17 +344,18 @@ static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string e
         return Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
     }
 
-    bool IEquatable<Result<TValue>>.Equals(Result<TValue> other)
-    {
-        return Equals(in other);
-    }
-
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
     /// <param name="obj">The object to compare with this instance.</param>
     /// <returns><c>true</c> if the specified object is equal to this instance; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj)
     {
         return obj is Result<TValue> other && Equals(in other);
+    }
+
+    /// <inheritdoc/>
+    bool IEquatable<Result<TValue>>.Equals(Result<TValue> other)
+    {
+        return Equals(in other);
     }
 
     /// <summary>Returns the hash code for this instance.</summary>
