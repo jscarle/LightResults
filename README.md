@@ -215,20 +215,6 @@ public sealed class HttpError : Error
 }
 ```
 
-### Comparing errors
-
-`Error` implements `IEquatable<Error>` so instances with the same message and metadata are considered equal.
-
-```csharp
-var error1 = new Error("Invalid", ("Code", 42));
-var error2 = new Error("Invalid", ("Code", 42));
-
-if (error1 == error2)
-{
-    // Errors are equal
-}
-```
-
 We can further simplify creating errors by creating an error factory.
 
 ```csharp
@@ -259,6 +245,20 @@ public Result GetPerson(int id)
         return AppError.NotFound();
     
     return Result.Success();
+}
+```
+
+### Comparing errors
+
+`Error` implements `IEquatable<Error>` so instances with the same message and metadata are considered equal.
+
+```csharp
+var error1 = new Error("Invalid", ("Code", 42));
+var error2 = new Error("Invalid", ("Code", 42));
+
+if (error1 == error2)
+{
+    // Errors are equal
 }
 ```
 
