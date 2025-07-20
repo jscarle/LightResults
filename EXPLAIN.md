@@ -1,110 +1,107 @@
 # LightResults API Overview
 
-LightResults implements a lightweight Result Pattern for .NET. Use it to represent success or failure states without exceptions.
+LightResults implements a lightweight Result Pattern for .NET. It provides immutable types to represent success or failure states without using exceptions.
+
+## Namespaces
+- `LightResults` – contains `Result`, `Result<TValue>`, `Error`, `IResult`, `IResult<TValue>` and `IError`.
+- `LightResults.Common` – defines `IActionableResult<TResult>` and `IActionableResult<TValue, TResult>` (only available when targeting .NET 7 or later).
 
 ## Core Types
 
-### `Result`
+### `Result` (readonly struct)
 Represents a success or failure without a value.
 
-Static factory methods that return a `Result`:
-- `Result.Success()` – create a success.
-- `Result.Failure()` – create a failure with an empty error.
-- `Result.Failure(string message)` – failure with an error message.
+Static factory methods returning `Result`:
+- `Result.Success()` – create a success instance.
+- `Result.Failure()` – failure with an empty error.
+- `Result.Failure(string message)`
 - `Result.Failure(string message, (string Key, object? Value) metadata)`
 - `Result.Failure(string message, KeyValuePair<string, object?> metadata)`
 - `Result.Failure(string message, IReadOnlyDictionary<string, object?> metadata)`
-- `Result.Failure(Exception? ex)` – failure wrapping an exception.
-- `Result.Failure(string message, Exception? ex)` – message and exception.
-- `Result.Failure(IError error)` – failure from an existing error.
+- `Result.Failure(Exception? ex)` – wraps an exception.
+- `Result.Failure(string message, Exception? ex)`
+- `Result.Failure(IError error)`
 - `Result.Failure(IEnumerable<IError> errors)`
 - `Result.Failure(IReadOnlyList<IError> errors)`
 
-Static factory methods that return a `Result<TValue>`:
-- `Result.Success<TValue>(TValue value)` – create a success with a value.
-- `Result.Failure<TValue>()` – create a failure with an empty error.
-- `Result.Failure<TValue>(string message)` – failure with an error message.
+Static factory methods returning `Result<TValue>`:
+- `Result.Success<TValue>(TValue value)`
+- `Result.Failure<TValue>()`
+- `Result.Failure<TValue>(string message)`
 - `Result.Failure<TValue>(string message, (string Key, object? Value) metadata)`
 - `Result.Failure<TValue>(string message, KeyValuePair<string, object?> metadata)`
 - `Result.Failure<TValue>(string message, IReadOnlyDictionary<string, object?> metadata)`
-- `Result.Failure<TValue>(Exception? ex)` – failure wrapping an exception.
-- `Result.Failure<TValue>(string message, Exception? ex)` – message and exception.
-- `Result.Failure<TValue>(IError error)` – failure from an existing error.
+- `Result.Failure<TValue>(Exception? ex)`
+- `Result.Failure<TValue>(string message, Exception? ex)`
+- `Result.Failure<TValue>(IError error)`
 - `Result.Failure<TValue>(IEnumerable<IError> errors)`
 - `Result.Failure<TValue>(IReadOnlyList<IError> errors)`
 
 Instance members:
 - `bool IsSuccess()`
 - `bool IsFailure()`
-- `bool IsFailure(out IError error)` – returns first error.
-- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)` – check for a specific error type.
-- `Result AsFailure()` – convert to failure `Result`.
-- `Result<TDestination> AsFailure<TDestination>()` – convert to failure of another type.
-- `IReadOnlyCollection<IError> Errors` – full error list.
-- Implicit conversion from `Error` to `Result` for failures.
-- Implements `IEquatable<Result>` with `==`/`!=` operators and overrides `Equals`, `GetHashCode`, and `ToString`.
+- `bool IsFailure(out IError error)` – retrieves the first error.
+- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)`
+- `Result AsFailure()` – convert to a non-generic failure.
+- `Result<TDestination> AsFailure<TDestination>()` – convert to a different failure type.
+- `IReadOnlyCollection<IError> Errors`
+- Implicit conversion from `Error` to `Result`.
+- Equality: implements `IEquatable<Result>`, provides `Equals(...)`, `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
 
-### `Result<TValue>`
-Generic result carrying a value on success. Additional members:
-- `bool IsSuccess()` – check success without retrieving the value.
-- `bool IsSuccess(out TValue value)` – get value when successful.
-- `bool IsSuccess(out TValue value, out IError error)` – also obtains first error when failed.
-- `bool IsFailure()` – check failure without retrieving the error.
-- `bool IsFailure(out IError error)` – returns first error.
-- `bool IsFailure(out IError error, out TValue value)` – obtains value on failure (default) and error.
-- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)` – check for a specific error type.
-- `Result AsFailure()` – convert to failure `Result`.
-- `Result<TDestination> AsFailure<TDestination>()` – convert to failure of another type.
-- `IReadOnlyCollection<IError> Errors` – full error list.
-- Implicit conversions: from `TValue` to success result and from `Error` to failure result.
-- Implements `IEquatable<Result<TValue>>` with `==`/`!=` operators and overrides `Equals`, `GetHashCode`, and `ToString`.
+### `Result<TValue>` (readonly struct)
+Represents a result carrying a value on success.
 
-### `Error`
-Represents an error with optional metadata.
+Instance members:
+- `bool IsSuccess()`
+- `bool IsSuccess(out TValue value)`
+- `bool IsSuccess(out TValue value, out IError error)`
+- `bool IsFailure()`
+- `bool IsFailure(out IError error)`
+- `bool IsFailure(out IError error, out TValue value)`
+- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)`
+- `Result AsFailure()`
+- `Result<TDestination> AsFailure<TDestination>()`
+- `IReadOnlyCollection<IError> Errors`
+- Implicit conversions: `TValue` → success result, `Error` → failure result.
+- Equality: implements `IEquatable<Result<TValue>>`, provides `Equals(...)`, `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
+
+### `Error` (class)
+Represents an error with an optional message and metadata.
 
 Constructors:
 - `Error()` – empty error.
 - `Error(string message)`
-- `Error(Exception? ex)` – message from the exception and stored under the "Exception" metadata key.
-- `Error(string message, Exception? ex)` – stores the exception in metadata under the "Exception" key.
+- `Error(Exception? ex)` – message from the exception stored under the `"Exception"` key.
+- `Error(string message, Exception? ex)` – stores the exception under the `"Exception"` key.
 - `Error(string message, (string Key, object? Value) metadata)`
 - `Error(string message, KeyValuePair<string, object?> metadata)`
-- `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (only on .NET 6 or higher)
+- `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (available on .NET 6 or later)
 - `Error(string message, IReadOnlyDictionary<string, object?> metadata)`
 
 Properties:
 - `string Message`
 - `IReadOnlyDictionary<string, object?> Metadata`
-- `Exception? Exception` (if present in metadata)
+- `Exception? Exception`
 - `static IError Empty`
 
-Implements `IEquatable<Error>` with `==`/`!=` operators and overrides `Equals`, `GetHashCode`, and `ToString`.
+Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashCode()`, and overrides `ToString()`.
 
 ### Interfaces
-- `IError` – exposes `Message`, `Metadata`, and `Exception`.
-- `IResult` – exposes `Errors`, `IsSuccess`, `IsFailure`, and `HasError` methods.
-- `IResult<TValue>` – adds overloads of `IsSuccess` and `IsFailure` to access the value.
-- `IActionableResult` / `IActionableResult<TValue, TResult>` (for .NET 7+) – interfaces with static abstract members:
-  - `Success()` / `Success(TValue value)`
-  - `Failure()`
-  - `Failure(string errorMessage)`
-  - `Failure(string errorMessage, (string Key, object? Value) metadata)`
-  - `Failure(string errorMessage, KeyValuePair<string, object?> metadata)`
-  - `Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)`
-  - `Failure(Exception? ex)`
-  - `Failure(string errorMessage, Exception? ex)`
-  - `Failure(IError error)`
-  - `Failure(IEnumerable<IError> errors)`
-  - `Failure(IReadOnlyList<IError> errors)`
+- `IError`
+- `IResult`
+- `IResult<TValue>`
+- `IActionableResult<TResult>` *(NET 7+)*
+- `IActionableResult<TValue, TResult>` *(NET 7+)*
+
+Both actionable-result interfaces expose static abstract members for `Success` and the various `Failure` overloads listed above.
 
 ## Usage Pattern
 1. Create results using the static `Result` methods rather than constructors.
 2. Check results with `IsSuccess()`/`IsFailure()` before accessing values or errors.
 3. Use `HasError<TError>()` to branch on specific error types.
 4. Custom errors can inherit from `Error` to represent domain-specific failures.
-5. Convert failed results to another result type with `AsFailure()` or `AsFailure<T>()`.
-6. Prefer returning `Result` or `Result<TValue>` from methods rather than throwing exceptions.
+5. Convert failed results to another type with `AsFailure()` or `AsFailure<TValue>()`.
+6. Prefer returning `Result` or `Result<TValue>` from methods instead of throwing exceptions.
 
 ## Target Frameworks
-The library targets .NET Standard 2.0 and .NET 6.0–9.0. It's AOT compatible and optimised for minimal allocations.
-
+This library targets .NET Standard 2.0 and .NET 6.0–9.0 and is AOT-compatible.
