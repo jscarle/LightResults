@@ -36,6 +36,19 @@ public interface IActionableResult<out TResult> : IResult
     /// <returns>A new instance of <typeparamref name="TResult"/> representing a failure result with the specified error message and metadata.</returns>
     static abstract TResult Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata);
 
+    /// <summary>Creates a failure result with the given exception.</summary>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
+    static abstract TResult Failure(Exception? ex);
+
+    /// <summary>Creates a failure result with the given error message and exception.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    static abstract TResult Failure(string errorMessage, Exception? ex);
+
     /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <returns>A new instance of <typeparamref name="TResult"/> representing a failure result with the specified error.</returns>
@@ -87,6 +100,19 @@ public interface IActionableResult<TValue, out TResult> : IResult<TValue>
     /// <param name="metadata">The metadata associated with the failure.</param>
     /// <returns>A new instance of <typeparamref name="TResult"/> representing a failure result with the specified error message and metadata.</returns>
     static abstract TResult Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata);
+
+    /// <summary>Creates a failure result with the given exception.</summary>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
+    static abstract TResult Failure(Exception? ex);
+
+    /// <summary>Creates a failure result with the given error message and exception.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
+    /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified error message and exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    static abstract TResult Failure(string errorMessage, Exception? ex);
 
     /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>

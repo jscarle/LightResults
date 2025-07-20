@@ -210,6 +210,29 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         return new Result<TValue>(error);
     }
 
+    /// <summary>Creates a failure result with the given exception.</summary>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception" and the error <see cref="Error.Message"/> is set to that of the exception.</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(Exception? ex)
+    {
+        var error = new Error(ex);
+        return new Result<TValue>(error);
+    }
+
+    /// <summary>Creates a failure result with the given error message and exception.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
+    /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error message and exception.</returns>
+    /// <remarks>The exception is added to the error <see cref="Error.Metadata"/> under the key of "Exception".</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(string errorMessage, Exception? ex)
+    {
+        var error = new Error(errorMessage, ex);
+        return new Result<TValue>(error);
+    }
+
     /// <summary>Creates a failure result with the given error.</summary>
     /// <param name="error">The error associated with the failure.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified error.</returns>

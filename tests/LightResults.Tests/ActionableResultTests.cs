@@ -46,6 +46,16 @@ public sealed class ActionableResultEdgeTests
             return new CustomResult(Result.Failure(errorMessage, metadata));
         }
 
+        public static CustomResult Failure(Exception? ex)
+        {
+            return new CustomResult(Result.Failure(ex));
+        }
+
+        public static CustomResult Failure(string errorMessage, Exception? ex)
+        {
+            return new CustomResult(Result.Failure(errorMessage, ex));
+        }
+
         public static CustomResult Failure(IError error)
         {
             return new CustomResult(Result.Failure(error));
