@@ -1,10 +1,10 @@
-BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.3374/23H2/2023Update/SunValley3)
-13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
-.NET SDK 9.0.100-preview.2.24157.14
-[Host]   : .NET 8.0.3 (8.0.324.11423), X64 RyuJIT AVX2
-.NET 8.0 : .NET 8.0.3 (8.0.324.11423), X64 RyuJIT AVX2
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.4652/24H2/2024Update/HudsonValley)
+13th Gen Intel Core i7-13700KF 3.40GHz, 1 CPU, 24 logical and 16 physical cores
+.NET SDK 10.0.100-preview.6.25358.103
+  [Host]   : .NET 9.0.7 (9.0.725.31616), X64 RyuJIT AVX2
+  .NET 9.0 : .NET 9.0.7 (9.0.725.31616), X64 RyuJIT AVX2
 
-Job=.NET 8.0 Runtime=.NET 8.0 IterationTime=250.0000 ms
+Job=.NET 9.0  Runtime=.NET 9.0  IterationTime=250ms
 Iterations=10
 
 | Method                                                      | Categories                                                                |         Mean |  Ratio | Allocated | Alloc Ratio |
