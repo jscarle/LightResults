@@ -69,11 +69,11 @@ Constructors:
 - `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (only on .NET 6 or higher)
 - `Error(string message, IReadOnlyDictionary<string, object?> metadata)`
 
-Properties shared by `Error` and `IError`:
+Properties:
 - `string Message`
 - `IReadOnlyDictionary<string, object?> Metadata`
 - `Exception? Exception` (if present in metadata)
-- `Error` also exposes the static property `IError Empty`.
+- `static IError Empty`
 
 Implements `IEquatable<Error>` with `==`/`!=` operators and overrides `Equals`, `GetHashCode`, and `ToString`.
 
