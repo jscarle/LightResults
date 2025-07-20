@@ -1,4 +1,4 @@
-﻿BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.3374/23H2/2023Update/SunValley3)
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.3374/23H2/2023Update/SunValley3)
 13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
 .NET SDK 9.0.100-preview.2.24157.14
 [Host]   : .NET 8.0.3 (8.0.324.11423), X64 RyuJIT AVX2

@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Running;
 using LightResults.DevelopBenchmarks;
 
 BenchmarkRunner.Run<Benchmarks>();
