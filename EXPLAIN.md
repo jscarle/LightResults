@@ -1,6 +1,6 @@
 # LightResults API Overview
 
-LightResults implements a lightweight Result Pattern for .NET. It provides immutable types to represent success or failure states without using exceptions.
+LightResults implements a lightweight Result Pattern for .NET. It provides immutable types to represent success or failure states without throwing exceptions.
 
 ## Namespaces
 - `LightResults` – contains `Result`, `Result<TValue>`, `Error`, `IResult`, `IResult<TValue>` and `IError`.
@@ -10,7 +10,7 @@ LightResults implements a lightweight Result Pattern for .NET. It provides immut
 
 ### `Result` (readonly struct)
 Represents a success or failure without a value.
-Constructors are private; use the static methods below to create instances.
+Constructors are not public; use the static methods below to create instances.
 
 Static factory methods returning `Result`:
 - `Result.Success()` – create a success instance.
