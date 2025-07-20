@@ -21,7 +21,7 @@ Static factory methods that return a `Result`:
 - `Result.Failure(IReadOnlyList<IError> errors)`
 
 Static factory methods that return a `Result<TValue>`:
-- `Result.Success<TValue>()` – create a success.
+- `Result.Success<TValue>(TValue value)` – create a success with a value.
 - `Result.Failure<TValue>()` – create a failure with an empty error.
 - `Result.Failure<TValue>(string message)` – failure with an error message.
 - `Result.Failure<TValue>(string message, (string Key, object? Value) metadata)`
@@ -41,6 +41,7 @@ Instance members:
 - `Result AsFailure()` – convert to failure `Result`.
 - `Result<TDestination> AsFailure<TDestination>()` – convert to failure of another type.
 - `IReadOnlyCollection<IError> Errors` – full error list.
+- Implicit conversion from `Error` to `Result` for failures.
 
 ### `Result<T>`
 Generic result carrying a value on success. Additional members:
