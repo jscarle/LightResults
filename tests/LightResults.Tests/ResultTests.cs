@@ -16,20 +16,29 @@ public sealed class ResultTests
         Result result = default;
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out var resultError).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out var resultError)
+            .ShouldBeTrue();
         resultError.ShouldBeEquivalentTo(EmptyError);
 
         result.Errors.ShouldHaveSingleItem();
-        result.Errors.First().ShouldBeOfType<Error>();
+        result.Errors
+            .First()
+            .ShouldBeOfType<Error>();
 
-        result.HasError<Error>().ShouldBeTrue();
-        result.HasError<Error>(out var error).ShouldBeTrue();
+        result.HasError<Error>()
+            .ShouldBeTrue();
+        result.HasError<Error>(out var error)
+            .ShouldBeTrue();
         error.ShouldBeEquivalentTo(EmptyError);
 
-        result.HasError<ValidationError>().ShouldBeFalse();
-        result.HasError<ValidationError>(out var validationError).ShouldBeFalse();
+        result.HasError<ValidationError>()
+            .ShouldBeFalse();
+        result.HasError<ValidationError>(out var validationError)
+            .ShouldBeFalse();
         validationError.ShouldBeNull();
     }
 
@@ -40,7 +49,8 @@ public sealed class ResultTests
         var result = Result.Success();
 
         // Assert
-        result.IsSuccess().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -50,7 +60,8 @@ public sealed class ResultTests
         var result = Result.Failure();
 
         // Assert
-        result.IsFailure().ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -108,9 +119,12 @@ public sealed class ResultTests
         var result = Result.Success();
 
         // Assert
-        result.IsSuccess().ShouldBeTrue();
-        result.IsFailure().ShouldBeFalse();
-        result.IsFailure(out var resultError).ShouldBeFalse();
+        result.IsSuccess()
+            .ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeFalse();
+        result.IsFailure(out var resultError)
+            .ShouldBeFalse();
         resultError.ShouldBeNull();
         result.Errors.ShouldBeEmpty();
     }
@@ -125,11 +139,15 @@ public sealed class ResultTests
         var result = Result.Success(value);
 
         // Assert
-        result.IsSuccess().ShouldBeTrue();
-        result.IsSuccess(out var resultValue).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeTrue();
+        result.IsSuccess(out var resultValue)
+            .ShouldBeTrue();
         resultValue.ShouldBe(value);
-        result.IsFailure().ShouldBeFalse();
-        result.IsFailure(out var resultError).ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeFalse();
+        result.IsFailure(out var resultError)
+            .ShouldBeFalse();
         resultError.ShouldBeNull();
         result.Errors.ShouldBeEmpty();
     }
@@ -141,9 +159,12 @@ public sealed class ResultTests
         var result = Result.Failure();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("");
@@ -159,9 +180,12 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
@@ -178,15 +202,20 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -200,15 +229,20 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -225,15 +259,20 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -247,12 +286,15 @@ public sealed class ResultTests
         var result = Result.Failure(exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
-        singleError.Message.ShouldBe(exceptionMessage);
+        singleError.Message.ShouldBe($"{exception.GetType().Name}: {exceptionMessage}");
 
         singleError.Metadata.Count.ShouldBe(1);
         var metadata = singleError.Metadata.Single();
@@ -272,9 +314,12 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage, exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
@@ -295,15 +340,14 @@ public sealed class ResultTests
         var result = Result.Failure(exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("");
-        singleError.Metadata.Count.ShouldBe(1);
-        var metadata = singleError.Metadata.Single();
-        metadata.Key.ShouldBe("Exception");
-        metadata.Value.ShouldBe(exception);
+        singleError.Metadata.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -317,15 +361,14 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage, exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
-        singleError.Metadata.Count.ShouldBe(1);
-        var metadata = singleError.Metadata.Single();
-        metadata.Key.ShouldBe("Exception");
-        metadata.Value.ShouldBe(exception);
+        singleError.Metadata.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -338,9 +381,12 @@ public sealed class ResultTests
         var result = Result.Failure(error);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.ShouldBe(error);
@@ -360,9 +406,12 @@ public sealed class ResultTests
         var result = Result.Failure(errors.AsEnumerable());
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
     }
@@ -398,9 +447,12 @@ public sealed class ResultTests
         var result = Result.Failure(errors);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
     }
@@ -412,10 +464,14 @@ public sealed class ResultTests
         var result = Result.Failure<object>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("");
@@ -431,10 +487,14 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errorMessage);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
@@ -451,16 +511,22 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -474,16 +540,22 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -500,16 +572,22 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errorMessage, metadata);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -523,12 +601,15 @@ public sealed class ResultTests
         var result = Result.Failure<object>(exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
-        singleError.Message.ShouldBe(exceptionMessage);
+        singleError.Message.ShouldBe($"{exception.GetType().Name}: {exceptionMessage}");
 
         singleError.Metadata.Count.ShouldBe(1);
         var metadata = singleError.Metadata.Single();
@@ -548,9 +629,12 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errorMessage, exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
@@ -571,15 +655,14 @@ public sealed class ResultTests
         var result = Result.Failure<object>(exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("");
-        singleError.Metadata.Count.ShouldBe(1);
-        var metadata = singleError.Metadata.Single();
-        metadata.Key.ShouldBe("Exception");
-        metadata.Value.ShouldBe(exception);
+        singleError.Metadata.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -593,15 +676,14 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errorMessage, exception);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
-        singleError.Metadata.Count.ShouldBe(1);
-        var metadata = singleError.Metadata.Single();
-        metadata.Key.ShouldBe("Exception");
-        metadata.Value.ShouldBe(exception);
+        singleError.Metadata.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -614,10 +696,14 @@ public sealed class ResultTests
         var result = Result.Failure<object>(error);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.ShouldBe(error);
@@ -637,10 +723,14 @@ public sealed class ResultTests
         var result = Result.Failure<object>(errors);
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsSuccess(out _).ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsSuccess(out _)
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
     }
@@ -652,7 +742,8 @@ public sealed class ResultTests
         var result = Result.Failure(new ValidationError("Validation error"));
 
         // Assert
-        result.HasError<ValidationError>().ShouldBeTrue();
+        result.HasError<ValidationError>()
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -682,7 +773,8 @@ public sealed class ResultTests
         var result = Result.Failure(new Error("Generic error"));
 
         // Assert
-        result.HasError<ValidationError>().ShouldBeFalse();
+        result.HasError<ValidationError>()
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -706,7 +798,8 @@ public sealed class ResultTests
         var result = Result.Success();
 
         // Assert
-        result.HasError<ValidationError>().ShouldBeFalse();
+        result.HasError<ValidationError>()
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -738,8 +831,10 @@ public sealed class ResultTests
         var nonGenericResult = result.AsFailure();
 
         // Assert
-        nonGenericResult.IsSuccess().ShouldBeFalse();
-        nonGenericResult.IsFailure().ShouldBeTrue();
+        nonGenericResult.IsSuccess()
+            .ShouldBeFalse();
+        nonGenericResult.IsFailure()
+            .ShouldBeTrue();
         nonGenericResult.Errors.Count.ShouldBe(2);
         nonGenericResult.Errors.ShouldBe(errors);
     }
@@ -754,10 +849,14 @@ public sealed class ResultTests
         var nonGenericResult = result.AsFailure();
 
         // Assert
-        nonGenericResult.IsSuccess().ShouldBeFalse();
-        nonGenericResult.IsFailure().ShouldBeTrue();
+        nonGenericResult.IsSuccess()
+            .ShouldBeFalse();
+        nonGenericResult.IsFailure()
+            .ShouldBeTrue();
         nonGenericResult.Errors.ShouldHaveSingleItem();
-        nonGenericResult.Errors.Single().ShouldBeEquivalentTo(EmptyError);
+        nonGenericResult.Errors
+            .Single()
+            .ShouldBeEquivalentTo(EmptyError);
     }
 
     [Fact]
@@ -775,8 +874,10 @@ public sealed class ResultTests
         var genericResult = result.AsFailure<object>();
 
         // Assert
-        genericResult.IsSuccess().ShouldBeFalse();
-        genericResult.IsFailure().ShouldBeTrue();
+        genericResult.IsSuccess()
+            .ShouldBeFalse();
+        genericResult.IsFailure()
+            .ShouldBeTrue();
         genericResult.Errors.Count.ShouldBe(2);
         genericResult.Errors.ShouldBe(errors);
     }
@@ -791,10 +892,14 @@ public sealed class ResultTests
         var genericResult = result.AsFailure<object>();
 
         // Assert
-        genericResult.IsSuccess().ShouldBeFalse();
-        genericResult.IsFailure().ShouldBeTrue();
+        genericResult.IsSuccess()
+            .ShouldBeFalse();
+        genericResult.IsFailure()
+            .ShouldBeTrue();
         genericResult.Errors.ShouldHaveSingleItem();
-        genericResult.Errors.Single().ShouldBeEquivalentTo(EmptyError);
+        genericResult.Errors
+            .Single()
+            .ShouldBeEquivalentTo(EmptyError);
     }
 
     [Fact]
@@ -807,9 +912,12 @@ public sealed class ResultTests
         Result result = error;
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out var resultError).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out var resultError)
+            .ShouldBeTrue();
         resultError.ShouldBe(error);
 
         var singleError = result.Errors.ShouldHaveSingleItem();
@@ -824,7 +932,8 @@ public sealed class ResultTests
         var result2 = Result.Success();
 
         // Assert
-        result1.Equals(result2).ShouldBeTrue();
+        result1.Equals(result2)
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -835,7 +944,8 @@ public sealed class ResultTests
         var result2 = Result.Failure("Error");
 
         // Assert
-        result1.Equals(result2).ShouldBeFalse();
+        result1.Equals(result2)
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -846,7 +956,8 @@ public sealed class ResultTests
         var result2 = Result.Success();
 
         // Assert
-        result1.Equals((object)result2).ShouldBeTrue();
+        result1.Equals((object)result2)
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -857,7 +968,8 @@ public sealed class ResultTests
         var result2 = Result.Failure("Error");
 
         // Assert
-        result1.Equals((object)result2).ShouldBeFalse();
+        result1.Equals((object)result2)
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -868,7 +980,8 @@ public sealed class ResultTests
         var result2 = Result.Success();
 
         // Assert
-        result1.GetHashCode().ShouldBe(result2.GetHashCode());
+        result1.GetHashCode()
+            .ShouldBe(result2.GetHashCode());
     }
 
     [Fact]
@@ -923,7 +1036,8 @@ public sealed class ResultTests
         Result result2 = default;
 
         // Assert
-        result1.Equals(result2).ShouldBeTrue();
+        result1.Equals(result2)
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -934,7 +1048,8 @@ public sealed class ResultTests
         Result result2 = default;
 
         // Assert
-        result1.GetHashCode().ShouldBe(result2.GetHashCode());
+        result1.GetHashCode()
+            .ShouldBe(result2.GetHashCode());
     }
 
     [Fact]
@@ -945,7 +1060,8 @@ public sealed class ResultTests
         var result2 = Result.Failure();
 
         // Assert
-        result1.Equals(result2).ShouldBeFalse();
+        result1.Equals(result2)
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -956,7 +1072,8 @@ public sealed class ResultTests
         var result2 = Result.Failure();
 
         // Assert
-        result1.GetHashCode().ShouldNotBe(result2.GetHashCode());
+        result1.GetHashCode()
+            .ShouldNotBe(result2.GetHashCode());
     }
 
     [Fact]
@@ -966,7 +1083,8 @@ public sealed class ResultTests
         var result = Result.Success();
 
         // Assert
-        result.ToString().ShouldBe("Result { IsSuccess = True }");
+        result.ToString()
+            .ShouldBe("Result { IsSuccess = True }");
     }
 
     [Theory]
@@ -978,11 +1096,8 @@ public sealed class ResultTests
         var result = Result.Failure(errorMessage);
 
         // Assert
-        result.ToString().ShouldBe(
-            errorMessage.Length > 0
-                ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}"
-                : "Result { IsSuccess = False }"
-        );
+        result.ToString()
+            .ShouldBe(errorMessage.Length > 0 ? $"Result {{ IsSuccess = False, Error = \"{errorMessage}\" }}" : "Result { IsSuccess = False }");
     }
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
@@ -1002,9 +1117,12 @@ public sealed class ResultTests
         var result = Success<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeTrue();
-        result.IsFailure().ShouldBeFalse();
-        result.IsFailure(out var resultError).ShouldBeFalse();
+        result.IsSuccess()
+            .ShouldBeTrue();
+        result.IsFailure()
+            .ShouldBeFalse();
+        result.IsFailure(out var resultError)
+            .ShouldBeFalse();
         resultError.ShouldBeNull();
         result.Errors.ShouldBeEmpty();
     }
@@ -1023,9 +1141,12 @@ public sealed class ResultTests
         var result = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("");
@@ -1046,9 +1167,12 @@ public sealed class ResultTests
         var result = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("Sample error message");
@@ -1070,15 +1194,20 @@ public sealed class ResultTests
         var result = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("Sample error message");
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1100,15 +1229,20 @@ public sealed class ResultTests
         var result = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe("Sample error message");
 
         singleError.Metadata.Count.ShouldBe(1);
-        singleError.Metadata.Single().ShouldBe(new KeyValuePair<string, object?>("Key", 0));
+        singleError.Metadata
+            .Single()
+            .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
     [Fact]
@@ -1126,9 +1260,12 @@ public sealed class ResultTests
         var result = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.ShouldBeEquivalentTo(new Error("Sample error"));
@@ -1153,9 +1290,12 @@ public sealed class ResultTests
         var (result, errors) = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBeSameAs(errors);
@@ -1180,16 +1320,20 @@ public sealed class ResultTests
         var result = Fail<Result>();
 
         // Assert
-        result.IsSuccess().ShouldBeFalse();
-        result.IsFailure().ShouldBeTrue();
-        result.IsFailure(out _).ShouldBeTrue();
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out _)
+            .ShouldBeTrue();
 
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBeEquivalentTo(new List<IError>
-        {
-            new Error("Error 1"),
-            new Error("Error 2"),
-        });
+            {
+                new Error("Error 1"),
+                new Error("Error 2"),
+            }
+        );
     }
 #endif
 }
