@@ -47,6 +47,8 @@ Instance members:
 - `IReadOnlyCollection<IError> Errors`
 - Implicit conversion from `Error` to `Result`.
 - Equality: implements `IEquatable<Result>`, provides `Equals(...)`, `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
+- Implements `IResult` (netstandard2.0–net6.0) or `IActionableResult<Result>` (net7.0+)
+
 
 ### `Result<TValue>` (readonly struct)
 Represents a result carrying a value on success.
@@ -64,6 +66,8 @@ Instance members:
 - `IReadOnlyCollection<IError> Errors`
 - Implicit conversions: `TValue` → success result, `Error` → failure result.
 - Equality: implements `IEquatable<Result<TValue>>`, provides `Equals(...)`, `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
+- Implements `IResult<TValue>` (netstandard2.0–net6.0) or `IActionableResult<TValue, Result<TValue>>` (net7.0+)
+
 
 ### `Error` (class)
 Represents an error with an optional message and metadata.
@@ -87,14 +91,50 @@ Properties:
 Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashCode()`, and overrides `ToString()`.
 
 ### Interfaces
-- `IError`
-- `IResult`
-- `IResult<TValue>`
-- `IActionableResult<TResult>` *(NET 7+)*
-- `IActionableResult<TValue, TResult>` *(NET 7+)*
 
-Both actionable-result interfaces expose static abstract members for `Success` and the various `Failure` overloads listed above.
+#### `IError`
+- `string Message { get; }`
+- `Exception? Exception { get; }`
+- `IReadOnlyDictionary<string, object?> Metadata { get; }`
 
+#### `IResult`
+- `IReadOnlyCollection<IError> Errors`
+- `bool IsSuccess()`
+- `bool IsFailure()`
+- `bool IsFailure(out IError error)`
+- `bool HasError<TError>()`
+- `bool HasError<TError>(out TError error)`
+
+#### `IResult<TValue>` – extends `IResult`
+- `bool IsSuccess(out TValue value)`
+- `bool IsSuccess(out TValue value, out IError error)`
+- `bool IsFailure(out IError error, out TValue value)`
+
+#### `IActionableResult<TResult>` *(NET 7+)*
+- `static abstract TResult Success()`
+- `static abstract TResult Failure()`
+- `static abstract TResult Failure(string errorMessage)`
+- `static abstract TResult Failure(string errorMessage, (string Key, object? Value) metadata)`
+- `static abstract TResult Failure(string errorMessage, KeyValuePair<string, object?> metadata)`
+- `static abstract TResult Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)`
+- `static abstract TResult Failure(Exception? ex)`
+- `static abstract TResult Failure(string errorMessage, Exception? ex)`
+- `static abstract TResult Failure(IError error)`
+- `static abstract TResult Failure(IEnumerable<IError> errors)`
+- `static abstract TResult Failure(IReadOnlyList<IError> errors)`
+
+#### `IActionableResult<TValue, TResult>` *(NET 7+)*
+- `static abstract TResult Success(TValue value)`
+- `static abstract TResult Failure()`
+- `static abstract TResult Failure(string errorMessage)`
+- `static abstract TResult Failure(string errorMessage, (string Key, object? Value) metadata)`
+- `static abstract TResult Failure(string errorMessage, KeyValuePair<string, object?> metadata)`
+- `static abstract TResult Failure(string errorMessage, IReadOnlyDictionary<string, object?> metadata)`
+- `static abstract TResult Failure(Exception? ex)`
+- `static abstract TResult Failure(string errorMessage, Exception? ex)`
+- `static abstract TResult Failure(IError error)`
+- `static abstract TResult Failure(IEnumerable<IError> errors)`
+- `static abstract TResult Failure(IReadOnlyList<IError> errors)`
 ## Usage Pattern
 1. Create results using the static `Result` methods rather than constructors.
 2. Check results with `IsSuccess()`/`IsFailure()` before accessing values or errors.
