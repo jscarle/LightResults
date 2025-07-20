@@ -46,8 +46,11 @@ Instance members:
 
 ### `Result<TValue>`
 Generic result carrying a value on success. Additional members:
+- `bool IsSuccess()` – check success without retrieving the value.
 - `bool IsSuccess(out TValue value)` – get value when successful.
 - `bool IsSuccess(out TValue value, out IError error)` – also obtains first error when failed.
+- `bool IsFailure()` – check failure without retrieving the error.
+- `bool IsFailure(out IError error)` – returns first error.
 - `bool IsFailure(out IError error, out TValue value)` – obtains value on failure (default) and error.
 - `bool HasError<TError>()` / `bool HasError<TError>(out TError error)` – check for a specific error type.
 - `Result AsFailure()` – convert to failure `Result`.
@@ -62,8 +65,8 @@ Represents an error with optional metadata.
 Constructors:
 - `Error()` – empty error.
 - `Error(string message)`
-- `Error(Exception? ex)` – message taken from exception.
-- `Error(string message, Exception? ex)`
+- `Error(Exception? ex)` – message from the exception and stored under the "Exception" metadata key.
+- `Error(string message, Exception? ex)` – stores the exception in metadata under the "Exception" key.
 - `Error(string message, (string Key, object? Value) metadata)`
 - `Error(string message, KeyValuePair<string, object?> metadata)`
 - `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (only on .NET 6 or higher)
