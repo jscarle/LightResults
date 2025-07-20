@@ -1,0 +1,21 @@
+* text=auto eol=lf
+.config text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.cs text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.csproj text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.dist text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.DotSettings text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.editorconfig text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.gitattributes text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.gitignore text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.info text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.js text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.json text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.md text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.ps1 text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.props text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.resx text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.runsettings text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.sln text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.targets text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.txt text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
+.yml text eol=lf encoding=UTF-8 working-tree-encoding=UTF-8
