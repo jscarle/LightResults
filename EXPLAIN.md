@@ -19,7 +19,7 @@ Static factory methods returning `Result`:
 - `Result.Failure(string message, (string Key, object? Value) metadata)`
 - `Result.Failure(string message, KeyValuePair<string, object?> metadata)`
 - `Result.Failure(string message, IReadOnlyDictionary<string, object?> metadata)`
-- `Result.Failure(Exception? ex)` – wraps an exception.
+- `Result.Failure(Exception? ex)` – derives the message from the exception and stores the exception under `"Exception"` in the resulting error.
 - `Result.Failure(string message, Exception? ex)`
 - `Result.Failure(IError error)`
 - `Result.Failure(IEnumerable<IError> errors)`
@@ -32,7 +32,7 @@ Static factory methods returning `Result<TValue>`:
 - `Result.Failure<TValue>(string message, (string Key, object? Value) metadata)`
 - `Result.Failure<TValue>(string message, KeyValuePair<string, object?> metadata)`
 - `Result.Failure<TValue>(string message, IReadOnlyDictionary<string, object?> metadata)`
-- `Result.Failure<TValue>(Exception? ex)`
+- `Result.Failure<TValue>(Exception? ex)` – derives the message from the exception and stores the exception under `"Exception"` in the resulting error.
 - `Result.Failure<TValue>(string message, Exception? ex)`
 - `Result.Failure<TValue>(IError error)`
 - `Result.Failure<TValue>(IEnumerable<IError> errors)`
@@ -78,9 +78,8 @@ This class is not sealed, enabling custom error subclasses.
 Constructors:
 - `Error()` – empty error.
 - `Error(string message)`
-- `Error(Exception? ex)` – message from the exception stored under the `"Exception"` key.
-- `Error(string message, Exception? ex)` – stores the exception under the `"Exception"` key.
-- `Error(string message, (string Key, object? Value) metadata)`
+- `Error(Exception? ex)` – derives the message from the exception and stores it under `"Exception"` in `Metadata`.
+- `Error(string message, Exception? ex)` – when `ex` is not null, stores the exception under `"Exception"` in `Metadata`.
 - `Error(string message, KeyValuePair<string, object?> metadata)`
 - `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (available on .NET 6 or later)
 - `Error(string message, IReadOnlyDictionary<string, object?> metadata)`
