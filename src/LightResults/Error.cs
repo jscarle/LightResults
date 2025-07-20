@@ -41,8 +41,9 @@ public class Error : IError, IEquatable<Error>
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
-        : this("")
     {
+        Message = "";
+        Metadata = EmptyMetaData;
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message.</summary>
@@ -58,11 +59,21 @@ public class Error : IError, IEquatable<Error>
     /// <remarks>The <paramref name="exception"/> is added to <see cref="Metadata"/> under the key of "Exception" and the <see cref="Message"/> is set to the exception message if present.</remarks>
     public Error(Exception? exception)
     {
-        Message = exception?.Message ?? string.Empty;
-        Metadata = new Dictionary<string, object?>(1)
+        if (exception is null)
         {
-            { "Exception", exception },
+            Message = "";
+            Metadata = EmptyMetaData;
+            return;
+        }
+
+        var errorMessage = exception switch
+        {
+            _ when string.IsNullOrEmpty(exception.Message) => $"An exception of type {exception.GetType().Name} was thrown.",
+            _ => $"{exception.GetType().Name}: {exception.Message}",
         };
+
+        Message = errorMessage;
+        Metadata = new SingleItemMetadataDictionary(ExceptionKey, exception);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and exception.</summary>
@@ -71,11 +82,15 @@ public class Error : IError, IEquatable<Error>
     /// <remarks>The <paramref name="exception"/> is added to <see cref="Metadata"/> under the key of "Exception".</remarks>
     public Error(string message, Exception? exception)
     {
-        Message = message;
-        Metadata = new Dictionary<string, object?>(1)
+        if (exception is null)
         {
-            { ExceptionKey, exception },
-        };
+            Message = message;
+            Metadata = EmptyMetaData;
+            return;
+        }
+
+        Message = message;
+        Metadata = new SingleItemMetadataDictionary(ExceptionKey, exception);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -103,7 +118,11 @@ public class Error : IError, IEquatable<Error>
     public Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object?>(metadata);
+        Metadata = new Dictionary<string, object?>(metadata)
+#if NET7_0_OR_GREATER
+            .AsReadOnly()
+#endif
+            ;
     }
 #endif
 

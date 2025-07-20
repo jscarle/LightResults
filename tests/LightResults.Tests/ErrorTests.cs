@@ -1,7 +1,7 @@
+using Shouldly;
 #if NET6_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
-using Shouldly;
 
 namespace LightResults.Tests;
 
@@ -156,7 +156,7 @@ public sealed class ErrorTests
         var error = new Error(exception);
 
         // Assert
-        error.Message.ShouldBe(exception.Message);
+        error.Message.ShouldBe($"{exception.GetType().Name}: {exception.Message}");
         error.Metadata.Count.ShouldBe(1);
         var metadata = error.Metadata.Single();
         metadata.Key.ShouldBe("Exception");
@@ -190,7 +190,8 @@ public sealed class ErrorTests
         var error = new Error(errorMessage);
 
         // Assert
-        error.ToString().ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
+        error.ToString()
+            .ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
     }
 
     [Fact]
@@ -201,7 +202,8 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 1));
 
         // Assert
-        error1.Equals(error2).ShouldBeTrue();
+        error1.Equals(error2)
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -212,7 +214,8 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 2));
 
         // Assert
-        error1.Equals(error2).ShouldBeFalse();
+        error1.Equals(error2)
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -223,7 +226,8 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 1));
 
         // Assert
-        error1.Equals((object)error2).ShouldBeTrue();
+        error1.Equals((object)error2)
+            .ShouldBeTrue();
     }
 
     [Fact]
@@ -234,7 +238,8 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 2));
 
         // Assert
-        error1.Equals((object)error2).ShouldBeFalse();
+        error1.Equals((object)error2)
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -245,7 +250,8 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 1));
 
         // Assert
-        error1.GetHashCode().ShouldBe(error2.GetHashCode());
+        error1.GetHashCode()
+            .ShouldBe(error2.GetHashCode());
     }
 
     [Fact]
