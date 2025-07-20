@@ -1,4 +1,4 @@
-﻿namespace LightResults;
+namespace LightResults;
 
 /// <summary>Defines an error with a message and associated metadata.</summary>
 public interface IError

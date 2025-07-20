@@ -10,16 +10,16 @@ for exceptional performance by intentionally simplifying its API.
 Below are comparisons of LightResults against other result pattern implementations.
 
 ```
-BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.2605)
-13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
-.NET SDK 9.0.101
-  [Host]   : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
-  .NET 9.0 : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.4652/24H2/2024Update/HudsonValley)
+13th Gen Intel Core i7-13700KF 3.40GHz, 1 CPU, 24 logical and 16 physical cores
+.NET SDK 9.0.303
+  [Host]   : .NET 9.0.7 (9.0.725.31616), X64 RyuJIT AVX2
+  .NET 9.0 : .NET 9.0.7 (9.0.725.31616), X64 RyuJIT AVX2
 
 Job=.NET 9.0  Runtime=.NET 9.0  IterationTime=250ms
 Iterations=10
 ```
-These results were produced using **LightResults 9.0.3** and **BenchmarkDotNet 0.15.2**.
+These results were produced using **LightResults 9.0.5** and **BenchmarkDotNet 0.15.2**.
 The comparison implementations used the following package versions:
 
 - **FluentResults** 4.0.0

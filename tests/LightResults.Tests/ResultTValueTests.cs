@@ -1,4 +1,4 @@
-﻿using Shouldly;
+using Shouldly;
 #if NET7_0_OR_GREATER
 using LightResults.Common;
 #endif
