@@ -10,7 +10,7 @@ LightResults implements a lightweight Result Pattern for .NET. It provides immut
 
 ### `Result` (readonly struct)
 Represents a success or failure without a value.
-Constructors are private; use the static methods below to create instances.
+Constructors are private or internal – no public constructors exist. Use the static factory methods below to create instances.
 
 Static factory methods returning `Result`:
 - `Result.Success()` – create a success instance.
@@ -53,7 +53,7 @@ Instance members:
 
 ### `Result<TValue>` (readonly struct)
 Represents a result carrying a value on success.
-Constructors are internal; create instances using the static methods.
+Constructors are internal only. Use the static factory methods to create instances.
 
 Instance members:
 - `bool IsSuccess()`
