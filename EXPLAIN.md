@@ -4,7 +4,7 @@ LightResults implements a lightweight Result Pattern for .NET. It provides immut
 
 ## Namespaces
 - `LightResults` – contains `Result`, `Result<TValue>`, `Error`, `IResult`, `IResult<TValue>` and `IError`.
-- `LightResults.Common` – defines `IActionableResult<TResult>` and `IActionableResult<TValue, TResult>` (only available when targeting .NET 7 or later).
+- `LightResults.Common` – defines `IActionableResult<TResult>` and `IActionableResult<TValue, TResult>`; these interfaces are only available when targeting .NET 7 or later.
 
 ## Core Types
 
@@ -112,6 +112,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 
 #### `IActionableResult<TResult>` *(NET 7+)*
 - extends `IResult`
+- generic constraint: `where TResult : IResult`
 - `static abstract TResult Success()`
 - `static abstract TResult Failure()`
 - `static abstract TResult Failure(string errorMessage)`
@@ -126,6 +127,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 
 #### `IActionableResult<TValue, TResult>` *(NET 7+)*
 - extends `IResult<TValue>`
+- generic constraint: `where TResult : IResult<TValue>`
 - `static abstract TResult Success(TValue value)`
 - `static abstract TResult Failure()`
 - `static abstract TResult Failure(string errorMessage)`
@@ -146,4 +148,4 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 6. Prefer returning `Result` or `Result<TValue>` from methods instead of throwing exceptions.
 
 ## Target Frameworks
-This library targets .NET Standard 2.0 and .NET 6.0 through .NET 9.0 and is AOT-compatible.
+This library targets `netstandard2.0`, `net6.0`, `net7.0`, `net8.0` and `net9.0` and is AOT-compatible.
