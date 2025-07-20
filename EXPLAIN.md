@@ -7,9 +7,8 @@ LightResults implements a lightweight Result Pattern for .NET. Use it to represe
 ### `Result`
 Represents a success or failure without a value.
 
-Static factory methods:
+Static factory methods that return a `Result`:
 - `Result.Success()` – create a success.
-- `Result.Success<T>(T value)` – create a successful `Result<T>`.
 - `Result.Failure()` – create a failure with an empty error.
 - `Result.Failure(string message)` – failure with an error message.
 - `Result.Failure(string message, (string Key, object? Value) metadata)`
@@ -20,7 +19,19 @@ Static factory methods:
 - `Result.Failure(IError error)` – failure from an existing error.
 - `Result.Failure(IEnumerable<IError> errors)`
 - `Result.Failure(IReadOnlyList<IError> errors)`
-- `Result.Failure<T>()` and overloads above also exist for `Result<T>`.
+
+Static factory methods that return a `Result<TValue>`:
+- `Result.Success<TValue>()` – create a success.
+- `Result.Failure<TValue>()` – create a failure with an empty error.
+- `Result.Failure<TValue>(string message)` – failure with an error message.
+- `Result.Failure<TValue>(string message, (string Key, object? Value) metadata)`
+- `Result.Failure<TValue>(string message, KeyValuePair<string, object?> metadata)`
+- `Result.Failure<TValue>(string message, IReadOnlyDictionary<string, object?> metadata)`
+- `Result.Failure<TValue>(Exception? ex)` – failure wrapping an exception.
+- `Result.Failure<TValue>(string message, Exception? ex)` – message and exception.
+- `Result.Failure<TValue>(IError error)` – failure from an existing error.
+- `Result.Failure<TValue>(IEnumerable<IError> errors)`
+- `Result.Failure<TValue>(IReadOnlyList<IError> errors)`
 
 Instance members:
 - `bool IsSuccess()`
@@ -33,10 +44,14 @@ Instance members:
 
 ### `Result<T>`
 Generic result carrying a value on success. Additional members:
-- `bool IsSuccess(out T value)` – get value when successful.
-- `bool IsSuccess(out T value, out IError error)` – also obtains first error when failed.
-- `bool IsFailure(out IError error, out T value)` – obtains value on failure (default) and error.
-- Implicit conversions: from `T` to success result and from `Error` to failure result.
+- `bool IsSuccess(out TValue value)` – get value when successful.
+- `bool IsSuccess(out TValue value, out IError error)` – also obtains first error when failed.
+- `bool IsFailure(out IError error, out TValue value)` – obtains value on failure (default) and error.
+- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)` – check for a specific error type.
+- `Result AsFailure()` – convert to failure `Result`.
+- `Result<TDestination> AsFailure<TDestination>()` – convert to failure of another type.
+- `IReadOnlyCollection<IError> Errors` – full error list.
+- Implicit conversions: from `TValue` to success result and from `Error` to failure result.
 
 ### `Error`
 Represents an error with optional metadata.
