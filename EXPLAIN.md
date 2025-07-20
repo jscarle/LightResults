@@ -10,6 +10,7 @@ LightResults implements a lightweight Result Pattern for .NET. It provides immut
 
 ### `Result` (readonly struct)
 Represents a success or failure without a value.
+Constructors are private; use the static methods below to create instances.
 
 Static factory methods returning `Result`:
 - `Result.Success()` – create a success instance.
@@ -52,6 +53,7 @@ Instance members:
 
 ### `Result<TValue>` (readonly struct)
 Represents a result carrying a value on success.
+Constructors are internal; create instances using the static methods.
 
 Instance members:
 - `bool IsSuccess()`
@@ -71,6 +73,7 @@ Instance members:
 
 ### `Error` (class)
 Represents an error with an optional message and metadata.
+This class is not sealed, enabling custom error subclasses.
 
 Constructors:
 - `Error()` – empty error.
@@ -88,6 +91,7 @@ Properties:
 - `Exception? Exception`
 - `static IError Empty`
 
+Properties are init-only to keep errors immutable.
 Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashCode()`, and overrides `ToString()`.
 
 ### Interfaces
