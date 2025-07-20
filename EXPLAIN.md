@@ -42,11 +42,11 @@ Instance members:
 - `bool IsFailure()`
 - `bool IsFailure(out IError error)` – retrieves the first error.
 - `bool HasError<TError>()` / `bool HasError<TError>(out TError error)`
-- `Result AsFailure()` – convert to a non-generic failure.
+- `Result AsFailure()` – ensure a failed result preserving existing errors.
 - `Result<TDestination> AsFailure<TDestination>()` – convert to a different failure type.
 - `IReadOnlyCollection<IError> Errors`
 - Implicit conversion from `Error` to `Result`.
-- Equality: implements `IEquatable<Result>`, provides `Equals(...)`, `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
+- Equality: implements `IEquatable<Result>` with `Equals(in Result)` and `Equals(object?)`, provides `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
 - Implements `IResult` (netstandard2.0–net6.0) or `IActionableResult<Result>` (net7.0+)
 
 
@@ -61,11 +61,11 @@ Instance members:
 - `bool IsFailure(out IError error)`
 - `bool IsFailure(out IError error, out TValue value)`
 - `bool HasError<TError>()` / `bool HasError<TError>(out TError error)`
-- `Result AsFailure()`
+- `Result AsFailure()` – ensure a failed result preserving existing errors.
 - `Result<TDestination> AsFailure<TDestination>()`
 - `IReadOnlyCollection<IError> Errors`
 - Implicit conversions: `TValue` → success result, `Error` → failure result.
-- Equality: implements `IEquatable<Result<TValue>>`, provides `Equals(...)`, `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
+- Equality: implements `IEquatable<Result<TValue>>` with `Equals(in Result<TValue>)` and `Equals(object?)`, provides `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
 - Implements `IResult<TValue>` (netstandard2.0–net6.0) or `IActionableResult<TValue, Result<TValue>>` (net7.0+)
 
 
@@ -146,4 +146,4 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 6. Prefer returning `Result` or `Result<TValue>` from methods instead of throwing exceptions.
 
 ## Target Frameworks
-This library targets .NET Standard 2.0 and .NET 6.0–9.0 and is AOT-compatible.
+This library targets .NET Standard 2.0 and .NET 6.0 through .NET 9.0 and is AOT-compatible.
