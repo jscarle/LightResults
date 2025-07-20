@@ -53,7 +53,7 @@ Instance members:
 
 ### `Result<TValue>` (readonly struct)
 Represents a result carrying a value on success.
-Constructors are internal only. Use the static factory methods to create instances.
+Constructors are internal. Create instances using the static `Result` methods or via the implicit conversions from `TValue` and `Error`.
 
 Instance members:
 - `bool IsSuccess()`
