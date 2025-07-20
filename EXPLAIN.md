@@ -111,6 +111,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 - `bool IsFailure(out IError error, out TValue value)`
 
 #### `IActionableResult<TResult>` *(NET 7+)*
+- extends `IResult`
 - `static abstract TResult Success()`
 - `static abstract TResult Failure()`
 - `static abstract TResult Failure(string errorMessage)`
@@ -124,6 +125,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 - `static abstract TResult Failure(IReadOnlyList<IError> errors)`
 
 #### `IActionableResult<TValue, TResult>` *(NET 7+)*
+- extends `IResult<TValue>`
 - `static abstract TResult Success(TValue value)`
 - `static abstract TResult Failure()`
 - `static abstract TResult Failure(string errorMessage)`
