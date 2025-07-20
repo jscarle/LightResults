@@ -142,7 +142,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 2. Check results with `IsSuccess()`/`IsFailure()` before accessing values or errors.
 3. Use `HasError<TError>()` to branch on specific error types.
 4. Custom errors can inherit from `Error` to represent domain-specific failures.
-5. Convert failed results to another type with `AsFailure()` or `AsFailure<TValue>()`.
+5. Convert failed results to another type with `AsFailure()` or `AsFailure<TDestination>()`.
 6. Prefer returning `Result` or `Result<TValue>` from methods instead of throwing exceptions.
 
 ## Target Frameworks
