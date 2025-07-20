@@ -42,7 +42,7 @@ Instance members:
 - `bool IsSuccess()`
 - `bool IsFailure()`
 - `bool IsFailure(out IError error)` – retrieves the first error.
-- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)`
+- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)` – `TError : IError`
 - `Result AsFailure()` – ensure a failed result preserving existing errors.
 - `Result<TDestination> AsFailure<TDestination>()` – convert to a different failure type.
 - `IReadOnlyCollection<IError> Errors`
@@ -62,7 +62,7 @@ Instance members:
 - `bool IsFailure()`
 - `bool IsFailure(out IError error)`
 - `bool IsFailure(out IError error, out TValue value)`
-- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)`
+- `bool HasError<TError>()` / `bool HasError<TError>(out TError error)` – `TError : IError`
 - `Result AsFailure()` – ensure a failed result preserving existing errors.
 - `Result<TDestination> AsFailure<TDestination>()`
 - `IReadOnlyCollection<IError> Errors`
@@ -88,7 +88,7 @@ Constructors:
 Properties:
 - `string Message`
 - `IReadOnlyDictionary<string, object?> Metadata`
-- `Exception? Exception`
+- `Exception? Exception` – retrieved from the `Metadata` entry named "Exception" if present
 - `static IError Empty`
 
 Properties are init-only to keep errors immutable.
@@ -106,8 +106,8 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 - `bool IsSuccess()`
 - `bool IsFailure()`
 - `bool IsFailure(out IError error)`
-- `bool HasError<TError>()`
-- `bool HasError<TError>(out TError error)`
+- `bool HasError<TError>()` – `TError : IError`
+- `bool HasError<TError>(out TError error)` – `TError : IError`
 
 #### `IResult<TValue>` – extends `IResult`
 - `bool IsSuccess(out TValue value)`
