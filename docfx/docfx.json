@@ -10,67 +10,7 @@
         }
       ],
       "outputFormat": "apiPage",
-      "dest": "netstandard2.0",
-      "properties": {
-        "TargetFramework": "netstandard2.0"
-      }
-    },
-    {
-      "src": [
-        {
-          "src": "../src",
-          "files": [
-            "**/*.csproj"
-          ]
-        }
-      ],
-      "outputFormat": "apiPage",
-      "dest": "net6.0",
-      "properties": {
-        "TargetFramework": "net6.0"
-      }
-    },
-    {
-      "src": [
-        {
-          "src": "../src",
-          "files": [
-            "**/*.csproj"
-          ]
-        }
-      ],
-      "outputFormat": "apiPage",
-      "dest": "net7.0",
-      "properties": {
-        "TargetFramework": "net7.0"
-      }
-    },
-    {
-      "src": [
-        {
-          "src": "../src",
-          "files": [
-            "**/*.csproj"
-          ]
-        }
-      ],
-      "outputFormat": "apiPage",
-      "dest": "net8.0",
-      "properties": {
-        "TargetFramework": "net8.0"
-      }
-    },
-    {
-      "src": [
-        {
-          "src": "../src",
-          "files": [
-            "**/*.csproj"
-          ]
-        }
-      ],
-      "outputFormat": "apiPage",
-      "dest": "net9.0",
+      "dest": "api",
       "properties": {
         "TargetFramework": "net9.0"
       }
