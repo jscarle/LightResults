@@ -1,7 +1,5 @@
 using Shouldly;
-#if NET7_0_OR_GREATER
 using LightResults.Common;
-#endif
 
 namespace LightResults.Tests;
 
@@ -1102,7 +1100,6 @@ public sealed class ResultTests
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
 
-#if NET7_0_OR_GREATER
     [Fact]
     public void InterfaceSuccess_ShouldCreateSuccessResult()
     {
@@ -1335,5 +1332,4 @@ public sealed class ResultTests
             }
         );
     }
-#endif
 }

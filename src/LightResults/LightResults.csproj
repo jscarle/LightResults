@@ -3,7 +3,7 @@
     <!-- Compilation -->
     <PropertyGroup>
         <RootNamespace>LightResults</RootNamespace>
-        <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
@@ -16,17 +16,8 @@
     </PropertyGroup>
 
     <!-- References -->
-    <ItemGroup Condition="'$(targetframework)' == 'netstandard2.0'">
-        <PackageReference Include="PolySharp" Version="1.15.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0"/>
-        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3"/>
-    </ItemGroup>
-
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.14.0.120626">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -36,12 +27,12 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>9.0.5</Version>
-        <AssemblyVersion>9.0.5.0</AssemblyVersion>
-        <FileVersion>9.0.5.0</FileVersion>
+        <Version>10.0.0</Version>
+        <AssemblyVersion>10.0.0.0</AssemblyVersion>
+        <FileVersion>10.0.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Optimize>true</Optimize>
-        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+        <IsAotCompatible>true</IsAotCompatible>
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
 
@@ -57,7 +48,7 @@
         <RepositoryUrl>https://github.com/jscarle/LightResults</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Authors>Jean-Sebastien Carle</Authors>
-        <Copyright>Copyright © Jean-Sebastien Carle 2024</Copyright>
+        <Copyright>Copyright © Jean-Sebastien Carle 2025</Copyright>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageIcon>Icon.png</PackageIcon>
         <IncludeSymbols>true</IncludeSymbols>

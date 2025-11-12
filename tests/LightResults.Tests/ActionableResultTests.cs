@@ -1,4 +1,3 @@
-#if NET7_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 using Shouldly;
@@ -107,4 +106,3 @@ public sealed class ActionableResultEdgeTests
         result.Errors.ShouldHaveSingleItem();
     }
 }
-#endif

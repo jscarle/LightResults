@@ -1,4 +1,3 @@
-#if NET7_0_OR_GREATER
 namespace LightResults.Common;
 
 /// <summary>Defines an actionable result.</summary>
@@ -129,4 +128,3 @@ public interface IActionableResult<TValue, out TResult> : IResult<TValue>
     /// <returns>A new instance of <typeparamref name="TResult"/> representing a failure result with the specified errors.</returns>
     static abstract TResult Failure(IReadOnlyList<IError> errors);
 }
-#endif

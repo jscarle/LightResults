@@ -31,7 +31,7 @@ jobs:
       - name: Setup .NET 9.0
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
 
       - name: Setup docfx
         run: dotnet tool update -g docfx

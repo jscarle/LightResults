@@ -1,7 +1,5 @@
 using Shouldly;
-#if NET7_0_OR_GREATER
 using LightResults.Common;
-#endif
 
 // ReSharper disable SuspiciousTypeConversion.Global
 
@@ -1182,7 +1180,6 @@ public sealed class ResultTValueTests
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
 
-#if NET7_0_OR_GREATER
     [Fact]
     public void InterfaceSuccess_WithValue_ShouldCreateSuccessResultWithValue()
     {
@@ -1414,9 +1411,7 @@ public sealed class ResultTValueTests
             new Error("Error 2"),
         });
     }
-#endif
 
-#if NET6_0_OR_GREATER
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = \"2024-04-05\"", "")]
     [InlineData(false, "IsSuccess = False", "")]
@@ -1442,9 +1437,7 @@ public sealed class ResultTValueTests
         // Assert
         result.ToString().ShouldBe($"Result {{ {expected} }}");
     }
-#endif
 
-#if NET7_0_OR_GREATER
     [Theory]
     [InlineData(true, "IsSuccess = True, Value = 1", "")]
     [InlineData(false, "IsSuccess = False", "")]
@@ -1470,5 +1463,4 @@ public sealed class ResultTValueTests
         // Assert
         result.ToString().ShouldBe($"Result {{ {expected} }}");
     }
-#endif
 }
