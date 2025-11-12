@@ -111,7 +111,6 @@ public class Error : IError, IEquatable<Error>
         Metadata = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
     }
 
-#if NET6_0_OR_GREATER
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>
     /// <param name="metadata">The metadata associated with the error.</param>
@@ -119,12 +118,9 @@ public class Error : IError, IEquatable<Error>
     {
         Message = message;
         Metadata = new Dictionary<string, object?>(metadata)
-#if NET7_0_OR_GREATER
             .AsReadOnly()
-#endif
             ;
     }
-#endif
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
     /// <param name="message">The error message.</param>

@@ -40,12 +40,10 @@ internal static class StringHelper
                 return GetResultValueValueString(longValue.ToString(CultureInfo.InvariantCulture));
             case ulong ulongValue:
                 return GetResultValueValueString(ulongValue.ToString(CultureInfo.InvariantCulture));
-#if NET7_0_OR_GREATER
             case Int128 int128Value:
                 return GetResultValueValueString(int128Value.ToString(CultureInfo.InvariantCulture));
             case UInt128 uint128Value:
                 return GetResultValueValueString(uint128Value.ToString(CultureInfo.InvariantCulture));
-#endif
             case decimal decimalValue:
                 return GetResultValueValueString(decimalValue.ToString(CultureInfo.InvariantCulture));
             case float floatValue:
@@ -56,12 +54,10 @@ internal static class StringHelper
                 return GetResultStringValueString(dateTimeValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
             case DateTimeOffset dateTimeOffsetValue:
                 return GetResultStringValueString(dateTimeOffsetValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
-#if NET6_0_OR_GREATER
             case DateOnly dateOnlyValue:
                 return GetResultStringValueString(dateOnlyValue.ToString("yyyy'-'MM'-'dd", CultureInfo.InvariantCulture));
             case TimeOnly timeOnlyValue:
                 return GetResultStringValueString(timeOnlyValue.ToString("HH':'mm':'ss", CultureInfo.InvariantCulture));
-#endif
             case char charValue:
                 return GetResultCharValueString(charValue.ToString());
             case string stringValue:
@@ -82,7 +78,6 @@ internal static class StringHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetResultCharValueString(string valueString)
     {
-#if NET6_0_OR_GREATER
         var stringLength = PreResultStrLength
                            + SuccessResultStrLength
                            + PreValueStrLength
@@ -91,15 +86,11 @@ internal static class StringHelper
                            + CharStrLength
                            + PostResultStrLength;
         return string.Create(stringLength, valueString, GetResultValueCharSpan);
-#else
-        return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{CharStr}{valueString}{CharStr}{PostResultStr}";
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetResultStringValueString(string valueString)
     {
-#if NET6_0_OR_GREATER
         var stringLength = PreResultStrLength
                            + SuccessResultStrLength
                            + PreValueStrLength
@@ -108,45 +99,29 @@ internal static class StringHelper
                            + StringStrLength
                            + PostResultStrLength;
         return string.Create(stringLength, valueString, GetResultValueStringSpan);
-#else
-        return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{StringStr}{valueString}{StringStr}{PostResultStr}";
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetResultValueValueString(string valueString)
     {
-#if NET6_0_OR_GREATER
         var stringLength = PreResultStrLength + SuccessResultStrLength + PreValueStrLength + valueString.Length + PostResultStrLength;
         return string.Create(stringLength, valueString, GetResultValueSpan);
-#else
-        return $"{PreResultStr}{SuccessResultStr}{PreValueStr}{valueString}{PostResultStr}";
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetResultErrorString(string errorMessage)
     {
-#if NET6_0_OR_GREATER
         var stringLength = PreResultStrLength + FailureResultStrLength + PreErrorStrLength + errorMessage.Length + PostErrorStrLength + PostResultStrLength;
         return string.Create(stringLength, errorMessage, GetResultErrorSpan);
-#else
-        return $"{PreResultStr}{FailureResultStr}{PreErrorStr}{errorMessage}{PostErrorStr}{PostResultStr}";
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetErrorString(string type, string message)
     {
-#if NET6_0_OR_GREATER
         var stringLength = type.Length + PreMessageStrLength + message.Length + PostMessageStrLength;
         return string.Create(stringLength, (errorType: type, errorMessage: message), GetErrorSpan);
-#else
-        return $"{type}{PreMessageStr}{message}{PostMessageStr}";
-#endif
     }
 
-#if NET6_0_OR_GREATER
     private const int PreResultStrLength = 21;
     private const int SuccessResultStrLength = 4;
     private const int FailureResultStrLength = 5;
@@ -267,5 +242,4 @@ internal static class StringHelper
         PostMessageStr.AsSpan()
             .CopyTo(span);
     }
-#endif
 }

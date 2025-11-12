@@ -6,11 +6,7 @@ namespace LightResults;
 
 /// <summary>Represents a result.</summary>
 public readonly struct Result : IEquatable<Result>,
-#if NET7_0_OR_GREATER
     IActionableResult<Result>
-#else
-    IResult
-#endif
 {
     /// <inheritdoc/>
     public IReadOnlyCollection<IError> Errors

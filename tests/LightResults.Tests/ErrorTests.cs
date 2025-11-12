@@ -1,7 +1,5 @@
 using Shouldly;
-#if NET6_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace LightResults.Tests;
 
@@ -68,7 +66,6 @@ public sealed class ErrorTests
         firstMetadata.Value.ShouldBe(metadata.Value);
     }
 
-#if NET6_0_OR_GREATER
     [Fact]
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public void ConstructorWithMessageAndMetadataIEnumerable_ShouldCreateErrorWithMessageAndMetadata()
@@ -89,7 +86,6 @@ public sealed class ErrorTests
         error.Metadata.Count.ShouldBe(2);
         error.Metadata.ShouldBe(metadata);
     }
-#endif
 
     [Fact]
     public void ConstructorWithMessageAndMetadataDictionary_ShouldCreateErrorWithMessageAndMetadata()

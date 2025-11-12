@@ -8,11 +8,7 @@ namespace LightResults;
 /// <summary>Represents a result.</summary>
 /// <typeparam name="TValue">The type of the value of the result.</typeparam>
 public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
-#if NET7_0_OR_GREATER
     IActionableResult<TValue, Result<TValue>>
-#else
-    IResult<TValue>
-#endif
 {
     /// <inheritdoc/>
     public IReadOnlyCollection<IError> Errors
@@ -147,7 +143,6 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         return !_isSuccess;
     }
 
-#if NET7_0_OR_GREATER
     /// <summary>Creates a success result with the specified value.</summary>
     /// <param name="value">The value to include in the result.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a success result with the specified value.</returns>
@@ -259,7 +254,6 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     {
         return new Result<TValue>(errors);
     }
-#endif
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
