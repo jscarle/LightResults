@@ -1,7 +1,7 @@
 # Guidance for AI contributors
 
 This repository contains **LightResults**, a very small but highly-optimized .NET library that implements the Result Pattern. The code is intended to be used in performance critical paths of applications that handle millions of requests per
-second. The current version targets multiple frameworks (netstandard2.0 and net6.0–net9.0) and relies heavily on low allocation techniques.
+second. The current version targets multiple frameworks (net8.0–net10.0) and relies heavily on low allocation techniques.
 
 ## Repository layout
 
