@@ -1,3 +1,4 @@
+using System.Collections;
 using Shouldly;
 using LightResults.Common;
 
@@ -187,6 +188,38 @@ public sealed class ResultTests
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
+    }
+
+    [Fact]
+    public void Failure_WithReadOnlyCollection_ShouldPreallocateFromCount()
+    {
+        // Arrange
+        var firstError = new Error("first");
+        var secondError = new Error("second");
+        var errors = new TestReadOnlyCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure(errors);
+
+        // Assert
+        errors.CountAccesses.ShouldBe(1);
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+    }
+
+    [Fact]
+    public void FailureTValue_WithReadOnlyCollection_ShouldPreallocateFromCount()
+    {
+        // Arrange
+        var firstError = new Error("first");
+        var secondError = new Error("second");
+        var errors = new TestReadOnlyCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure<int>(errors);
+
+        // Assert
+        errors.CountAccesses.ShouldBe(1);
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
     }
 
     [Fact]
@@ -1331,5 +1364,39 @@ public sealed class ResultTests
                 new Error("Error 2"),
             }
         );
+    }
+
+    private sealed class TestReadOnlyCollection : IReadOnlyCollection<IError>
+    {
+        private readonly IError[] _errors;
+
+        internal TestReadOnlyCollection(params IError[] errors)
+        {
+            _errors = errors;
+        }
+
+        internal int CountAccesses { get; private set; }
+
+        public int Count
+        {
+            get
+            {
+                CountAccesses++;
+                return _errors.Length;
+            }
+        }
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            for (var index = 0; index < _errors.Length; index++)
+            {
+                yield return _errors[index];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
