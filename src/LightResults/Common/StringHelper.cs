@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
@@ -23,29 +24,29 @@ internal static class StringHelper
         switch (value)
         {
             case bool booleanValue:
-                return GetResultValueValueString(booleanValue.ToString());
+                return GetResultBooleanValueString(booleanValue);
             case sbyte sbyteValue:
-                return GetResultValueValueString(sbyteValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultSignedIntegerValueString(sbyteValue);
             case byte byteValue:
-                return GetResultValueValueString(byteValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultUnsignedIntegerValueString(byteValue);
             case short shortValue:
-                return GetResultValueValueString(shortValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultSignedIntegerValueString(shortValue);
             case ushort uShortValue:
-                return GetResultValueValueString(uShortValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultUnsignedIntegerValueString(uShortValue);
             case int intValue:
-                return GetResultValueValueString(intValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultSignedIntegerValueString(intValue);
             case uint uintValue:
-                return GetResultValueValueString(uintValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultUnsignedIntegerValueString(uintValue);
             case long longValue:
-                return GetResultValueValueString(longValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultSignedIntegerValueString(longValue);
             case ulong ulongValue:
-                return GetResultValueValueString(ulongValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultUnsignedIntegerValueString(ulongValue);
             case Int128 int128Value:
                 return GetResultValueValueString(int128Value.ToString(CultureInfo.InvariantCulture));
             case UInt128 uint128Value:
                 return GetResultValueValueString(uint128Value.ToString(CultureInfo.InvariantCulture));
             case decimal decimalValue:
-                return GetResultValueValueString(decimalValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultDecimalValueString(decimalValue);
             case float floatValue:
                 return GetResultValueValueString(floatValue.ToString(CultureInfo.InvariantCulture));
             case double doubleValue:
@@ -109,6 +110,68 @@ internal static class StringHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string GetResultBooleanValueString(bool value)
+    {
+        var valueLength = value ? SuccessResultStrLength : FailureResultStrLength;
+        var stringLength = ResultValuePrefixLength + valueLength + PostResultStrLength;
+        return string.Create(stringLength, (value, valueLength), static (span, state) =>
+        {
+            span = WriteResultValuePrefix(span);
+            var valueSpan = span[..state.valueLength];
+            (state.value ? SuccessResultStr : FailureResultStr).AsSpan()
+                .CopyTo(valueSpan);
+            span = span[state.valueLength..];
+            PostResultStr.AsSpan()
+                .CopyTo(span);
+        });
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string GetResultSignedIntegerValueString(long value)
+    {
+        var valueLength = GetSignedIntegerLength(value);
+        var stringLength = ResultValuePrefixLength + valueLength + PostResultStrLength;
+        return string.Create(stringLength, (value, valueLength), static (span, state) =>
+        {
+            span = WriteResultValuePrefix(span);
+            state.value.TryFormat(span[..state.valueLength], out _, default, CultureInfo.InvariantCulture);
+            span = span[state.valueLength..];
+            PostResultStr.AsSpan()
+                .CopyTo(span);
+        });
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string GetResultUnsignedIntegerValueString(ulong value)
+    {
+        var valueLength = GetUnsignedIntegerLength(value);
+        var stringLength = ResultValuePrefixLength + valueLength + PostResultStrLength;
+        return string.Create(stringLength, (value, valueLength), static (span, state) =>
+        {
+            span = WriteResultValuePrefix(span);
+            state.value.TryFormat(span[..state.valueLength], out _, default, CultureInfo.InvariantCulture);
+            span = span[state.valueLength..];
+            PostResultStr.AsSpan()
+                .CopyTo(span);
+        });
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string GetResultDecimalValueString(decimal value)
+    {
+        var valueLength = GetDecimalFormattedLength(value);
+        var stringLength = ResultValuePrefixLength + valueLength + PostResultStrLength;
+        return string.Create(stringLength, (value, valueLength), static (span, state) =>
+        {
+            span = WriteResultValuePrefix(span);
+            state.value.TryFormat(span[..state.valueLength], out _, default, CultureInfo.InvariantCulture);
+            span = span[state.valueLength..];
+            PostResultStr.AsSpan()
+                .CopyTo(span);
+        });
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetResultErrorString(string errorMessage)
     {
         var stringLength = PreResultStrLength + FailureResultStrLength + PreErrorStrLength + errorMessage.Length + PostErrorStrLength + PostResultStrLength;
@@ -133,6 +196,59 @@ internal static class StringHelper
     private const int PostResultStrLength = 2;
     private const int PreMessageStrLength = 14;
     private const int PostMessageStrLength = 3;
+    private const int ResultValuePrefixLength = PreResultStrLength + SuccessResultStrLength + PreValueStrLength;
+    private const int DecimalStackBufferLength = 50;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Span<char> WriteResultValuePrefix(Span<char> span)
+    {
+        PreResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[PreResultStrLength..];
+        SuccessResultStr.AsSpan()
+            .CopyTo(span);
+        span = span[SuccessResultStrLength..];
+        PreValueStr.AsSpan()
+            .CopyTo(span);
+        return span[PreValueStrLength..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int GetSignedIntegerLength(long value)
+    {
+        if (value >= 0)
+        {
+            return GetUnsignedIntegerLength((ulong)value);
+        }
+
+        var positiveValue = (ulong)(-(value + 1)) + 1UL;
+        return 1 + GetUnsignedIntegerLength(positiveValue);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int GetUnsignedIntegerLength(ulong value)
+    {
+        var length = 1;
+        while (value >= 10)
+        {
+            value /= 10;
+            length++;
+        }
+
+        return length;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int GetDecimalFormattedLength(decimal value)
+    {
+        Span<char> buffer = stackalloc char[DecimalStackBufferLength];
+        if (!value.TryFormat(buffer, out var charsWritten, default, CultureInfo.InvariantCulture))
+        {
+            throw new InvalidOperationException("Decimal formatting buffer too small.");
+        }
+
+        return charsWritten;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetResultValueSpan(Span<char> span, string state)
