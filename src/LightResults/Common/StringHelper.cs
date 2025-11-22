@@ -23,7 +23,7 @@ internal static class StringHelper
         switch (value)
         {
             case bool booleanValue:
-                return GetResultValueValueString(booleanValue.ToString());
+                return GetResultValueValueString(booleanValue ? TrueString : FalseString);
             case sbyte sbyteValue:
                 return GetResultValueValueString(sbyteValue.ToString(CultureInfo.InvariantCulture));
             case byte byteValue:
@@ -133,6 +133,9 @@ internal static class StringHelper
     private const int PostResultStrLength = 2;
     private const int PreMessageStrLength = 14;
     private const int PostMessageStrLength = 3;
+
+    private const string TrueString = "True";
+    private const string FalseString = "False";
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void GetResultValueSpan(Span<char> span, string state)
