@@ -391,6 +391,24 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void Success_WithDefaultValue_ShouldCreateSuccessResultWithValue()
+    {
+        // Arrange
+        const int value = 0;
+
+        // Act
+        var result = Result.Success(value);
+
+        // Assert
+        result.IsSuccess().ShouldBeTrue();
+        result.IsSuccess(out var resultValue, out var resultError).ShouldBeTrue();
+        resultValue.ShouldBe(value);
+        resultError.ShouldBeNull();
+        result.IsFailure().ShouldBeFalse();
+        result.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Failure_ShouldCreateFailureResultWithSingleError()
     {
         // Act
