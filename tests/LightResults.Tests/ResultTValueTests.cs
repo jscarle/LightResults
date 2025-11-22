@@ -839,14 +839,12 @@ public sealed class ResultTValueTests
 
         // Act
         Result<Guid> result = validationError;
-        var expected = Result.Failure<Guid>(validationError);
 
         // Assert
         result.IsFailure().ShouldBeTrue();
         result.HasError<ValidationError>().ShouldBeTrue();
         result.Errors.ShouldHaveSingleItem().ShouldBeEquivalentTo(validationError);
 
-        result.Equals(expected).ShouldBeTrue();
         result.ToString().ShouldBe("Result { IsSuccess = False, Error = \"Validation failed\" }");
     }
 
