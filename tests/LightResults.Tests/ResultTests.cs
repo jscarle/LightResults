@@ -207,6 +207,22 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithICollection_ShouldCopyUsingCopyTo()
+    {
+        // Arrange
+        var firstError = new Error("first");
+        var secondError = new Error("second");
+        var errors = new CopyTrackingCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure(errors);
+
+        // Assert
+        errors.CopyToCalls.ShouldBe(1);
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+    }
+
+    [Fact]
     public void FailureTValue_WithReadOnlyCollection_ShouldPreallocateFromCount()
     {
         // Arrange
@@ -1364,6 +1380,69 @@ public sealed class ResultTests
                 new Error("Error 2"),
             }
         );
+    }
+
+    private sealed class CopyTrackingCollection : ICollection<IError>
+    {
+        private readonly IError[] _errors;
+
+        internal CopyTrackingCollection(params IError[] errors)
+        {
+            _errors = errors;
+        }
+
+        internal int CopyToCalls { get; private set; }
+
+        public int Count => _errors.Length;
+
+        public bool IsReadOnly => false;
+
+        public void Add(IError item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Contains(IError item)
+        {
+            for (var index = 0; index < _errors.Length; index++)
+            {
+                if (Equals(_errors[index], item))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void CopyTo(IError[] array, int arrayIndex)
+        {
+            CopyToCalls++;
+            _errors.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(IError item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            for (var index = 0; index < _errors.Length; index++)
+            {
+                yield return _errors[index];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 
     private sealed class TestReadOnlyCollection : IReadOnlyCollection<IError>
