@@ -464,6 +464,24 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithCustomIterator_ShouldMaterializeErrors()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var secondError = new Error("Error 2");
+        var iterator = new TestIterator(firstError, secondError);
+
+        // Act
+        var result = Result.Failure(iterator);
+
+        // Assert
+        iterator.EnumerationCount.ShouldBe(1);
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        iterator.EnumerationCount.ShouldBe(1);
+    }
+
+    [Fact]
     public void Failure_WithErrorsEnumerable_ShouldReuseListInstance()
     {
         // Arrange
@@ -780,6 +798,24 @@ public sealed class ResultTests
             .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
+    }
+
+    [Fact]
+    public void FailureTValue_WithCustomIterator_ShouldMaterializeErrors()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var secondError = new Error("Error 2");
+        var iterator = new TestIterator(firstError, secondError);
+
+        // Act
+        var result = Result.Failure<object>(iterator);
+
+        // Assert
+        iterator.EnumerationCount.ShouldBe(1);
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        iterator.EnumerationCount.ShouldBe(1);
     }
 
     [Fact]
@@ -1467,6 +1503,33 @@ public sealed class ResultTests
 
         public IEnumerator<IError> GetEnumerator()
         {
+            for (var index = 0; index < _errors.Length; index++)
+            {
+                yield return _errors[index];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    private sealed class TestIterator : IEnumerable<IError>
+    {
+        private readonly IError[] _errors;
+
+        internal TestIterator(params IError[] errors)
+        {
+            _errors = errors;
+        }
+
+        internal int EnumerationCount { get; private set; }
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            EnumerationCount++;
+
             for (var index = 0; index < _errors.Length; index++)
             {
                 yield return _errors[index];
