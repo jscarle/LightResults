@@ -117,9 +117,13 @@ public class Error : IError, IEquatable<Error>
     public Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object?>(metadata)
-            .AsReadOnly()
-            ;
+        if (metadata is IReadOnlyDictionary<string, object?> readOnlyDictionary)
+        {
+            Metadata = readOnlyDictionary;
+            return;
+        }
+
+        Metadata = new Dictionary<string, object?>(metadata).AsReadOnly();
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
