@@ -1,10 +1,11 @@
 # Getting Started
 
-LightResults consists of only three classes `Result`, `Result<TValue>`, and `Error`.
+LightResults centers on two result structs—`Result` and `Result<TValue>`—plus the `Error` struct and `IResult`/`IResult<TValue>`
+and `IError` interfaces for extensibility.
 
-- The `Result` class represents a generic result indicating success or failure.
-- The `Result<TValue>` class represents a success or failure result with a value.
-- The `Error` class represents an error with a message and optional associated metadata.
+- The `Result` struct represents a generic result indicating success or failure.
+- The `Result<TValue>` struct represents a success or failure result with a value.
+- The `Error` struct represents an error with a message and optional associated metadata.
 
 ### Creating a successful result
 
@@ -32,7 +33,7 @@ var failureResultWithMessageAndException = Result.Failure("Operation failure!", 
 
 ### Checking the state of a result
 
-There are two methods used to check a result, `IsSuccess()` and `IsFailed()`. Both of which have several overloads to obtain the
+There are two methods used to check a result, `IsSuccess()` and `IsFailure()`. Both of which have several overloads to obtain the
 value and error.
 
 ```csharp
@@ -53,7 +54,7 @@ if (result.IsFailure(out var error))
 
 ### Getting the value
 
-The value from a successful result can be retrieved through the `out` parameter of the `Success()` method.
+The value from a successful result can be retrieved through the `out` parameter of the `IsSuccess()` method.
 
 ```csharp
 if (result.IsSuccess(out var value))
@@ -173,17 +174,17 @@ public sealed class HttpError : Error
 We can further simplify creating errors by creating an error factory.
 
 ```csharp
-public static AppError
+public static class AppError
 {
-    public Result NotFound()
+    public static Result NotFound()
     {
         var notFoundError = new NotFoundError();
         return Result.Failure(notFoundError);
     }
 
-    public Result HttpError(HttpStatusCode statusCode)
+    public static Result HttpError(HttpStatusCode statusCode)
     {
-        var httpError = new HttpError(statusCode)
+        var httpError = new HttpError(statusCode);
         return Result.Failure(httpError);
     }
 }
@@ -232,17 +233,18 @@ introduced in .NET 7.0 (C# 11.0), it is possible to use generics to obtain acces
 of the generic variant of the result. As such the error factory can be enhanced to take advantage of that.
 
 ```csharp
-public static AppError
+public static class AppError
 {
-    public Result NotFound()
+    public static Result NotFound()
     {
         var notFoundError = new NotFoundError();
         return Result.Failure(notFoundError);
     }
-    
-    public TResult NotFound<TResult>()
+
+    public static TResult NotFound<TResult>()
+        where TResult : IResult<TResult>
     {
-        var notFoundError = new NotFoundError(); 
+        var notFoundError = new NotFoundError();
         return TResult.Failure(notFoundError);
     }
 }

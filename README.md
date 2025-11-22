@@ -14,7 +14,15 @@ excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
 ## References
 
-This library targets .NET Standard 2.0, .NET 6.0, .NET 7.0, .NET 8.0, and .NET 9.0.
+This library currently targets .NET 8.0, .NET 9.0, and .NET 10.0 with no external runtime dependencies.
+
+## Installation
+
+Install the library from NuGet:
+
+```bash
+dotnet add package LightResults
+```
 
 ## Dependencies
 
@@ -28,8 +36,7 @@ This library has no dependencies.
 - 🧵 Thread-safe — Error and metadata collections are read-only.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
-- ❤️ Compatible — Available for dozens of versions of .NET as a
-  [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
+- ❤️ Compatible — Multi-targeted for current LTS and STS releases.
 - 🪚 Trimmable — Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 - 🚀 Performant — Heavily optimized and [benchmarked](https://jscarle.github.io/LightResults/docs/performance.html) to aim for the highest possible performance.
 
@@ -43,11 +50,11 @@ Make sure to [read the docs](https://jscarle.github.io/LightResults/) for the fu
 
 ## Getting Started
 
-LightResults consists of only three types: `Result`, `Result<TValue>`, and `Error`.
+LightResults centers on three primary types—`Result`, `Result<TValue>`, and `Error`—plus the `IResult`/`IResult<TValue>` and `IError` interfaces for extensibility.
 
-- The `Result` class represents a generic result indicating success or failure.
-- The `Result<TValue>` class represents a success or failure result with a value.
-- The `Error` class represents an error with a message and optional associated metadata.
+- The `Result` struct represents a generic result indicating success or failure.
+- The `Result<TValue>` struct represents a success or failure result with a value.
+- The `Error` struct represents an error with a message, optional metadata, and an optional exception.
 
 ### Creating a successful result
 
@@ -310,6 +317,8 @@ public static class AppError
 ```
 
 ## What's new in v9.0
+
+LightResults 10.0 builds on the redesigned API introduced in v9.0. If you're upgrading from v8.0, the following notes still apply and outline the breaking changes between those versions.
 
 The API for LightResults was completely redesigned for v9.0 to improve performance and remove any potential pits of failure caused by the prior version's use
 of properties that could result in exceptions being thrown when values were accessed without checking the state of the result. Thus, there are several breaking
