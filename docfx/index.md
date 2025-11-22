@@ -42,7 +42,7 @@ This library has no dependencies.
 - 🧵 Thread-safe — Error and metadata collections are read-only.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
-- ❤️ Compatible — Multi-targeted for current .NET LTS and STS releases.
+- ❤️ Compatible — Multi-targeted for current LTS and STS releases.
 - 🪚 Trimmable — Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 - 🚀 Performant — Heavily optimized and [benchmarked](https://jscarle.github.io/LightResults/docs/performance.html) to aim for the highest possible performance.
 

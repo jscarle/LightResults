@@ -1,11 +1,10 @@
 # Getting Started
 
-LightResults centers on two result structs—`Result` and `Result<TValue>`—plus the `Error` struct and `IResult`/`IResult<TValue>`
-and `IError` interfaces for extensibility.
+LightResults centers on three primary types `Result`, `Result<TValue>`, and `Error`.
 
 - The `Result` struct represents a generic result indicating success or failure.
 - The `Result<TValue>` struct represents a success or failure result with a value.
-- The `Error` struct represents an error with a message and optional associated metadata.
+- The `Error` struct represents an error with a message, optional metadata, and an optional exception.
 
 ### Creating a successful result
 
@@ -196,10 +195,10 @@ Which clearly and explicitly describes the results.
 public Result GetPerson(int id)
 {
     var person = _database.GetPerson(id);
-    
+
     if (person is null)
         return AppError.NotFound();
-    
+
     return Result.Success();
 }
 ```
@@ -219,7 +218,7 @@ public Result DoSomeWork()
     {
         return Result.Failure(ex);
     }
-    
+
     return Result.Success();
 }
 ```
