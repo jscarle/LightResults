@@ -366,4 +366,62 @@ public sealed class ErrorTests
         // Assert
         error.Exception.ShouldBeNull();
     }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnExceptionFromReadOnlyDictionaryMetadata()
+    {
+        // Arrange
+        var exception = new InvalidOperationException();
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
+        {
+            { "Exception", exception },
+        };
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenReadOnlyDictionaryMetadataIsNotException()
+    {
+        // Arrange
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
+        {
+            { "Exception", "not exception" },
+        };
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnExceptionFromEnumerableMetadata()
+    {
+        // Arrange
+        var exception = new InvalidOperationException();
+        IEnumerable<KeyValuePair<string, object?>> metadata = new[]
+        {
+            new KeyValuePair<string, object?>("Exception", exception),
+        };
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenEnumerableMetadataIsNotException()
+    {
+        // Arrange
+        IEnumerable<KeyValuePair<string, object?>> metadata = new[]
+        {
+            new KeyValuePair<string, object?>("Exception", "not exception"),
+        };
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
 }
