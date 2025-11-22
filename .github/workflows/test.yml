@@ -25,16 +25,6 @@ jobs:
         with:
           languages: 'csharp'
 
-      - name: Setup .NET 8.0
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.x
-
-      - name: Setup .NET 9.0
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.x
-
       - name: Setup .NET 10.0
         uses: actions/setup-dotnet@v4
         with:
@@ -47,7 +37,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --configuration Release --no-build --verbosity normal --framework net8.0
+        run: dotnet test --configuration Release --no-build --verbosity normal --framework net10.0
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
