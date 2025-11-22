@@ -10,8 +10,13 @@ namespace LightResults;
 )]
 public class Error : IError, IEquatable<Error>
 {
+    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
+
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
-    public static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
+    public static IError Empty { get; } = new Error("", EmptyMetaData);
+
+    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
 
     /// <inheritdoc/>
     public string Message { get; init; }
@@ -22,6 +27,9 @@ public class Error : IError, IEquatable<Error>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
+            if (Metadata.Count == 0)
+                return null;
+
             if (Metadata.TryGetValue(ExceptionKey, out var value) && value is Exception ex)
                 return ex;
 
@@ -32,12 +40,8 @@ public class Error : IError, IEquatable<Error>
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
-    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
-
     private const string ErrorTypeName = nameof(Error);
     private const string ExceptionKey = "Exception";
-    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
@@ -117,9 +121,13 @@ public class Error : IError, IEquatable<Error>
     public Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)
     {
         Message = message;
-        Metadata = new Dictionary<string, object?>(metadata)
-            .AsReadOnly()
-            ;
+        if (metadata is IReadOnlyDictionary<string, object?> readOnlyDictionary)
+        {
+            Metadata = readOnlyDictionary;
+            return;
+        }
+
+        Metadata = new Dictionary<string, object?>(metadata).AsReadOnly();
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -146,7 +154,14 @@ public class Error : IError, IEquatable<Error>
         if (!Message.Equals(other.Message, StringComparison.Ordinal))
             return false;
 
-        if (Metadata.Count != other.Metadata.Count)
+        if (ReferenceEquals(Metadata, other.Metadata))
+            return true;
+
+        var metadataCount = Metadata.Count;
+        if (metadataCount == 0 && other.Metadata.Count == 0)
+            return true;
+
+        if (metadataCount != other.Metadata.Count)
             return false;
 
         foreach (var kvp in Metadata)

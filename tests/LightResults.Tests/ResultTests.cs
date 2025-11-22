@@ -1,3 +1,4 @@
+using System.Collections;
 using Shouldly;
 using LightResults.Common;
 
@@ -187,6 +188,54 @@ public sealed class ResultTests
 
         var singleError = result.Errors.ShouldHaveSingleItem();
         singleError.Message.ShouldBe(errorMessage);
+    }
+
+    [Fact]
+    public void Failure_WithReadOnlyCollection_ShouldPreallocateFromCount()
+    {
+        // Arrange
+        var firstError = new Error("first");
+        var secondError = new Error("second");
+        var errors = new TestReadOnlyCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure(errors);
+
+        // Assert
+        errors.CountAccesses.ShouldBe(1);
+        result.Errors.ShouldBe([firstError, secondError]);
+    }
+
+    [Fact]
+    public void Failure_WithICollection_ShouldCopyUsingCopyTo()
+    {
+        // Arrange
+        var firstError = new Error("first");
+        var secondError = new Error("second");
+        var errors = new CopyTrackingCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure(errors);
+
+        // Assert
+        errors.CopyToCalls.ShouldBe(1);
+        result.Errors.ShouldBe([firstError, secondError]);
+    }
+
+    [Fact]
+    public void FailureTValue_WithReadOnlyCollection_ShouldPreallocateFromCount()
+    {
+        // Arrange
+        var firstError = new Error("first");
+        var secondError = new Error("second");
+        var errors = new TestReadOnlyCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure<int>(errors);
+
+        // Assert
+        errors.CountAccesses.ShouldBe(1);
+        result.Errors.ShouldBe([firstError, secondError]);
     }
 
     [Fact]
@@ -412,6 +461,24 @@ public sealed class ResultTests
             .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
+    }
+
+    [Fact]
+    public void Failure_WithCustomIterator_ShouldMaterializeErrors()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var secondError = new Error("Error 2");
+        var iterator = new TestIterator(firstError, secondError);
+
+        // Act
+        var result = Result.Failure(iterator);
+
+        // Assert
+        iterator.EnumerationCount.ShouldBe(1);
+        result.Errors.ShouldBe([firstError, secondError]);
+        result.Errors.ShouldBe([firstError, secondError]);
+        iterator.EnumerationCount.ShouldBe(1);
     }
 
     [Fact]
@@ -731,6 +798,24 @@ public sealed class ResultTests
             .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldBe(errors);
+    }
+
+    [Fact]
+    public void FailureTValue_WithCustomIterator_ShouldMaterializeErrors()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var secondError = new Error("Error 2");
+        var iterator = new TestIterator(firstError, secondError);
+
+        // Act
+        var result = Result.Failure<object>(iterator);
+
+        // Assert
+        iterator.EnumerationCount.ShouldBe(1);
+        result.Errors.ShouldBe([firstError, secondError]);
+        result.Errors.ShouldBe([firstError, secondError]);
+        iterator.EnumerationCount.ShouldBe(1);
     }
 
     [Fact]
@@ -1331,5 +1416,115 @@ public sealed class ResultTests
                 new Error("Error 2"),
             }
         );
+    }
+
+    private sealed class CopyTrackingCollection : ICollection<IError>
+    {
+        private readonly IError[] _errors;
+
+        internal CopyTrackingCollection(params IError[] errors)
+        {
+            _errors = errors;
+        }
+
+        internal int CopyToCalls { get; private set; }
+
+        public int Count => _errors.Length;
+
+        public bool IsReadOnly => false;
+
+        public void Add(IError item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Contains(IError item)
+        {
+            return _errors.Contains(item);
+        }
+
+        public void CopyTo(IError[] array, int arrayIndex)
+        {
+            CopyToCalls++;
+            _errors.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(IError item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            return ((IEnumerable<IError>)_errors).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    private sealed class TestReadOnlyCollection : IReadOnlyCollection<IError>
+    {
+        private readonly IError[] _errors;
+
+        internal TestReadOnlyCollection(params IError[] errors)
+        {
+            _errors = errors;
+        }
+
+        internal int CountAccesses { get; private set; }
+
+        public int Count
+        {
+            get
+            {
+                CountAccesses++;
+                return _errors.Length;
+            }
+        }
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            return ((IEnumerable<IError>)_errors).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    private sealed class TestIterator : IEnumerable<IError>
+    {
+        private readonly IError[] _errors;
+
+        internal TestIterator(params IError[] errors)
+        {
+            _errors = errors;
+        }
+
+        internal int EnumerationCount { get; private set; }
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            EnumerationCount++;
+
+            foreach (var t in _errors)
+            {
+                yield return t;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

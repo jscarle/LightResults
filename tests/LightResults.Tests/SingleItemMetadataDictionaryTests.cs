@@ -1,0 +1,191 @@
+using Shouldly;
+
+namespace LightResults.Tests;
+
+public sealed class SingleItemMetadataDictionaryTests
+{
+    private const string StoredKey = "correlation-id";
+    private const string StoredValue = "abc123";
+
+    [Fact]
+    public void CountAndLookup_ShouldReflectSingleStoredItem()
+    {
+        // Arrange
+        var dictionary = CreateDictionary();
+
+        // Act & Assert
+        dictionary.Count.ShouldBe(1);
+
+        dictionary.ContainsKey(StoredKey)
+            .ShouldBeTrue();
+        dictionary.ContainsKey("other")
+            .ShouldBeFalse();
+
+        dictionary.TryGetValue(StoredKey, out var storedValue)
+            .ShouldBeTrue();
+        storedValue.ShouldBe(StoredValue);
+
+        dictionary.TryGetValue("missing", out var missingValue)
+            .ShouldBeFalse();
+        missingValue.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Indexer_ShouldReturnValueOrThrow()
+    {
+        // Arrange
+        var dictionary = CreateDictionary();
+
+        // Act & Assert
+        dictionary[StoredKey]
+            .ShouldBe(StoredValue);
+
+        Should.Throw<KeyNotFoundException>(() => _ = dictionary["missing"]);
+    }
+
+    [Fact]
+    public void Enumerators_ShouldYieldSingleItemOnce()
+    {
+        // Arrange
+        var dictionary = CreateDictionary();
+
+        // Act
+        var keys = dictionary.Keys.ToList();
+        var values = dictionary.Values.ToList();
+        var items = dictionary.ToList();
+
+        using var keyEnumerator = dictionary.Keys.GetEnumerator();
+        using var valueEnumerator = dictionary.Values.GetEnumerator();
+        using var itemEnumerator = dictionary.GetEnumerator();
+
+        // Assert
+        keys.ShouldBe(new[] { StoredKey });
+        values.ShouldBe(new[] { (object?)StoredValue });
+        items.ShouldBe(new[] { new KeyValuePair<string, object?>(StoredKey, StoredValue) });
+
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.Current.ShouldBe(StoredKey);
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.Current.ShouldBe(StoredValue);
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        itemEnumerator.MoveNext()
+            .ShouldBeTrue();
+        itemEnumerator.Current.Key.ShouldBe(StoredKey);
+        itemEnumerator.Current.Value.ShouldBe(StoredValue);
+        itemEnumerator.MoveNext()
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Enumerators_Reset_ShouldRestartEnumeration()
+    {
+        // Arrange
+        var dictionary = CreateDictionary();
+
+        using var keyEnumerator = dictionary.Keys.GetEnumerator();
+        using var valueEnumerator = dictionary.Values.GetEnumerator();
+        using var itemEnumerator = dictionary.GetEnumerator();
+
+        // Act
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.Reset();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.Reset();
+
+        itemEnumerator.MoveNext()
+            .ShouldBeTrue();
+        itemEnumerator.Reset();
+
+        // Assert
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.Current.ShouldBe(StoredKey);
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.Current.ShouldBe(StoredValue);
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        itemEnumerator.MoveNext()
+            .ShouldBeTrue();
+        itemEnumerator.Current.Key.ShouldBe(StoredKey);
+        itemEnumerator.Current.Value.ShouldBe(StoredValue);
+        itemEnumerator.MoveNext()
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Enumerators_ResetAfterCompletion_ShouldAllowSinglePassThenStop()
+    {
+        // Arrange
+        var dictionary = CreateDictionary();
+
+        using var keyEnumerator = dictionary.Keys.GetEnumerator();
+        using var valueEnumerator = dictionary.Values.GetEnumerator();
+        using var itemEnumerator = dictionary.GetEnumerator();
+
+        // Act
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+        keyEnumerator.Reset();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+        valueEnumerator.Reset();
+
+        itemEnumerator.MoveNext()
+            .ShouldBeTrue();
+        itemEnumerator.MoveNext()
+            .ShouldBeFalse();
+        itemEnumerator.Reset();
+
+        // Assert
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.Current.ShouldBe(StoredKey);
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.Current.ShouldBe(StoredValue);
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        itemEnumerator.MoveNext()
+            .ShouldBeTrue();
+        itemEnumerator.Current.Key.ShouldBe(StoredKey);
+        itemEnumerator.Current.Value.ShouldBe(StoredValue);
+        itemEnumerator.MoveNext()
+            .ShouldBeFalse();
+        itemEnumerator.MoveNext()
+            .ShouldBeFalse();
+    }
+
+    private static IReadOnlyDictionary<string, object?> CreateDictionary()
+    {
+        var type = typeof(Result).Assembly.GetType("LightResults.Common.SingleItemMetadataDictionary")!;
+        return (IReadOnlyDictionary<string, object?>)Activator.CreateInstance(type, StoredKey, StoredValue)!;
+    }
+}

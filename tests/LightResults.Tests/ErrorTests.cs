@@ -160,6 +160,50 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void ConstructorWithException_ShouldFallbackMessageWhenExceptionMessageIsEmpty()
+    {
+        // Arrange
+        var exception = new InvalidOperationException("");
+
+        // Act
+        var error = new Error(exception);
+
+        // Assert
+        error.Message.ShouldBe($"An exception of type {exception.GetType().Name} was thrown.");
+        error.Metadata.Count.ShouldBe(1);
+        var metadata = error.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ConstructorWithNullException_ShouldCreateEmptyError()
+    {
+        // Arrange & Act
+        var error = new Error((Exception?)null);
+
+        // Assert
+        error.Message.ShouldBeEmpty();
+        error.Metadata.Count.ShouldBe(0);
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ConstructorWithMessageAndNullException_ShouldPreserveMessage()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+
+        // Act
+        var error = new Error(errorMessage, (Exception?)null);
+
+        // Assert
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.Count.ShouldBe(0);
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
     public void ConstructorWithMessageAndException_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
@@ -211,6 +255,31 @@ public sealed class ErrorTests
 
         // Assert
         error1.Equals(error2)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_Error_ShouldIgnoreMetadataOrderingButRespectKeys()
+    {
+        // Arrange
+        var metadata1 = new Dictionary<string, object?>
+        {
+            { "Key1", 1 },
+            { "Key2", "two" },
+        };
+        var metadata2 = new Dictionary<string, object?>
+        {
+            { "Key2", "two" },
+            { "Key1", 1 },
+        };
+        var error1 = new Error("error", metadata1);
+        var error2 = new Error("error", metadata2);
+        var error3 = new Error("error", metadata1.Where(pair => pair.Key != "Key2"));
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeTrue();
+        error1.Equals(error3)
             .ShouldBeFalse();
     }
 
@@ -320,6 +389,80 @@ public sealed class ErrorTests
     {
         // Arrange
         var error = new Error("", ("Exception", "not exception"));
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldPreserveMetadataWhenValueIsNotException()
+    {
+        // Arrange
+        const string metadataValue = "not exception";
+        var error = new Error("error", ("Exception", metadataValue));
+
+        // Act
+        var exception = error.Exception;
+
+        // Assert
+        exception.ShouldBeNull();
+        error.Metadata.Count.ShouldBe(1);
+        error.Metadata.Single().Value.ShouldBe(metadataValue);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnExceptionFromReadOnlyDictionaryMetadata()
+    {
+        // Arrange
+        var exception = new InvalidOperationException();
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
+        {
+            { "Exception", exception },
+        };
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenReadOnlyDictionaryMetadataIsNotException()
+    {
+        // Arrange
+        IReadOnlyDictionary<string, object?> metadata = new Dictionary<string, object?>
+        {
+            { "Exception", "not exception" },
+        };
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnExceptionFromEnumerableMetadata()
+    {
+        // Arrange
+        var exception = new InvalidOperationException();
+        IEnumerable<KeyValuePair<string, object?>> metadata =
+        [
+            new KeyValuePair<string, object?>("Exception", exception),
+        ];
+        var error = new Error("error", metadata);
+
+        // Assert
+        error.Exception.ShouldBe(exception);
+    }
+
+    [Fact]
+    public void ExceptionProperty_ShouldReturnNullWhenEnumerableMetadataIsNotException()
+    {
+        // Arrange
+        IEnumerable<KeyValuePair<string, object?>> metadata =
+        [
+            new KeyValuePair<string, object?>("Exception", "not exception"),
+        ];
+        var error = new Error("error", metadata);
 
         // Assert
         error.Exception.ShouldBeNull();

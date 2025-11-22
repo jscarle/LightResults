@@ -20,7 +20,15 @@ excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
 ## References
 
-This library targets .NET Standard 2.0, .NET 6.0, .NET 7.0, .NET 8.0, and .NET 9.0.
+This library targets .NET 8.0, .NET 9.0, and .NET 10.0 with no external runtime dependencies.
+
+## Installation
+
+Install the library from NuGet:
+
+```bash
+dotnet add package LightResults
+```
 
 ## Dependencies
 
@@ -34,7 +42,7 @@ This library has no dependencies.
 - 🧵 Thread-safe — Error and metadata collections are read-only.
 - ✨ Modern — Built against the latest version of .NET using the most recent best practices.
 - 🧪 Native — Written, compiled, and tested against the latest versions of .NET.
-- ❤️ Compatible — Available for dozens of versions of .NET as a [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) library.
+- ❤️ Compatible — Multi-targeted for current LTS and STS releases.
 - 🪚 Trimmable — Compatible with [ahead-of-time compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/) (AOT) as of .NET 7.0.
 - 🚀 Performant — Heavily optimized and [benchmarked](https://jscarle.github.io/LightResults/docs/performance.html) to aim for the highest possible performance.
 

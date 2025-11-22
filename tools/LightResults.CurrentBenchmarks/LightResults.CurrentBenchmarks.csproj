@@ -11,7 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="LightResults" Version="9.0.5" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+        <PackageReference Include="LightResults" Version="10.0.0" />
         <PackageReference Include="BenchmarkDotNet" Version="0.15.6" />
     </ItemGroup>
 

@@ -54,6 +54,20 @@ public readonly struct Result : IEquatable<Result>,
             return;
         }
 
+        if (errors is IReadOnlyCollection<IError> readOnlyCollection)
+        {
+            var array = new IError[readOnlyCollection.Count];
+            var index = 0;
+
+            foreach (var error in readOnlyCollection)
+            {
+                array[index++] = error;
+            }
+
+            _errors = array;
+            return;
+        }
+
         _errors = errors.ToArray();
     }
 
@@ -333,10 +347,10 @@ public readonly struct Result : IEquatable<Result>,
             return false;
 
         if (_errors is not null)
-            // Do not convert to LINQ, this creates unnecessary heap allocations.
-            // For is the most efficient way to loop. It is the fastest and does not allocate.
             // ReSharper disable once ForCanBeConvertedToForeach
             // ReSharper disable once LoopCanBeConvertedToQuery
+            // Do not convert to LINQ, this creates unnecessary heap allocations.
+            // For is the most efficient way to loop. It is the fastest and does not allocate.
             for (var index = 0; index < _errors.Count; index++)
             {
                 if (_errors[index] is TError)
@@ -358,10 +372,10 @@ public readonly struct Result : IEquatable<Result>,
         }
 
         if (_errors is not null)
-            // Do not convert to LINQ, this creates unnecessary heap allocations.
-            // For is the most efficient way to loop. It is the fastest and does not allocate.
             // ReSharper disable once ForCanBeConvertedToForeach
             // ReSharper disable once LoopCanBeConvertedToQuery
+            // Do not convert to LINQ, this creates unnecessary heap allocations.
+            // For is the most efficient way to loop. It is the fastest and does not allocate.
             for (var index = 0; index < _errors.Count; index++)
             {
                 if (_errors[index] is not TError tError)

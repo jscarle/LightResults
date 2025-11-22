@@ -9,6 +9,7 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
     private readonly string _key;
     private readonly object? _value;
 
+    /// <summary>A minimal read-only dictionary optimized for a single metadata entry.</summary>
     public SingleItemMetadataDictionary(string key, object? value)
     {
         _key = key;
@@ -32,7 +33,7 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(string key, out object? value)
     {
-        if (ContainsKey(key))
+        if (string.Equals(key, _key, StringComparison.Ordinal))
         {
             value = _value;
             return true;

@@ -1,3 +1,4 @@
+using System.Collections;
 using Shouldly;
 using LightResults.Common;
 
@@ -144,6 +145,31 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void IsSuccess_WhenResultIsFailure_ShouldReturnDefaultValueAndFirstOrEmptyError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
+
+        // Act
+        var isSuccess = Result.Failure<int>(errors).IsSuccess(out var resultValue, out var resultError);
+
+        // Assert
+        isSuccess.ShouldBeFalse();
+        resultValue.ShouldBe(0);
+        resultError.ShouldBe(firstError);
+
+        Result<int> defaultResult = default;
+        defaultResult.IsSuccess(out var defaultValue, out var defaultError).ShouldBeFalse();
+        defaultValue.ShouldBe(0);
+        defaultError.ShouldBeEquivalentTo(EmptyError);
+    }
+
+    [Fact]
     public void IsSuccess_WhenResultIsFailure_ShouldReturnNullValueAndFirstError()
     {
         // Arrange
@@ -207,6 +233,73 @@ public sealed class ResultTValueTests
         // Assert
         isFailure.ShouldBeTrue();
         resultError.ShouldBe(firstError);
+    }
+
+    [Fact]
+    public void IsFailure_WithErrorAndValueOutParameters_ShouldReturnFalseForSuccess()
+    {
+        // Arrange
+        var result = Result.Success(42);
+
+        // Act
+        var isFailure = result.IsFailure(out IError? error, out var value);
+
+        // Assert
+        isFailure.ShouldBeFalse();
+        value.ShouldBe(42);
+        error.ShouldBeNull();
+    }
+
+    [Fact]
+    public void IsFailure_WithErrorAndValueOutParameters_ShouldReturnTrueAndFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
+        var result = Result.Failure<int>(errors);
+
+        // Act
+        var isFailure = result.IsFailure(out IError? error, out var value);
+
+        // Assert
+        isFailure.ShouldBeTrue();
+        value.ShouldBe(0);
+        error.ShouldBe(firstError);
+    }
+
+    [Fact]
+    public void Failure_WithICollection_ShouldCopyErrorsInOrderOnce()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var secondError = new Error("Error 2");
+        var errors = new CopyTrackingErrorCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure<int>(errors);
+
+        // Assert
+        result.Errors.ShouldBeEquivalentTo(new IError[] { firstError, secondError });
+        errors.CopyToCallCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public void IsFailure_WithErrorAndValueOutParameters_ShouldReturnEmptyErrorForDefaultStruct()
+    {
+        // Arrange
+        Result<int> result = default;
+
+        // Act
+        var isFailure = result.IsFailure(out IError? error, out var value);
+
+        // Assert
+        isFailure.ShouldBeTrue();
+        value.ShouldBe(0);
+        error.ShouldBeEquivalentTo(EmptyError);
     }
 
     [Fact]
@@ -311,6 +404,21 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeFalse();
         result.IsFailure(out var resultError).ShouldBeFalse();
         resultError.ShouldBeNull();
+        result.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Success_WithNullValue_ShouldCreateSuccessResultWithNullValue()
+    {
+        // Act
+        var result = Result.Success<object?>(null);
+
+        // Assert
+        result.IsSuccess().ShouldBeTrue();
+        result.IsSuccess(out var resultValue, out var resultError).ShouldBeTrue();
+        resultValue.ShouldBeNull();
+        resultError.ShouldBeNull();
+        result.IsFailure().ShouldBeFalse();
         result.Errors.ShouldBeEmpty();
     }
 
@@ -449,6 +557,28 @@ public sealed class ResultTValueTests
 
         // Assert
         result.Errors.ShouldBeSameAs(errors);
+    }
+
+    [Fact]
+    public void Failure_WithEmptyErrorsEnumerable_ShouldCreateFailureWithoutErrors()
+    {
+        // Arrange
+        var result = Result.Failure<int>(Enumerable.Empty<IError>());
+
+        // Assert
+        result.IsSuccess().ShouldBeFalse();
+        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess(out var resultValue).ShouldBeFalse();
+        resultValue.ShouldBe(0);
+        result.IsFailure(out var resultError).ShouldBeTrue();
+        resultError.ShouldBe(Error.Empty);
+        result.Errors.ShouldBeEmpty();
+        result.HasError<Error>().ShouldBeTrue();
+        result.HasError<Error>(out var error).ShouldBeTrue();
+        error.ShouldBe(Error.Empty);
+        result.HasError<ValidationError>().ShouldBeFalse();
+        result.HasError<ValidationError>(out var validationError).ShouldBeFalse();
+        validationError.ShouldBeNull();
     }
 
     [Fact]
@@ -678,6 +808,44 @@ public sealed class ResultTValueTests
         resultError.ShouldBeEquivalentTo(error);
         result.Errors.ShouldHaveSingleItem();
         result.Errors.Single().ShouldBeEquivalentTo(error);
+    }
+
+    [Fact]
+    public void ImplicitCast_FromValue_ShouldReflectSuccessState()
+    {
+        // Arrange
+        const string value = "Implicit value";
+
+        // Act
+        Result<string> result = value;
+        var expected = Result.Success(value);
+
+        // Assert
+        result.IsSuccess().ShouldBeTrue();
+        result.IsFailure().ShouldBeFalse();
+        result.IsSuccess(out var resultValue).ShouldBeTrue();
+        resultValue.ShouldBe(value);
+
+        result.Equals(expected).ShouldBeTrue();
+        result.GetHashCode().ShouldBe(expected.GetHashCode());
+        result.ToString().ShouldBe("Result { IsSuccess = True, Value = \"Implicit value\" }");
+    }
+
+    [Fact]
+    public void ImplicitCast_FromError_ShouldPropagateErrorToGenericResult()
+    {
+        // Arrange
+        var validationError = new ValidationError("Validation failed");
+
+        // Act
+        Result<Guid> result = validationError;
+
+        // Assert
+        result.IsFailure().ShouldBeTrue();
+        result.HasError<ValidationError>().ShouldBeTrue();
+        result.Errors.ShouldHaveSingleItem().ShouldBeEquivalentTo(validationError);
+
+        result.ToString().ShouldBe("Result { IsSuccess = False, Error = \"Validation failed\" }");
     }
 
     [Fact]
@@ -1163,18 +1331,11 @@ public sealed class ResultTValueTests
         result.ToString().ShouldBe($"Result {{ {expected} }}");
     }
 
-    private readonly struct CustomFormattable : IFormattable
+    private readonly struct CustomFormattable(int value) : IFormattable
     {
-        private readonly int _value;
-
-        public CustomFormattable(int value)
-        {
-            _value = value;
-        }
-
         public string ToString(string? format, IFormatProvider? formatProvider)
         {
-            return _value.ToString(formatProvider);
+            return value.ToString(formatProvider);
         }
     }
 
@@ -1462,5 +1623,52 @@ public sealed class ResultTValueTests
 
         // Assert
         result.ToString().ShouldBe($"Result {{ {expected} }}");
+    }
+
+    private sealed class CopyTrackingErrorCollection(params IError[] errors) : ICollection<IError>
+    {
+        private readonly List<IError> _errors = errors.ToList();
+
+        public int CopyToCallCount { get; private set; }
+
+        public int Count => _errors.Count;
+
+        public bool IsReadOnly => true;
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            return _errors.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Add(IError item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Contains(IError item)
+        {
+            return _errors.Contains(item);
+        }
+
+        public void CopyTo(IError[] array, int arrayIndex)
+        {
+            CopyToCallCount++;
+            _errors.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(IError item)
+        {
+            throw new NotSupportedException();
+        }
     }
 }
