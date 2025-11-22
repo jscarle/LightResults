@@ -203,7 +203,7 @@ public sealed class ResultTests
 
         // Assert
         errors.CountAccesses.ShouldBe(1);
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe([firstError, secondError]);
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public sealed class ResultTests
 
         // Assert
         errors.CopyToCalls.ShouldBe(1);
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe([firstError, secondError]);
     }
 
     [Fact]
@@ -235,7 +235,7 @@ public sealed class ResultTests
 
         // Assert
         errors.CountAccesses.ShouldBe(1);
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe([firstError, secondError]);
     }
 
     [Fact]
@@ -476,8 +476,8 @@ public sealed class ResultTests
 
         // Assert
         iterator.EnumerationCount.ShouldBe(1);
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe([firstError, secondError]);
+        result.Errors.ShouldBe([firstError, secondError]);
         iterator.EnumerationCount.ShouldBe(1);
     }
 
@@ -813,8 +813,8 @@ public sealed class ResultTests
 
         // Assert
         iterator.EnumerationCount.ShouldBe(1);
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
-        result.Errors.ShouldBe(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe([firstError, secondError]);
+        result.Errors.ShouldBe([firstError, secondError]);
         iterator.EnumerationCount.ShouldBe(1);
     }
 
@@ -1445,15 +1445,7 @@ public sealed class ResultTests
 
         public bool Contains(IError item)
         {
-            for (var index = 0; index < _errors.Length; index++)
-            {
-                if (Equals(_errors[index], item))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return _errors.Contains(item);
         }
 
         public void CopyTo(IError[] array, int arrayIndex)
@@ -1469,10 +1461,7 @@ public sealed class ResultTests
 
         public IEnumerator<IError> GetEnumerator()
         {
-            for (var index = 0; index < _errors.Length; index++)
-            {
-                yield return _errors[index];
-            }
+            return ((IEnumerable<IError>)_errors).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -1503,10 +1492,7 @@ public sealed class ResultTests
 
         public IEnumerator<IError> GetEnumerator()
         {
-            for (var index = 0; index < _errors.Length; index++)
-            {
-                yield return _errors[index];
-            }
+            return ((IEnumerable<IError>)_errors).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -1530,9 +1516,9 @@ public sealed class ResultTests
         {
             EnumerationCount++;
 
-            for (var index = 0; index < _errors.Length; index++)
+            foreach (var t in _errors)
             {
-                yield return _errors[index];
+                yield return t;
             }
         }
 

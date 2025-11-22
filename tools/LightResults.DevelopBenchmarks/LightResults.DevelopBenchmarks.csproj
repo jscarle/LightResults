@@ -16,6 +16,7 @@
 
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" Version="0.15.6" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
     </ItemGroup>
 
 </Project>

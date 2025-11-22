@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Jobs;
+using JetBrains.Annotations;
 
 namespace LightResults.CurrentBenchmarks;
 
@@ -12,8 +13,7 @@ namespace LightResults.CurrentBenchmarks;
 public class Benchmarks
 {
     [Params(10)]
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
-    public int Iterations { get; set; }
+    public int Iterations { get; [UsedImplicitly] set; }
 
     private const int ResultValue = 0;
     private const string ErrorMessage = "An unknown error occurred.";

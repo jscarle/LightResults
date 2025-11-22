@@ -70,7 +70,7 @@ internal static class StringHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string GetResultValueString(IFormattable value)
+    private static string GetResultValueString(IFormattable value)
     {
         return GetResultValueValueString(value.ToString(null, CultureInfo.InvariantCulture));
     }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Shouldly;
 
 namespace LightResults.Tests;
@@ -57,7 +56,7 @@ public sealed class SingleItemMetadataDictionaryTests
 
         using var keyEnumerator = dictionary.Keys.GetEnumerator();
         using var valueEnumerator = dictionary.Values.GetEnumerator();
-        var itemEnumerator = dictionary.GetEnumerator();
+        using var itemEnumerator = dictionary.GetEnumerator();
 
         // Assert
         keys.ShouldBe(new[] { StoredKey });
@@ -92,7 +91,7 @@ public sealed class SingleItemMetadataDictionaryTests
 
         using var keyEnumerator = dictionary.Keys.GetEnumerator();
         using var valueEnumerator = dictionary.Values.GetEnumerator();
-        var itemEnumerator = dictionary.GetEnumerator();
+        using var itemEnumerator = dictionary.GetEnumerator();
 
         // Act
         keyEnumerator.MoveNext()
@@ -136,7 +135,7 @@ public sealed class SingleItemMetadataDictionaryTests
 
         using var keyEnumerator = dictionary.Keys.GetEnumerator();
         using var valueEnumerator = dictionary.Values.GetEnumerator();
-        var itemEnumerator = dictionary.GetEnumerator();
+        using var itemEnumerator = dictionary.GetEnumerator();
 
         // Act
         keyEnumerator.MoveNext()

@@ -4,48 +4,39 @@ using System.Runtime.CompilerServices;
 namespace LightResults.Common;
 
 /// <summary>A minimal read-only dictionary optimized for a single metadata entry.</summary>
-internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string, object?>
+internal sealed class SingleItemMetadataDictionary(string key, object? value) : IReadOnlyDictionary<string, object?>
 {
-    private readonly string _key;
-    private readonly object? _value;
-
-    public SingleItemMetadataDictionary(string key, object? value)
-    {
-        _key = key;
-        _value = value;
-    }
-
     public int Count => 1;
 
-    public object? this[string key] => string.Equals(key, _key, StringComparison.Ordinal) ? _value : throw new KeyNotFoundException();
+    public object? this[string key1] => string.Equals(key1, key, StringComparison.Ordinal) ? value : throw new KeyNotFoundException();
 
-    IEnumerable<string> IReadOnlyDictionary<string, object?>.Keys => new KeyEnumerable(_key);
+    IEnumerable<string> IReadOnlyDictionary<string, object?>.Keys => new KeyEnumerable(key);
 
-    IEnumerable<object?> IReadOnlyDictionary<string, object?>.Values => new ValueEnumerable(_value);
+    IEnumerable<object?> IReadOnlyDictionary<string, object?>.Values => new ValueEnumerable(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool ContainsKey(string key)
+    public bool ContainsKey(string key1)
     {
-        return string.Equals(key, _key, StringComparison.Ordinal);
+        return string.Equals(key1, key, StringComparison.Ordinal);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetValue(string key, out object? value)
+    public bool TryGetValue(string key1, out object? value1)
     {
-        if (string.Equals(key, _key, StringComparison.Ordinal))
+        if (string.Equals(key1, key, StringComparison.Ordinal))
         {
-            value = _value;
+            value1 = value;
             return true;
         }
 
-        value = null;
+        value1 = null;
         return false;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private Enumerator GetEnumerator()
     {
-        return new Enumerator(_key, _value);
+        return new Enumerator(key, value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

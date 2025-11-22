@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Jobs;
+using JetBrains.Annotations;
 
 namespace LightResults.DevelopBenchmarks;
 
@@ -12,7 +13,7 @@ namespace LightResults.DevelopBenchmarks;
 public class Benchmarks
 {
     [Params(10)]
-    public int Iterations { get; set; }
+    public int Iterations { get; [UsedImplicitly] set; }
 
     private const int ResultValue = 0;
     private const string ErrorMessage = "An unknown error occurred.";

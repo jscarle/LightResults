@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using LightResults.Common;
 using Shouldly;
 
@@ -197,19 +196,19 @@ public sealed class ActionableResultEdgeTests
 
     public static IEnumerable<object[]> FailureMetadataCases()
     {
-        yield return new object[]
-        {
-            CustomResult.Failure("Metadata tuple", ("TupleKey", (object?)"TupleValue")),
+        yield return
+        [
+            CustomResult.Failure("Metadata tuple", ("TupleKey", "TupleValue")),
             "TupleKey",
             "TupleValue",
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             CustomResult.Failure("Metadata key value pair", new KeyValuePair<string, object?>("PairKey", 123)),
             "PairKey",
             123,
-        };
+        ];
 
         object dictionaryValue = Guid.NewGuid();
         var dictionary = new Dictionary<string, object?>
@@ -217,21 +216,21 @@ public sealed class ActionableResultEdgeTests
             { "DictKey", dictionaryValue },
         };
 
-        yield return new object[]
-        {
+        yield return
+        [
             CustomResult.Failure("Metadata dictionary", dictionary),
             "DictKey",
             dictionaryValue,
-        };
+        ];
     }
 
     public static IEnumerable<object[]> FailureExceptionCases()
     {
         var exception = new InvalidOperationException("Operation failed");
-        yield return new object[] { CustomResult.Failure(exception), exception };
+        yield return [CustomResult.Failure(exception), exception];
 
         var exceptionWithMessage = new ArgumentException("Bad argument");
-        yield return new object[] { CustomResult.Failure("Custom message", exceptionWithMessage), exceptionWithMessage };
+        yield return [CustomResult.Failure("Custom message", exceptionWithMessage), exceptionWithMessage];
     }
 
     public static IEnumerable<object[]> FailureEnumerableErrorsCases()
@@ -240,44 +239,27 @@ public sealed class ActionableResultEdgeTests
         var secondError = new AnotherCustomError();
         var arrayErrors = new IError[] { firstError, secondError };
 
-        yield return new object[]
-        {
+        yield return
+        [
             CustomResult.Failure((IEnumerable<IError>)arrayErrors),
             arrayErrors,
-        };
+        ];
 
         var thirdError = new CustomError();
         var fourthError = new AnotherCustomError();
         IReadOnlyList<IError> readOnlyListErrors = new List<IError> { thirdError, fourthError };
 
-        yield return new object[]
-        {
+        yield return
+        [
             CustomResult.Failure(readOnlyListErrors),
             readOnlyListErrors,
-        };
+        ];
     }
 
-    private sealed class CustomError : Error
-    {
-        public CustomError()
-            : base("Custom error")
-        {
-        }
-    }
+    private sealed class CustomError() : Error("Custom error");
 
-    private sealed class AnotherCustomError : Error
-    {
-        public AnotherCustomError()
-            : base("Another custom error")
-        {
-        }
-    }
+    private sealed class AnotherCustomError() : Error("Another custom error");
 
-    private sealed class UnrelatedError : Error
-    {
-        public UnrelatedError()
-            : base("Unrelated error")
-        {
-        }
-    }
+    [UsedImplicitly]
+    private sealed class UnrelatedError() : Error("Unrelated error");
 }

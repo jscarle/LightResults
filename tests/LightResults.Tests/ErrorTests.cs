@@ -444,10 +444,10 @@ public sealed class ErrorTests
     {
         // Arrange
         var exception = new InvalidOperationException();
-        IEnumerable<KeyValuePair<string, object?>> metadata = new[]
-        {
+        IEnumerable<KeyValuePair<string, object?>> metadata =
+        [
             new KeyValuePair<string, object?>("Exception", exception),
-        };
+        ];
         var error = new Error("error", metadata);
 
         // Assert
@@ -458,10 +458,10 @@ public sealed class ErrorTests
     public void ExceptionProperty_ShouldReturnNullWhenEnumerableMetadataIsNotException()
     {
         // Arrange
-        IEnumerable<KeyValuePair<string, object?>> metadata = new[]
-        {
+        IEnumerable<KeyValuePair<string, object?>> metadata =
+        [
             new KeyValuePair<string, object?>("Exception", "not exception"),
-        };
+        ];
         var error = new Error("error", metadata);
 
         // Assert

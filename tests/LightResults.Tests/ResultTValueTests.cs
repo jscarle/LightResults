@@ -160,12 +160,12 @@ public sealed class ResultTValueTests
 
         // Assert
         isSuccess.ShouldBeFalse();
-        resultValue.ShouldBe(default(int));
+        resultValue.ShouldBe(0);
         resultError.ShouldBe(firstError);
 
         Result<int> defaultResult = default;
         defaultResult.IsSuccess(out var defaultValue, out var defaultError).ShouldBeFalse();
-        defaultValue.ShouldBe(default(int));
+        defaultValue.ShouldBe(0);
         defaultError.ShouldBeEquivalentTo(EmptyError);
     }
 
@@ -1331,18 +1331,11 @@ public sealed class ResultTValueTests
         result.ToString().ShouldBe($"Result {{ {expected} }}");
     }
 
-    private readonly struct CustomFormattable : IFormattable
+    private readonly struct CustomFormattable(int value) : IFormattable
     {
-        private readonly int _value;
-
-        public CustomFormattable(int value)
-        {
-            _value = value;
-        }
-
         public string ToString(string? format, IFormatProvider? formatProvider)
         {
-            return _value.ToString(formatProvider);
+            return value.ToString(formatProvider);
         }
     }
 
@@ -1632,14 +1625,9 @@ public sealed class ResultTValueTests
         result.ToString().ShouldBe($"Result {{ {expected} }}");
     }
 
-    private sealed class CopyTrackingErrorCollection : ICollection<IError>
+    private sealed class CopyTrackingErrorCollection(params IError[] errors) : ICollection<IError>
     {
-        private readonly List<IError> _errors;
-
-        public CopyTrackingErrorCollection(params IError[] errors)
-        {
-            _errors = errors.ToList();
-        }
+        private readonly List<IError> _errors = errors.ToList();
 
         public int CopyToCallCount { get; private set; }
 
