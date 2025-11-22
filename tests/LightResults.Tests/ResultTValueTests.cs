@@ -144,6 +144,31 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void IsSuccess_WhenResultIsFailure_ShouldReturnDefaultValueAndFirstOrEmptyError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
+
+        // Act
+        var isSuccess = Result.Failure<int>(errors).IsSuccess(out var resultValue, out var resultError);
+
+        // Assert
+        isSuccess.ShouldBeFalse();
+        resultValue.ShouldBe(default(int));
+        resultError.ShouldBe(firstError);
+
+        Result<int> defaultResult = default;
+        defaultResult.IsSuccess(out var defaultValue, out var defaultError).ShouldBeFalse();
+        defaultValue.ShouldBe(default(int));
+        defaultError.ShouldBeEquivalentTo(EmptyError);
+    }
+
+    [Fact]
     public void IsSuccess_WhenResultIsFailure_ShouldReturnNullValueAndFirstError()
     {
         // Arrange
