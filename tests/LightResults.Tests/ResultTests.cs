@@ -1008,6 +1008,34 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void ImplicitCast_FromError_ShouldPreserveEqualityAndHashCode()
+    {
+        // Arrange
+        var implicitError = new Error("Implicit conversion error", ("Code", 404));
+
+        // Act
+        Result result = implicitError;
+        var expected = Result.Failure(implicitError);
+
+        // Assert
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.HasError<Error>()
+            .ShouldBeTrue();
+        result.Errors.ShouldHaveSingleItem()
+            .ShouldBeEquivalentTo(implicitError);
+
+        result.Equals(expected)
+            .ShouldBeTrue();
+        (result == expected)
+            .ShouldBeTrue();
+        (result != expected)
+            .ShouldBeFalse();
+        result.GetHashCode()
+            .ShouldBe(expected.GetHashCode());
+    }
+
+    [Fact]
     public void Equals_Result_ShouldReturnTrueForEqualResults()
     {
         // Arrange

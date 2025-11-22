@@ -779,6 +779,46 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void ImplicitCast_FromValue_ShouldReflectSuccessState()
+    {
+        // Arrange
+        const string value = "Implicit value";
+
+        // Act
+        Result<string> result = value;
+        var expected = Result.Success(value);
+
+        // Assert
+        result.IsSuccess().ShouldBeTrue();
+        result.IsFailure().ShouldBeFalse();
+        result.IsSuccess(out var resultValue).ShouldBeTrue();
+        resultValue.ShouldBe(value);
+
+        result.Equals(expected).ShouldBeTrue();
+        result.GetHashCode().ShouldBe(expected.GetHashCode());
+        result.ToString().ShouldBe("Result { IsSuccess = True, Value = \"Implicit value\" }");
+    }
+
+    [Fact]
+    public void ImplicitCast_FromError_ShouldPropagateErrorToGenericResult()
+    {
+        // Arrange
+        var validationError = new ValidationError("Validation failed");
+
+        // Act
+        Result<Guid> result = validationError;
+        var expected = Result.Failure<Guid>(validationError);
+
+        // Assert
+        result.IsFailure().ShouldBeTrue();
+        result.HasError<ValidationError>().ShouldBeTrue();
+        result.Errors.ShouldHaveSingleItem().ShouldBeEquivalentTo(validationError);
+
+        result.Equals(expected).ShouldBeTrue();
+        result.ToString().ShouldBe("Result { IsSuccess = False, Error = \"Validation failed\" }");
+    }
+
+    [Fact]
     public void Equals_ResultInt_ShouldReturnTrueForEqualResults()
     {
         // Arrange
