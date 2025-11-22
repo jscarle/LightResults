@@ -210,6 +210,57 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void IsFailure_WithErrorAndValueOutParameters_ShouldReturnFalseForSuccess()
+    {
+        // Arrange
+        var result = Result.Success(42);
+
+        // Act
+        var isFailure = result.IsFailure(out IError? error, out var value);
+
+        // Assert
+        isFailure.ShouldBeFalse();
+        value.ShouldBe(42);
+        error.ShouldBeNull();
+    }
+
+    [Fact]
+    public void IsFailure_WithErrorAndValueOutParameters_ShouldReturnTrueAndFirstError()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var errors = new List<IError>
+        {
+            firstError,
+            new Error("Error 2"),
+        };
+        var result = Result.Failure<int>(errors);
+
+        // Act
+        var isFailure = result.IsFailure(out IError? error, out var value);
+
+        // Assert
+        isFailure.ShouldBeTrue();
+        value.ShouldBe(0);
+        error.ShouldBe(firstError);
+    }
+
+    [Fact]
+    public void IsFailure_WithErrorAndValueOutParameters_ShouldReturnEmptyErrorForDefaultStruct()
+    {
+        // Arrange
+        Result<int> result = default;
+
+        // Act
+        var isFailure = result.IsFailure(out IError? error, out var value);
+
+        // Assert
+        isFailure.ShouldBeTrue();
+        value.ShouldBe(0);
+        error.ShouldBeEquivalentTo(EmptyError);
+    }
+
+    [Fact]
     public void IsFailure_WhenResultIsSuccess_ShouldReturnNullError()
     {
         // Arrange
