@@ -452,6 +452,28 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void Failure_WithEmptyErrorsEnumerable_ShouldCreateFailureWithoutErrors()
+    {
+        // Arrange
+        var result = Result<int>.Failure(Enumerable.Empty<IError>());
+
+        // Assert
+        result.IsSuccess().ShouldBeFalse();
+        result.IsFailure().ShouldBeTrue();
+        result.IsSuccess(out var resultValue).ShouldBeFalse();
+        resultValue.ShouldBe(default(int));
+        result.IsFailure(out var resultError).ShouldBeFalse();
+        resultError.ShouldBeNull();
+        result.Errors.ShouldBeEmpty();
+        result.HasError<Error>().ShouldBeFalse();
+        result.HasError<Error>(out var error).ShouldBeFalse();
+        error.ShouldBeNull();
+        result.HasError<ValidationError>().ShouldBeFalse();
+        result.HasError<ValidationError>(out var validationError).ShouldBeFalse();
+        validationError.ShouldBeNull();
+    }
+
+    [Fact]
     public void Failure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
