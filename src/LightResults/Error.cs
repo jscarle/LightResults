@@ -11,7 +11,7 @@ namespace LightResults;
 public class Error : IError, IEquatable<Error>
 {
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
-    public static IError Empty { get; } = new Error("", new Dictionary<string, object?>());
+    public static IError Empty { get; } = new Error("", EmptyMetaData);
 
     /// <inheritdoc/>
     public string Message { get; init; }
@@ -22,6 +22,9 @@ public class Error : IError, IEquatable<Error>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
+            if (Metadata.Count == 0)
+                return null;
+
             if (Metadata.TryGetValue(ExceptionKey, out var value) && value is Exception ex)
                 return ex;
 
