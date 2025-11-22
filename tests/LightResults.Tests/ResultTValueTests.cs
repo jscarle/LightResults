@@ -1,3 +1,4 @@
+using System.Collections;
 using Shouldly;
 using LightResults.Common;
 
@@ -268,6 +269,22 @@ public sealed class ResultTValueTests
         isFailure.ShouldBeTrue();
         value.ShouldBe(0);
         error.ShouldBe(firstError);
+    }
+
+    [Fact]
+    public void Failure_WithICollection_ShouldCopyErrorsInOrderOnce()
+    {
+        // Arrange
+        var firstError = new Error("Error 1");
+        var secondError = new Error("Error 2");
+        var errors = new CopyTrackingErrorCollection(firstError, secondError);
+
+        // Act
+        var result = Result.Failure<int>(errors);
+
+        // Assert
+        result.Errors.ShouldBeEquivalentTo(new IError[] { firstError, secondError });
+        errors.CopyToCallCount.ShouldBe(1);
     }
 
     [Fact]
@@ -1575,5 +1592,57 @@ public sealed class ResultTValueTests
 
         // Assert
         result.ToString().ShouldBe($"Result {{ {expected} }}");
+    }
+
+    private sealed class CopyTrackingErrorCollection : ICollection<IError>
+    {
+        private readonly List<IError> _errors;
+
+        public CopyTrackingErrorCollection(params IError[] errors)
+        {
+            _errors = errors.ToList();
+        }
+
+        public int CopyToCallCount { get; private set; }
+
+        public int Count => _errors.Count;
+
+        public bool IsReadOnly => true;
+
+        public IEnumerator<IError> GetEnumerator()
+        {
+            return _errors.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Add(IError item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Contains(IError item)
+        {
+            return _errors.Contains(item);
+        }
+
+        public void CopyTo(IError[] array, int arrayIndex)
+        {
+            CopyToCallCount++;
+            _errors.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(IError item)
+        {
+            throw new NotSupportedException();
+        }
     }
 }
