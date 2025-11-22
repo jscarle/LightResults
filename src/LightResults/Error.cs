@@ -10,8 +10,13 @@ namespace LightResults;
 )]
 public class Error : IError, IEquatable<Error>
 {
+    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
+
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
     public static IError Empty { get; } = new Error("", EmptyMetaData);
+
+    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
 
     /// <inheritdoc/>
     public string Message { get; init; }
@@ -35,12 +40,8 @@ public class Error : IError, IEquatable<Error>
     /// <inheritdoc/>
     public IReadOnlyDictionary<string, object?> Metadata { get; init; }
 
-    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
-
     private const string ErrorTypeName = nameof(Error);
     private const string ExceptionKey = "Exception";
-    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class.</summary>
     public Error()
