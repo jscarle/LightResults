@@ -84,6 +84,66 @@ public sealed class SingleItemMetadataDictionaryTests
             .ShouldBeFalse();
     }
 
+    [Fact]
+    public void Enumerators_Reset_ShouldReplaySingleItemWithoutAllocations()
+    {
+        // Arrange
+        var dictionary = CreateDictionary();
+
+        using var entryEnumerator = dictionary.GetEnumerator();
+        using var keyEnumerator = dictionary.Keys.GetEnumerator();
+        using var valueEnumerator = dictionary.Values.GetEnumerator();
+
+        // Act & Assert
+        entryEnumerator.GetType().IsValueType.ShouldBeTrue();
+        keyEnumerator.GetType().IsValueType.ShouldBeTrue();
+        valueEnumerator.GetType().IsValueType.ShouldBeTrue();
+
+        entryEnumerator.MoveNext()
+            .ShouldBeTrue();
+        entryEnumerator.Current.Key.ShouldBe(StoredKey);
+        entryEnumerator.Current.Value.ShouldBe(StoredValue);
+        entryEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        entryEnumerator.Reset();
+
+        entryEnumerator.MoveNext()
+            .ShouldBeTrue();
+        entryEnumerator.Current.Key.ShouldBe(StoredKey);
+        entryEnumerator.Current.Value.ShouldBe(StoredValue);
+        entryEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.Current.ShouldBe(StoredKey);
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        keyEnumerator.Reset();
+
+        keyEnumerator.MoveNext()
+            .ShouldBeTrue();
+        keyEnumerator.Current.ShouldBe(StoredKey);
+        keyEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.Current.ShouldBe(StoredValue);
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+
+        valueEnumerator.Reset();
+
+        valueEnumerator.MoveNext()
+            .ShouldBeTrue();
+        valueEnumerator.Current.ShouldBe(StoredValue);
+        valueEnumerator.MoveNext()
+            .ShouldBeFalse();
+    }
+
     private static IReadOnlyDictionary<string, object?> CreateDictionary()
     {
         var type = typeof(Result).Assembly.GetType("LightResults.Common.SingleItemMetadataDictionary")!;
