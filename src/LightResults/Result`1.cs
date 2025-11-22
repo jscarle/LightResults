@@ -128,7 +128,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     {
         if (_isSuccess)
             error = null;
-        else if (_errors is not null)
+        else if (_errors is not null && _errors.Count > 0)
             error = _errors[0];
         else
             error = Error.Empty;
@@ -148,7 +148,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         else
         {
             value = default;
-            if (_errors is not null)
+            if (_errors is not null && _errors.Count > 0)
                 error = _errors[0];
             else
                 error = Error.Empty;
