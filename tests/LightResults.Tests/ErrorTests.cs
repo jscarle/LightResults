@@ -368,6 +368,22 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void ExceptionProperty_ShouldPreserveMetadataWhenValueIsNotException()
+    {
+        // Arrange
+        const string metadataValue = "not exception";
+        var error = new Error("error", ("Exception", metadataValue));
+
+        // Act
+        var exception = error.Exception;
+
+        // Assert
+        exception.ShouldBeNull();
+        error.Metadata.Count.ShouldBe(1);
+        error.Metadata.Single().Value.ShouldBe(metadataValue);
+    }
+
+    [Fact]
     public void ExceptionProperty_ShouldReturnExceptionFromReadOnlyDictionaryMetadata()
     {
         // Arrange
