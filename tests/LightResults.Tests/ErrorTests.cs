@@ -160,6 +160,23 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void ConstructorWithException_ShouldFallbackMessageWhenExceptionMessageIsEmpty()
+    {
+        // Arrange
+        var exception = new InvalidOperationException("");
+
+        // Act
+        var error = new Error(exception);
+
+        // Assert
+        error.Message.ShouldBe($"An exception of type {exception.GetType().Name} was thrown.");
+        error.Metadata.Count.ShouldBe(1);
+        var metadata = error.Metadata.Single();
+        metadata.Key.ShouldBe("Exception");
+        metadata.Value.ShouldBe(exception);
+    }
+
+    [Fact]
     public void ConstructorWithMessageAndException_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
