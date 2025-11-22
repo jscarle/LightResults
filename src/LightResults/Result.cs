@@ -54,6 +54,20 @@ public readonly struct Result : IEquatable<Result>,
             return;
         }
 
+        if (errors is IReadOnlyCollection<IError> readOnlyCollection)
+        {
+            var array = new IError[readOnlyCollection.Count];
+            var index = 0;
+
+            foreach (var error in readOnlyCollection)
+            {
+                array[index++] = error;
+            }
+
+            _errors = array;
+            return;
+        }
+
         _errors = errors.ToArray();
     }
 
