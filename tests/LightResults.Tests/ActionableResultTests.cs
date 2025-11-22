@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using LightResults.Common;
 using Shouldly;
@@ -6,7 +8,7 @@ namespace LightResults.Tests;
 
 public sealed class ActionableResultEdgeTests
 {
-    private readonly struct CustomResult : IActionableResult<CustomResult>
+    public readonly struct CustomResult : IActionableResult<CustomResult>
     {
         private readonly Result _inner;
 
@@ -104,5 +106,178 @@ public sealed class ActionableResultEdgeTests
         result.IsSuccess().ShouldBeFalse();
         result.IsFailure().ShouldBeTrue();
         result.Errors.ShouldHaveSingleItem();
+    }
+
+    [Theory]
+    [MemberData(nameof(FailureMetadataCases))]
+    public void CustomActionableResult_Failure_WithMetadata_ShouldPropagateMetadata(
+        CustomResult result,
+        string expectedKey,
+        object? expectedValue)
+    {
+        // Act
+        result.IsFailure(out var error).ShouldBeTrue();
+
+        // Assert
+        error.ShouldNotBeNull();
+        error.Metadata.ContainsKey(expectedKey).ShouldBeTrue();
+        error.Metadata[expectedKey].ShouldBe(expectedValue);
+
+        result.HasError<Error>(out var typedError).ShouldBeTrue();
+        typedError.ShouldBeSameAs(error);
+
+        result.HasError<CustomError>().ShouldBeFalse();
+        result.HasError<CustomError>(out _).ShouldBeFalse();
+    }
+
+    [Theory]
+    [MemberData(nameof(FailureExceptionCases))]
+    public void CustomActionableResult_Failure_WithException_ShouldExposeException(
+        CustomResult result,
+        Exception exception)
+    {
+        // Act
+        result.IsFailure(out var error).ShouldBeTrue();
+
+        // Assert
+        error.ShouldNotBeNull();
+        error.Exception.ShouldBeSameAs(exception);
+        error.Metadata.ContainsKey("Exception").ShouldBeTrue();
+        error.Metadata["Exception"].ShouldBeSameAs(exception);
+
+        result.HasError<Error>(out var typedError).ShouldBeTrue();
+        typedError.ShouldBeSameAs(error);
+
+        result.HasError<CustomError>().ShouldBeFalse();
+        result.HasError<CustomError>(out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void CustomActionableResult_Failure_WithSingleError_ShouldPropagateError()
+    {
+        // Arrange
+        var customError = new CustomError();
+
+        // Act
+        var result = CustomResult.Failure(customError);
+
+        // Assert
+        result.IsFailure(out var error).ShouldBeTrue();
+        error.ShouldBeSameAs(customError);
+        result.Errors.ShouldHaveSingleItem();
+
+        result.HasError<CustomError>(out var typedError).ShouldBeTrue();
+        typedError.ShouldBeSameAs(customError);
+
+        result.HasError<AnotherCustomError>().ShouldBeFalse();
+        result.HasError<AnotherCustomError>(out _).ShouldBeFalse();
+    }
+
+    [Theory]
+    [MemberData(nameof(FailureEnumerableErrorsCases))]
+    public void CustomActionableResult_Failure_WithEnumerableErrors_ShouldPropagateErrors(
+        CustomResult result,
+        IReadOnlyList<IError> expectedErrors)
+    {
+        // Act
+        result.IsFailure(out var firstError).ShouldBeTrue();
+
+        // Assert
+        firstError.ShouldBeSameAs(expectedErrors[0]);
+        result.Errors.ShouldBe(expectedErrors);
+
+        result.HasError<CustomError>().ShouldBeTrue();
+        result.HasError<AnotherCustomError>().ShouldBeTrue();
+        result.HasError<Error>(out var typedError).ShouldBeTrue();
+        typedError.ShouldBeSameAs(firstError);
+
+        result.HasError<UnrelatedError>().ShouldBeFalse();
+        result.HasError<UnrelatedError>(out _).ShouldBeFalse();
+    }
+
+    public static IEnumerable<object[]> FailureMetadataCases()
+    {
+        yield return new object[]
+        {
+            CustomResult.Failure("Metadata tuple", ("TupleKey", (object?)"TupleValue")),
+            "TupleKey",
+            "TupleValue",
+        };
+
+        yield return new object[]
+        {
+            CustomResult.Failure("Metadata key value pair", new KeyValuePair<string, object?>("PairKey", 123)),
+            "PairKey",
+            123,
+        };
+
+        object dictionaryValue = Guid.NewGuid();
+        var dictionary = new Dictionary<string, object?>
+        {
+            { "DictKey", dictionaryValue },
+        };
+
+        yield return new object[]
+        {
+            CustomResult.Failure("Metadata dictionary", dictionary),
+            "DictKey",
+            dictionaryValue,
+        };
+    }
+
+    public static IEnumerable<object[]> FailureExceptionCases()
+    {
+        var exception = new InvalidOperationException("Operation failed");
+        yield return new object[] { CustomResult.Failure(exception), exception };
+
+        var exceptionWithMessage = new ArgumentException("Bad argument");
+        yield return new object[] { CustomResult.Failure("Custom message", exceptionWithMessage), exceptionWithMessage };
+    }
+
+    public static IEnumerable<object[]> FailureEnumerableErrorsCases()
+    {
+        var firstError = new CustomError();
+        var secondError = new AnotherCustomError();
+        var arrayErrors = new IError[] { firstError, secondError };
+
+        yield return new object[]
+        {
+            CustomResult.Failure((IEnumerable<IError>)arrayErrors),
+            arrayErrors,
+        };
+
+        var thirdError = new CustomError();
+        var fourthError = new AnotherCustomError();
+        IReadOnlyList<IError> readOnlyListErrors = new List<IError> { thirdError, fourthError };
+
+        yield return new object[]
+        {
+            CustomResult.Failure(readOnlyListErrors),
+            readOnlyListErrors,
+        };
+    }
+
+    private sealed class CustomError : Error
+    {
+        public CustomError()
+            : base("Custom error")
+        {
+        }
+    }
+
+    private sealed class AnotherCustomError : Error
+    {
+        public AnotherCustomError()
+            : base("Another custom error")
+        {
+        }
+    }
+
+    private sealed class UnrelatedError : Error
+    {
+        public UnrelatedError()
+            : base("Unrelated error")
+        {
+        }
     }
 }
