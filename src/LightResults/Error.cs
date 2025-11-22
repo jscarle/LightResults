@@ -150,7 +150,14 @@ public class Error : IError, IEquatable<Error>
         if (!Message.Equals(other.Message, StringComparison.Ordinal))
             return false;
 
-        if (Metadata.Count != other.Metadata.Count)
+        if (ReferenceEquals(Metadata, other.Metadata))
+            return true;
+
+        var metadataCount = Metadata.Count;
+        if (metadataCount == 0 && other.Metadata.Count == 0)
+            return true;
+
+        if (metadataCount != other.Metadata.Count)
             return false;
 
         foreach (var kvp in Metadata)
