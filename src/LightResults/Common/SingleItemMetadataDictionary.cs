@@ -32,7 +32,7 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(string key, out object? value)
     {
-        if (ContainsKey(key))
+        if (string.Equals(key, _key, StringComparison.Ordinal))
         {
             value = _value;
             return true;
