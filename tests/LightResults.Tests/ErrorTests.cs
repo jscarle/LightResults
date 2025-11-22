@@ -215,6 +215,31 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void Equals_Error_ShouldIgnoreMetadataOrderingButRespectKeys()
+    {
+        // Arrange
+        var metadata1 = new Dictionary<string, object?>
+        {
+            { "Key1", 1 },
+            { "Key2", "two" },
+        };
+        var metadata2 = new Dictionary<string, object?>
+        {
+            { "Key2", "two" },
+            { "Key1", 1 },
+        };
+        var error1 = new Error("error", metadata1);
+        var error2 = new Error("error", metadata2);
+        var error3 = new Error("error", metadata1.Where(pair => pair.Key != "Key2"));
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeTrue();
+        error1.Equals(error3)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
     public void Equals_Object_ShouldReturnTrueForEqualErrors()
     {
         // Arrange
