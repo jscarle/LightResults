@@ -1,15 +1,16 @@
 # Guidance for AI contributors
 
-This repository contains **LightResults**, a very small but highly-optimized .NET library that implements the Result Pattern. The code is intended to be used in performance critical paths of applications that handle millions of requests per
-second. The current version targets multiple frameworks (net8.0–net10.0) and relies heavily on low allocation techniques.
+This repository contains **LightResults**, a very small but highly-optimized .NET library that implements the Result Pattern.
+The code is intended for performance-critical paths that handle millions of requests per second. The current version targets
+multiple frameworks (net8.0–net10.0) and relies heavily on low-allocation techniques.
 
 ## Repository layout
 
 - `src/LightResults` – Main library.
-    - `Result.cs` / `Result\`1.cs` – immutable `readonly struct` implementations.
-    - `Error.cs` – immutable error type.
-    - `IResult.cs`, `IResult\`1.cs`, `IError.cs` – API contracts.
-    - `Common/` – helper utilities and optional interfaces when targeting newer frameworks.
+  - `Result.cs` / `Result\`1.cs` – immutable `readonly struct` implementations.
+  - `Error.cs` – immutable error type.
+  - `IResult.cs`, `IResult\`1.cs`, `IError.cs` – API contracts.
+  - `Common/` – helper utilities and optional interfaces when targeting newer frameworks.
 - `tests/LightResults.Tests` – xUnit tests for the library.
 - `docfx/` – documentation generation config.
 - `LightResults.sln` – solution file.
@@ -42,9 +43,7 @@ The project uses the standard .NET SDK. When a .NET environment is available you
  dotnet test tests/LightResults.Tests/LightResults.Tests.csproj -f net10.0
 ```
 
-The test project targets multiple frameworks. When `Mono` is not available (as
-in the Codex container) the `net481` target fails to start. Specify a supported
-framework like `net10.0` to run the unit tests successfully.
+The test project targets multiple frameworks; specify a supported framework like `net10.0` to run the unit tests successfully.
 
 However, building or testing is not required for simple documentation updates. This repository currently does not include an automated setup script for installing the .NET SDK.
 
@@ -62,4 +61,3 @@ Do not restore, run, or build performance benchmarks found in `tools`.
 
 - `src/LightResults/Result.cs` and `src/LightResults/Result\`1.cs` show the patterns for allocating errors, success values and formatting output.
 - `tests/LightResults.Tests` demonstrates expected behaviour of the API and how custom error types can be implemented.
-
