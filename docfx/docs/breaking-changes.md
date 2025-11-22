@@ -1,5 +1,8 @@
 # What's new in v9.0
 
+LightResults 10.0 builds on the redesigned API introduced in v9.0. If you're upgrading from v8.0, the following notes still apply and outline the breaking
+changes between those versions.
+
 The API for LightResults was completely redesigned for v9.0 to improve performance and remove any potential pits of failure caused by the prior version's use
 of properties that could result in exceptions being thrown when values were accessed without checking the state of the result. Thus, there are several breaking
 changes, detailed below, that developers must be aware of when upgrading from v8.0 to v9.0.
