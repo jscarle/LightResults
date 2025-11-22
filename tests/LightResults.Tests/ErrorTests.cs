@@ -177,6 +177,33 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void ConstructorWithNullException_ShouldCreateEmptyError()
+    {
+        // Arrange & Act
+        var error = new Error((Exception?)null);
+
+        // Assert
+        error.Message.ShouldBeEmpty();
+        error.Metadata.Count.ShouldBe(0);
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public void ConstructorWithMessageAndNullException_ShouldPreserveMessage()
+    {
+        // Arrange
+        const string errorMessage = "Sample error message";
+
+        // Act
+        var error = new Error(errorMessage, (Exception?)null);
+
+        // Assert
+        error.Message.ShouldBe(errorMessage);
+        error.Metadata.Count.ShouldBe(0);
+        error.Exception.ShouldBeNull();
+    }
+
+    [Fact]
     public void ConstructorWithMessageAndException_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
