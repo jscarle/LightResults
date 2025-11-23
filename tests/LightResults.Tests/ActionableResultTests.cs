@@ -84,7 +84,7 @@ public sealed class ActionableResultEdgeTests
         public bool HasError<TError>([MaybeNullWhen(false)] out TError error) where TError : IError => _inner.HasError(out error);
     }
 
-    [Fact]
+    [Test]
     public void CustomActionableResult_Success_ShouldCreateSuccessResult()
     {
         // Act
@@ -95,7 +95,7 @@ public sealed class ActionableResultEdgeTests
         result.IsFailure().ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void CustomActionableResult_Failure_ShouldCreateFailureResult()
     {
         // Act
@@ -107,8 +107,8 @@ public sealed class ActionableResultEdgeTests
         result.Errors.ShouldHaveSingleItem();
     }
 
-    [Theory]
-    [MemberData(nameof(FailureMetadataCases))]
+    [Test]
+    [MethodDataSource(nameof(FailureMetadataCases))]
     public void CustomActionableResult_Failure_WithMetadata_ShouldPropagateMetadata(
         CustomResult result,
         string expectedKey,
@@ -129,8 +129,8 @@ public sealed class ActionableResultEdgeTests
         result.HasError<CustomError>(out _).ShouldBeFalse();
     }
 
-    [Theory]
-    [MemberData(nameof(FailureExceptionCases))]
+    [Test]
+    [MethodDataSource(nameof(FailureExceptionCases))]
     public void CustomActionableResult_Failure_WithException_ShouldExposeException(
         CustomResult result,
         Exception exception)
@@ -151,7 +151,7 @@ public sealed class ActionableResultEdgeTests
         result.HasError<CustomError>(out _).ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void CustomActionableResult_Failure_WithSingleError_ShouldPropagateError()
     {
         // Arrange
@@ -172,8 +172,8 @@ public sealed class ActionableResultEdgeTests
         result.HasError<AnotherCustomError>(out _).ShouldBeFalse();
     }
 
-    [Theory]
-    [MemberData(nameof(FailureEnumerableErrorsCases))]
+    [Test]
+    [MethodDataSource(nameof(FailureEnumerableErrorsCases))]
     public void CustomActionableResult_Failure_WithEnumerableErrors_ShouldPropagateErrors(
         CustomResult result,
         IReadOnlyList<IError> expectedErrors)

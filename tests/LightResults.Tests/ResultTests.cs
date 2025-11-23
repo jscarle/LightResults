@@ -8,7 +8,7 @@ public sealed class ResultTests
 {
     private static readonly IError EmptyError = Error.Empty;
 
-    [Fact]
+    [Test]
     public void DefaultStruct_ShouldBeFailureResult()
     {
         // Arrange
@@ -41,7 +41,7 @@ public sealed class ResultTests
         validationError.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void IsSuccess_WhenResultIsSuccess()
     {
         // Arrange
@@ -52,7 +52,7 @@ public sealed class ResultTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsFailure_WhenResultIsFailure()
     {
         // Arrange
@@ -63,7 +63,7 @@ public sealed class ResultTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsFailure_WhenResultIsFailure_ShouldReturnFirstError()
     {
         // Arrange
@@ -83,7 +83,7 @@ public sealed class ResultTests
         resultError.ShouldBe(firstError);
     }
 
-    [Fact]
+    [Test]
     public void IsFailure_WhenResultIsSuccess_ShouldReturnDefaultValue()
     {
         // Arrange
@@ -97,7 +97,7 @@ public sealed class ResultTests
         resultError.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void IsFailure_WhenResultIsSuccess_ShouldReturnNullValue()
     {
         // Arrange
@@ -111,7 +111,7 @@ public sealed class ResultTests
         resultError.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void Success_ShouldCreateSuccessResult()
     {
         // Act
@@ -128,7 +128,7 @@ public sealed class ResultTests
         result.Errors.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void SuccessTValue_WithValue_ShouldCreateSuccessResultWithValue()
     {
         // Arrange
@@ -151,7 +151,7 @@ public sealed class ResultTests
         result.Errors.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Failure_ShouldCreateFailureResultWithSingleError()
     {
         // Act
@@ -169,7 +169,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe("");
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -190,7 +190,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithReadOnlyCollection_ShouldPreallocateFromCount()
     {
         // Arrange
@@ -206,7 +206,7 @@ public sealed class ResultTests
         result.Errors.ShouldBe([firstError, secondError]);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithICollection_ShouldCopyUsingCopyTo()
     {
         // Arrange
@@ -222,7 +222,7 @@ public sealed class ResultTests
         result.Errors.ShouldBe([firstError, secondError]);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithReadOnlyCollection_ShouldPreallocateFromCount()
     {
         // Arrange
@@ -238,7 +238,7 @@ public sealed class ResultTests
         result.Errors.ShouldBe([firstError, secondError]);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorMessageAndTupleMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -265,7 +265,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorMessageAndKeyValuePairMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -292,7 +292,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -322,7 +322,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -349,7 +349,7 @@ public sealed class ResultTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithMessageAndException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -377,7 +377,7 @@ public sealed class ResultTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -397,7 +397,7 @@ public sealed class ResultTests
         singleError.Metadata.Count.ShouldBe(0);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithMessageAndNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -418,7 +418,7 @@ public sealed class ResultTests
         singleError.Metadata.Count.ShouldBe(0);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorObject_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -439,7 +439,7 @@ public sealed class ResultTests
         singleError.ShouldBe(error);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
@@ -463,7 +463,7 @@ public sealed class ResultTests
         result.Errors.ShouldBe(errors);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithCustomIterator_ShouldMaterializeErrors()
     {
         // Arrange
@@ -481,7 +481,7 @@ public sealed class ResultTests
         iterator.EnumerationCount.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorsEnumerable_ShouldReuseListInstance()
     {
         // Arrange
@@ -498,7 +498,7 @@ public sealed class ResultTests
         result.Errors.ShouldBeSameAs(errors);
     }
 
-    [Fact]
+    [Test]
     public void Failure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
@@ -522,7 +522,7 @@ public sealed class ResultTests
         result.Errors.ShouldBe(errors);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_ShouldCreateFailureResultWithSingleError()
     {
         // Act
@@ -542,7 +542,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe("");
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -565,7 +565,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe(errorMessage);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithErrorMessageAndTupleMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -594,7 +594,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithErrorMessageAndKeyValuePairMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -623,7 +623,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -655,7 +655,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -682,7 +682,7 @@ public sealed class ResultTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithMessageAndException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -710,7 +710,7 @@ public sealed class ResultTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -730,7 +730,7 @@ public sealed class ResultTests
         singleError.Metadata.Count.ShouldBe(0);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithMessageAndNullException_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -751,7 +751,7 @@ public sealed class ResultTests
         singleError.Metadata.Count.ShouldBe(0);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithErrorObject_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -774,7 +774,7 @@ public sealed class ResultTests
         singleError.ShouldBe(error);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
@@ -800,7 +800,7 @@ public sealed class ResultTests
         result.Errors.ShouldBe(errors);
     }
 
-    [Fact]
+    [Test]
     public void FailureTValue_WithCustomIterator_ShouldMaterializeErrors()
     {
         // Arrange
@@ -818,7 +818,7 @@ public sealed class ResultTests
         iterator.EnumerationCount.ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void HasError_WithMatchingErrorType_ShouldReturnTrue()
     {
         // Arrange
@@ -829,7 +829,7 @@ public sealed class ResultTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasError_WithMatchingErrorType_ShouldOutFirstMatch()
     {
         // Arrange
@@ -849,7 +849,7 @@ public sealed class ResultTests
         error.ShouldBe(firstError);
     }
 
-    [Fact]
+    [Test]
     public void HasError_WithNonMatchingErrorType_ShouldReturnFalse()
     {
         // Arrange
@@ -860,7 +860,7 @@ public sealed class ResultTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasError_WithNonMatchingErrorType_ShouldOutDefaultError()
     {
         // Arrange
@@ -874,7 +874,7 @@ public sealed class ResultTests
         error.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void HasError_WhenIsSuccess_ShouldReturnFalse()
     {
         // Arrange
@@ -885,7 +885,7 @@ public sealed class ResultTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasError_WhenIsSuccess_ShouldOutDefaultError()
     {
         // Arrange
@@ -899,7 +899,7 @@ public sealed class ResultTests
         error.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void AsFailure_ShouldConvertResultToNonGenericResultWithSameErrors()
     {
         // Arrange
@@ -922,7 +922,7 @@ public sealed class ResultTests
         nonGenericResult.Errors.ShouldBe(errors);
     }
 
-    [Fact]
+    [Test]
     public void AsFailure_ShouldConvertDefaultResultToNonGenericResult()
     {
         // Arrange
@@ -942,7 +942,7 @@ public sealed class ResultTests
             .ShouldBeEquivalentTo(EmptyError);
     }
 
-    [Fact]
+    [Test]
     public void AsFailure_ShouldConvertResultToGenericResultWithSameErrors()
     {
         // Arrange
@@ -965,7 +965,7 @@ public sealed class ResultTests
         genericResult.Errors.ShouldBe(errors);
     }
 
-    [Fact]
+    [Test]
     public void AsFailure_ShouldConvertDefaultResultToGenericResult()
     {
         // Arrange
@@ -985,7 +985,7 @@ public sealed class ResultTests
             .ShouldBeEquivalentTo(EmptyError);
     }
 
-    [Fact]
+    [Test]
     public void ImplicitCast_ShouldCreateFailureResultFromError()
     {
         // Arrange
@@ -1007,7 +1007,7 @@ public sealed class ResultTests
         singleError.ShouldBe(error);
     }
 
-    [Fact]
+    [Test]
     public void Equals_Result_ShouldReturnTrueForEqualResults()
     {
         // Arrange
@@ -1019,7 +1019,7 @@ public sealed class ResultTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Result_ShouldReturnFalseForUnequalResults()
     {
         // Arrange
@@ -1031,7 +1031,7 @@ public sealed class ResultTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Object_ShouldReturnTrueForEqualResults()
     {
         // Arrange
@@ -1043,7 +1043,7 @@ public sealed class ResultTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Object_ShouldReturnFalseForUnequalResults()
     {
         // Arrange
@@ -1055,7 +1055,7 @@ public sealed class ResultTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ShouldReturnSameHashCodeForEqualResults()
     {
         // Arrange
@@ -1067,7 +1067,7 @@ public sealed class ResultTests
             .ShouldBe(result2.GetHashCode());
     }
 
-    [Fact]
+    [Test]
     public void op_Equality_Result_ShouldReturnTrueForEqualResults()
     {
         // Arrange
@@ -1078,7 +1078,7 @@ public sealed class ResultTests
         (result1 == result2).ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void op_Equality_Result_ShouldReturnFalseForUnequalResults()
     {
         // Arrange
@@ -1089,7 +1089,7 @@ public sealed class ResultTests
         (result1 == result2).ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void op_Inequality_Result_ShouldReturnFalseForEqualResults()
     {
         // Arrange
@@ -1100,7 +1100,7 @@ public sealed class ResultTests
         (result1 != result2).ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void op_Inequality_Result_ShouldReturnTrueForUnequalResults()
     {
         // Arrange
@@ -1111,7 +1111,7 @@ public sealed class ResultTests
         (result1 != result2).ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Result_DefaultResults_ShouldReturnTrue()
     {
         // Arrange
@@ -1123,7 +1123,7 @@ public sealed class ResultTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_Result_DefaultResults_ShouldReturnSameHashCode()
     {
         // Arrange
@@ -1135,7 +1135,7 @@ public sealed class ResultTests
             .ShouldBe(result2.GetHashCode());
     }
 
-    [Fact]
+    [Test]
     public void Equals_Result_DefaultAndFailure_ShouldReturnFalse()
     {
         // Arrange
@@ -1147,7 +1147,7 @@ public sealed class ResultTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_Result_DefaultAndFailure_ShouldReturnDifferentHashCodes()
     {
         // Arrange
@@ -1159,7 +1159,7 @@ public sealed class ResultTests
             .ShouldNotBe(result2.GetHashCode());
     }
 
-    [Fact]
+    [Test]
     public void ToString_WhenSuccess_ShouldReturnStringRepresentation()
     {
         // Arrange
@@ -1170,9 +1170,9 @@ public sealed class ResultTests
             .ShouldBe("Result { IsSuccess = True }");
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("An unknown error occurred!")]
+    [Test]
+    [Arguments("")]
+    [Arguments("An unknown error occurred!")]
     public void ToString_WhenFailure_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
@@ -1185,7 +1185,7 @@ public sealed class ResultTests
 
     private class ValidationError(string errorMessage) : Error(errorMessage);
 
-    [Fact]
+    [Test]
     public void InterfaceSuccess_ShouldCreateSuccessResult()
     {
         // Arrange
@@ -1209,7 +1209,7 @@ public sealed class ResultTests
         result.Errors.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -1234,7 +1234,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe("");
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -1260,7 +1260,7 @@ public sealed class ResultTests
         singleError.Message.ShouldBe("Sample error message");
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_WithErrorMessageAndTupleMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -1292,7 +1292,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_WithErrorMessageAndDictionaryMetadata_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -1327,7 +1327,7 @@ public sealed class ResultTests
             .ShouldBe(new KeyValuePair<string, object?>("Key", 0));
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_WithErrorObject_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -1353,7 +1353,7 @@ public sealed class ResultTests
         singleError.ShouldBeEquivalentTo(new Error("Sample error"));
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_WithErrorsEnumerable_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange
@@ -1383,7 +1383,7 @@ public sealed class ResultTests
         result.Errors.ShouldBeSameAs(errors);
     }
 
-    [Fact]
+    [Test]
     public void InterfaceFailure_WithErrorsReadOnlyList_ShouldCreateFailureResultWithMultipleErrors()
     {
         // Arrange

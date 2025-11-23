@@ -5,7 +5,7 @@ namespace LightResults.Tests;
 
 public sealed class ErrorTests
 {
-    [Fact]
+    [Test]
     public void DefaultConstructor_ShouldCreateEmptyError()
     {
         // Arrange
@@ -16,7 +16,7 @@ public sealed class ErrorTests
         error.Metadata.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessage_ShouldCreateErrorWithMessage()
     {
         // Arrange
@@ -30,7 +30,7 @@ public sealed class ErrorTests
         error.Metadata.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessageAndMetadataTuple_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
@@ -48,7 +48,7 @@ public sealed class ErrorTests
         firstMetadata.Value.ShouldBe(metadata.Value);
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessageAndMetadataKeyValuePair_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
@@ -66,7 +66,7 @@ public sealed class ErrorTests
         firstMetadata.Value.ShouldBe(metadata.Value);
     }
 
-    [Fact]
+    [Test]
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public void ConstructorWithMessageAndMetadataIEnumerable_ShouldCreateErrorWithMessageAndMetadata()
     {
@@ -87,7 +87,7 @@ public sealed class ErrorTests
         error.Metadata.ShouldBe(metadata);
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessageAndMetadataDictionary_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
@@ -107,7 +107,7 @@ public sealed class ErrorTests
         error.Metadata.ShouldBe(metadata);
     }
 
-    [Fact]
+    [Test]
     public void MessagePropertyInit_ShouldCreateErrorWithMessage()
     {
         // Arrange
@@ -122,7 +122,7 @@ public sealed class ErrorTests
         error.Metadata.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void MetadataPropertyInit_ShouldCreateErrorWithMetadata()
     {
         // Arrange
@@ -142,7 +142,7 @@ public sealed class ErrorTests
         error.Metadata.ShouldBe(metadata);
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithException_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
@@ -159,7 +159,7 @@ public sealed class ErrorTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithException_ShouldFallbackMessageWhenExceptionMessageIsEmpty()
     {
         // Arrange
@@ -176,7 +176,7 @@ public sealed class ErrorTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithNullException_ShouldCreateEmptyError()
     {
         // Arrange & Act
@@ -188,7 +188,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessageAndNullException_ShouldPreserveMessage()
     {
         // Arrange
@@ -203,7 +203,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessageAndException_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
@@ -221,9 +221,9 @@ public sealed class ErrorTests
         metadata.Value.ShouldBe(exception);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("An unknown error occurred!")]
+    [Test]
+    [Arguments("")]
+    [Arguments("An unknown error occurred!")]
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange
@@ -234,7 +234,7 @@ public sealed class ErrorTests
             .ShouldBe(errorMessage.Length > 0 ? $"Error {{ Message = \"{errorMessage}\" }}" : "Error");
     }
 
-    [Fact]
+    [Test]
     public void Equals_Error_ShouldReturnTrueForEqualErrors()
     {
         // Arrange
@@ -246,7 +246,7 @@ public sealed class ErrorTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Error_ShouldReturnFalseForUnequalErrors()
     {
         // Arrange
@@ -258,7 +258,7 @@ public sealed class ErrorTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Error_ShouldIgnoreMetadataOrderingButRespectKeys()
     {
         // Arrange
@@ -283,7 +283,7 @@ public sealed class ErrorTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Object_ShouldReturnTrueForEqualErrors()
     {
         // Arrange
@@ -295,7 +295,7 @@ public sealed class ErrorTests
             .ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Equals_Object_ShouldReturnFalseForUnequalErrors()
     {
         // Arrange
@@ -307,7 +307,7 @@ public sealed class ErrorTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ShouldReturnSameHashCodeForEqualErrors()
     {
         // Arrange
@@ -319,7 +319,7 @@ public sealed class ErrorTests
             .ShouldBe(error2.GetHashCode());
     }
 
-    [Fact]
+    [Test]
     public void op_Equality_Error_ShouldReturnTrueForEqualErrors()
     {
         // Arrange
@@ -330,7 +330,7 @@ public sealed class ErrorTests
         (error1 == error2).ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void op_Equality_Error_ShouldReturnFalseForUnequalErrors()
     {
         // Arrange
@@ -341,7 +341,7 @@ public sealed class ErrorTests
         (error1 == error2).ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void op_Inequality_Error_ShouldReturnFalseForEqualErrors()
     {
         // Arrange
@@ -352,7 +352,7 @@ public sealed class ErrorTests
         (error1 != error2).ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void op_Inequality_Error_ShouldReturnTrueForUnequalErrors()
     {
         // Arrange
@@ -363,7 +363,7 @@ public sealed class ErrorTests
         (error1 != error2).ShouldBeTrue();
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnExceptionWhenMetadataContainsException()
     {
         // Arrange
@@ -374,7 +374,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnNullWhenMetadataDoesNotContainException()
     {
         // Arrange
@@ -384,7 +384,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnNullWhenMetadataIsNotException()
     {
         // Arrange
@@ -394,7 +394,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldPreserveMetadataWhenValueIsNotException()
     {
         // Arrange
@@ -410,7 +410,7 @@ public sealed class ErrorTests
         error.Metadata.Single().Value.ShouldBe(metadataValue);
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnExceptionFromReadOnlyDictionaryMetadata()
     {
         // Arrange
@@ -425,7 +425,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnNullWhenReadOnlyDictionaryMetadataIsNotException()
     {
         // Arrange
@@ -439,7 +439,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnExceptionFromEnumerableMetadata()
     {
         // Arrange
@@ -454,7 +454,7 @@ public sealed class ErrorTests
         error.Exception.ShouldBe(exception);
     }
 
-    [Fact]
+    [Test]
     public void ExceptionProperty_ShouldReturnNullWhenEnumerableMetadataIsNotException()
     {
         // Arrange

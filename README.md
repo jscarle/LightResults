@@ -48,6 +48,11 @@ Several [extensions are available](https://github.com/jscarle/LightResults.Exten
 
 Make sure to [read the docs](https://jscarle.github.io/LightResults/) for the full API.
 
+## Testing
+
+The test suite uses [TUnit](https://www.nuget.org/packages/TUnit) with the native AOT test host enabled via `UseNativeAotForTestHost`.
+Run the tests with `dotnet test tests/LightResults.Tests/LightResults.Tests.csproj -f net10.0` (the repository opts into the .NET 10 Microsoft.Testing.Platform experience via `UseMicrosoftTestingPlatform` and a `global.json` manifest).
+
 ## Getting Started
 
 LightResults centers on three primary types `Result`, `Result<TValue>`, and `Error`.

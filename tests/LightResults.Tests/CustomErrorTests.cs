@@ -4,7 +4,7 @@ namespace LightResults.Tests;
 
 public sealed class CustomErrorTests
 {
-    [Fact]
+    [Test]
     public void DefaultConstructor_ShouldCreateEmptyCustomError()
     {
         // Arrange
@@ -15,7 +15,7 @@ public sealed class CustomErrorTests
         error.Metadata.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessage_ShouldCreateErrorWithMessage()
     {
         // Arrange
@@ -29,7 +29,7 @@ public sealed class CustomErrorTests
         error.Metadata.ShouldBeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ConstructorWithMessageAndMetadataDictionary_ShouldCreateErrorWithMessageAndMultipleMetadata()
     {
         // Arrange
@@ -49,9 +49,9 @@ public sealed class CustomErrorTests
         error.Metadata.ShouldBe(metadata);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("An unknown error occurred!")]
+    [Test]
+    [Arguments("")]
+    [Arguments("An unknown error occurred!")]
     public void ToString_ShouldReturnStringRepresentation(string errorMessage)
     {
         // Arrange

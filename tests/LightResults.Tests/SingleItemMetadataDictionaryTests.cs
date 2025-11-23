@@ -7,7 +7,7 @@ public sealed class SingleItemMetadataDictionaryTests
     private const string StoredKey = "correlation-id";
     private const string StoredValue = "abc123";
 
-    [Fact]
+    [Test]
     public void CountAndLookup_ShouldReflectSingleStoredItem()
     {
         // Arrange
@@ -30,7 +30,7 @@ public sealed class SingleItemMetadataDictionaryTests
         missingValue.ShouldBeNull();
     }
 
-    [Fact]
+    [Test]
     public void Indexer_ShouldReturnValueOrThrow()
     {
         // Arrange
@@ -43,7 +43,7 @@ public sealed class SingleItemMetadataDictionaryTests
         Should.Throw<KeyNotFoundException>(() => _ = dictionary["missing"]);
     }
 
-    [Fact]
+    [Test]
     public void Enumerators_ShouldYieldSingleItemOnce()
     {
         // Arrange
@@ -83,7 +83,7 @@ public sealed class SingleItemMetadataDictionaryTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Enumerators_Reset_ShouldRestartEnumeration()
     {
         // Arrange
@@ -127,7 +127,7 @@ public sealed class SingleItemMetadataDictionaryTests
             .ShouldBeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Enumerators_ResetAfterCompletion_ShouldAllowSinglePassThenStop()
     {
         // Arrange

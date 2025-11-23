@@ -1,0 +1,8 @@
+{
+  "sdk": {
+    "version": "10.0.100"
+  },
+  "msbuild-sdks": {
+    "Microsoft.Testing.Platform.Manifest-10.0.100": "2.0.1"
+  }
+}

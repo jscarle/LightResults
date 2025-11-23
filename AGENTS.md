@@ -11,7 +11,7 @@ multiple frameworks (net8.0–net10.0) and relies heavily on low-allocation tech
   - `Error.cs` – immutable error type.
   - `IResult.cs`, `IResult\`1.cs`, `IError.cs` – API contracts.
   - `Common/` – helper utilities and optional interfaces when targeting newer frameworks.
-- `tests/LightResults.Tests` – xUnit tests for the library.
+- `tests/LightResults.Tests` – TUnit tests for the library (native AOT test host enabled and configured for the Microsoft.Testing.Platform runner).
 - `docfx/` – documentation generation config.
 - `LightResults.sln` – solution file.
 
@@ -39,7 +39,7 @@ The project uses the standard .NET SDK. When a .NET environment is available you
 # Restore and build
  dotnet build LightResults.sln
 
-# Run tests
+# Run tests (TUnit with the Native AOT test host)
  dotnet test tests/LightResults.Tests/LightResults.Tests.csproj -f net10.0
 ```
 
