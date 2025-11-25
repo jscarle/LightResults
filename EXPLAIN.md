@@ -1,10 +1,10 @@
 # LightResults API Overview
 
-LightResults implements a lightweight Result Pattern for .NET. It provides immutable types to represent success or failure states without throwing exceptions.
+LightResults implements a lightweight Result Pattern for .NET. It provides immutable types to represent success or failure states without throwing exceptions and targets modern frameworks with AOT compatibility.
 
 ## Namespaces
 - `LightResults` – contains `Result`, `Result<TValue>`, `Error`, `IResult`, `IResult<TValue>` and `IError`.
-- `LightResults.Common` – defines `IActionableResult<TResult>` and `IActionableResult<TValue, TResult>`; these interfaces are only available when targeting .NET 7 or later.
+- `LightResults.Common` – defines `IActionableResult<TResult>` and `IActionableResult<TValue, TResult>`; these static-abstract interfaces are available on the library's supported frameworks.
 
 ## Core Types
 
@@ -48,7 +48,7 @@ Instance members:
 - `IReadOnlyCollection<IError> Errors`
 - Implicit conversion from `Error` to `Result`.
 - Equality: implements `IEquatable<Result>` with `Equals(in Result)` and `Equals(object?)`, provides `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
-- Implements `IResult` (netstandard2.0–net6.0) or `IActionableResult<Result>` (net7.0+)
+- Implements `IResult` and `IActionableResult<Result>`.
 
 
 ### `Result<TValue>` (readonly struct)
@@ -68,7 +68,7 @@ Instance members:
 - `IReadOnlyCollection<IError> Errors`
 - Implicit conversions: `TValue` → success result, `Error` → failure result.
 - Equality: implements `IEquatable<Result<TValue>>` with `Equals(in Result<TValue>)` and `Equals(object?)`, provides `GetHashCode()`, and `==`/`!=` operators. Overrides `ToString()`.
-- Implements `IResult<TValue>` (netstandard2.0–net6.0) or `IActionableResult<TValue, Result<TValue>>` (net7.0+)
+- Implements `IResult<TValue>` and `IActionableResult<TValue, Result<TValue>>`.
 
 
 ### `Error` (class)
@@ -81,7 +81,7 @@ Constructors:
 - `Error(Exception? ex)` – derives the message from the exception and stores it under `"Exception"` in `Metadata`.
 - `Error(string message, Exception? ex)` – when `ex` is not null, stores the exception under `"Exception"` in `Metadata`.
 - `Error(string message, KeyValuePair<string, object?> metadata)`
-- `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)` (available on .NET 6 or later)
+- `Error(string message, IEnumerable<KeyValuePair<string, object?>> metadata)`
 - `Error(string message, IReadOnlyDictionary<string, object?> metadata)`
 
 Properties:
@@ -90,7 +90,7 @@ Properties:
 - `Exception? Exception` – retrieved from the `Metadata` entry named "Exception" if present
 - `static IError Empty`
 
-Properties are init-only to keep errors immutable.
+Properties are init-only to keep errors immutable, and `Error.Empty` exposes an empty instance for reuse.
 Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashCode()`, and overrides `ToString()`.
 
 ### Interfaces
@@ -113,7 +113,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 - `bool IsSuccess(out TValue value, out IError error)`
 - `bool IsFailure(out IError error, out TValue value)`
 
-#### `IActionableResult<TResult>` *(NET 7+)*
+#### `IActionableResult<TResult>`
 - extends `IResult`
 - generic constraint: `where TResult : IResult`
 - `static abstract TResult Success()`
@@ -128,7 +128,7 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 - `static abstract TResult Failure(IEnumerable<IError> errors)`
 - `static abstract TResult Failure(IReadOnlyList<IError> errors)`
 
-#### `IActionableResult<TValue, TResult>` *(NET 7+)*
+#### `IActionableResult<TValue, TResult>`
 - extends `IResult<TValue>`
 - generic constraint: `where TResult : IResult<TValue>`
 - `static abstract TResult Success(TValue value)`
@@ -151,4 +151,4 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 6. Prefer returning `Result` or `Result<TValue>` from methods instead of throwing exceptions.
 
 ## Target Frameworks
-This library targets `netstandard2.0`, `net6.0`, `net7.0`, `net8.0` and `net9.0` and is AOT-compatible.
+This library targets `net8.0`, `net9.0`, and `net10.0` and is AOT-compatible.
