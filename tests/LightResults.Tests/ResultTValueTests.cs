@@ -1062,6 +1062,32 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
+    public void DefaultStruct_ShouldNotEqualExplicitOrCastSuccess()
+    {
+        // Arrange
+        Result<int> failure = default;
+        var explicitSuccess = Result.Success(0);
+        Result<int> castSuccess = 0;
+
+        // Assert
+        failure.Equals(explicitSuccess).ShouldBeFalse();
+        failure.Equals(castSuccess).ShouldBeFalse();
+        explicitSuccess.IsSuccess().ShouldBeTrue();
+        castSuccess.IsSuccess().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndSuccess_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        var result2 = Result.Success(0);
+
+        // Assert
+        result1.GetHashCode().ShouldNotBe(result2.GetHashCode());
+    }
+
+    [Fact]
     public void Equals_Result_DefaultAndFailure_ShouldReturnFalse()
     {
         // Arrange

@@ -433,7 +433,7 @@ public readonly struct Result : IEquatable<Result>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(in Result other)
     {
-        return Equals(_errors, other._errors);
+        return _isSuccess == other._isSuccess && Equals(_errors, other._errors);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -457,7 +457,7 @@ public readonly struct Result : IEquatable<Result>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return HashCode.Combine(_errors);
+        return HashCode.Combine(_isSuccess, _errors);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>

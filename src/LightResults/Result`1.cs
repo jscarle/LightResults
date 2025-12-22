@@ -372,7 +372,9 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(in Result<TValue> other)
     {
-        return Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
+        return _isSuccess == other._isSuccess
+            && Equals(_errors, other._errors)
+            && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -396,7 +398,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return HashCode.Combine(_errors, _valueOrDefault);
+        return HashCode.Combine(_isSuccess, _errors, _valueOrDefault);
     }
 
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are equal.</summary>

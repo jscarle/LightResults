@@ -1168,6 +1168,30 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Equals_Result_DefaultAndSuccess_ShouldReturnFalse()
+    {
+        // Arrange
+        Result result1 = default;
+        var result2 = Result.Success();
+
+        // Assert
+        result1.Equals(result2)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndSuccess_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result result1 = default;
+        var result2 = Result.Success();
+
+        // Assert
+        result1.GetHashCode()
+            .ShouldNotBe(result2.GetHashCode());
+    }
+
+    [Fact]
     public void Equals_Result_DefaultAndFailure_ShouldReturnFalse()
     {
         // Arrange
