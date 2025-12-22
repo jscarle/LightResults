@@ -106,7 +106,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         else
         {
             value = default;
-            error = _errors is not null ? _errors[0] : Error.Empty;
+            error = _errors is not null && _errors.Count > 0 ? _errors[0] : Error.Empty;
         }
 
         return _isSuccess;
@@ -372,7 +372,9 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(in Result<TValue> other)
     {
-        return Equals(_errors, other._errors) && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
+        return _isSuccess == other._isSuccess
+            && Equals(_errors, other._errors)
+            && EqualityComparer<TValue?>.Default.Equals(_valueOrDefault, other._valueOrDefault);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -396,7 +398,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return HashCode.Combine(_errors, _valueOrDefault);
+        return HashCode.Combine(_isSuccess, _errors, _valueOrDefault);
     }
 
     /// <summary>Determines whether two <see cref="Result{TValue}"/> instances are equal.</summary>
@@ -426,7 +428,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         if (_isSuccess)
             return StringHelper.GetResultValueString(_valueOrDefault);
 
-        if (_errors is not null && _errors[0].Message.Length > 0)
+        if (_errors is not null && _errors.Count > 0 && _errors[0].Message.Length > 0)
             return StringHelper.GetResultErrorString(_errors[0].Message);
 
         return $"{nameof(Result)} {{ IsSuccess = False }}";

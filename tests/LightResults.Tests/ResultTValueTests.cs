@@ -570,6 +570,9 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeTrue();
         result.IsSuccess(out var resultValue).ShouldBeFalse();
         resultValue.ShouldBe(0);
+        result.IsSuccess(out var resultValueWithError, out var resultErrorFromSuccess).ShouldBeFalse();
+        resultValueWithError.ShouldBe(0);
+        resultErrorFromSuccess.ShouldBeEquivalentTo(EmptyError);
         result.IsFailure(out var resultError).ShouldBeTrue();
         resultError.ShouldBe(Error.Empty);
         result.Errors.ShouldBeEmpty();
@@ -579,6 +582,7 @@ public sealed class ResultTValueTests
         result.HasError<ValidationError>().ShouldBeFalse();
         result.HasError<ValidationError>(out var validationError).ShouldBeFalse();
         validationError.ShouldBeNull();
+        result.ToString().ShouldBe("Result { IsSuccess = False }");
     }
 
     [Fact]
@@ -1055,6 +1059,32 @@ public sealed class ResultTValueTests
 
         // Assert
         result1.GetHashCode().ShouldBe(result2.GetHashCode());
+    }
+
+    [Fact]
+    public void DefaultStruct_ShouldNotEqualExplicitOrCastSuccess()
+    {
+        // Arrange
+        Result<int> failure = default;
+        var explicitSuccess = Result.Success(0);
+        Result<int> castSuccess = 0;
+
+        // Assert
+        failure.Equals(explicitSuccess).ShouldBeFalse();
+        failure.Equals(castSuccess).ShouldBeFalse();
+        explicitSuccess.IsSuccess().ShouldBeTrue();
+        castSuccess.IsSuccess().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndSuccess_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result<int> result1 = default;
+        var result2 = Result.Success(0);
+
+        // Assert
+        result1.GetHashCode().ShouldNotBe(result2.GetHashCode());
     }
 
     [Fact]

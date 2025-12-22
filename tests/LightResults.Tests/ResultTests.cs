@@ -464,6 +464,38 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithEmptyErrorsEnumerable_ShouldCreateFailureWithoutErrors()
+    {
+        // Arrange
+        var result = Result.Failure(Enumerable.Empty<IError>());
+
+        // Assert
+        result.IsSuccess()
+            .ShouldBeFalse();
+        result.IsFailure()
+            .ShouldBeTrue();
+        result.IsFailure(out var resultError)
+            .ShouldBeTrue();
+        resultError.ShouldBeEquivalentTo(EmptyError);
+        result.Errors.ShouldBeEmpty();
+
+        result.HasError<Error>()
+            .ShouldBeTrue();
+        result.HasError<Error>(out var error)
+            .ShouldBeTrue();
+        error.ShouldBeEquivalentTo(EmptyError);
+
+        result.HasError<ValidationError>()
+            .ShouldBeFalse();
+        result.HasError<ValidationError>(out var validationError)
+            .ShouldBeFalse();
+        validationError.ShouldBeNull();
+
+        result.ToString()
+            .ShouldBe("Result { IsSuccess = False }");
+    }
+
+    [Fact]
     public void Failure_WithCustomIterator_ShouldMaterializeErrors()
     {
         // Arrange
@@ -1133,6 +1165,30 @@ public sealed class ResultTests
         // Assert
         result1.GetHashCode()
             .ShouldBe(result2.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_Result_DefaultAndSuccess_ShouldReturnFalse()
+    {
+        // Arrange
+        Result result1 = default;
+        var result2 = Result.Success();
+
+        // Assert
+        result1.Equals(result2)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GetHashCode_Result_DefaultAndSuccess_ShouldReturnDifferentHashCodes()
+    {
+        // Arrange
+        Result result1 = default;
+        var result2 = Result.Success();
+
+        // Assert
+        result1.GetHashCode()
+            .ShouldNotBe(result2.GetHashCode());
     }
 
     [Fact]

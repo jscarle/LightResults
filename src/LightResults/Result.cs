@@ -330,7 +330,7 @@ public readonly struct Result : IEquatable<Result>,
         // Easier to refactor if this changes.
         if (_isSuccess)
             error = default;
-        else if (_errors is not null)
+        else if (_errors is not null && _errors.Count > 0)
             error = _errors[0];
         else
             error = Error.Empty;
@@ -433,7 +433,7 @@ public readonly struct Result : IEquatable<Result>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(in Result other)
     {
-        return Equals(_errors, other._errors);
+        return _isSuccess == other._isSuccess && Equals(_errors, other._errors);
     }
 
     /// <summary>Determines whether the specified object is equal to this instance.</summary>
@@ -457,7 +457,7 @@ public readonly struct Result : IEquatable<Result>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return HashCode.Combine(_errors);
+        return HashCode.Combine(_isSuccess, _errors);
     }
 
     /// <summary>Determines whether two <see cref="Result"/> instances are equal.</summary>
@@ -487,7 +487,7 @@ public readonly struct Result : IEquatable<Result>,
         if (_isSuccess)
             return $"{nameof(Result)} {{ IsSuccess = True }}";
 
-        if (_errors is not null && _errors[0].Message.Length > 0)
+        if (_errors is not null && _errors.Count > 0 && _errors[0].Message.Length > 0)
             return StringHelper.GetResultErrorString(_errors[0].Message);
 
         return $"{nameof(Result)} {{ IsSuccess = False }}";
