@@ -570,6 +570,9 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeTrue();
         result.IsSuccess(out var resultValue).ShouldBeFalse();
         resultValue.ShouldBe(0);
+        result.IsSuccess(out var resultValueWithError, out var resultErrorFromSuccess).ShouldBeFalse();
+        resultValueWithError.ShouldBe(0);
+        resultErrorFromSuccess.ShouldBeEquivalentTo(EmptyError);
         result.IsFailure(out var resultError).ShouldBeTrue();
         resultError.ShouldBe(Error.Empty);
         result.Errors.ShouldBeEmpty();
@@ -579,6 +582,7 @@ public sealed class ResultTValueTests
         result.HasError<ValidationError>().ShouldBeFalse();
         result.HasError<ValidationError>(out var validationError).ShouldBeFalse();
         validationError.ShouldBeNull();
+        result.ToString().ShouldBe("Result { IsSuccess = False }");
     }
 
     [Fact]

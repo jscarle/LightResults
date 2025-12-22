@@ -106,7 +106,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         else
         {
             value = default;
-            error = _errors is not null ? _errors[0] : Error.Empty;
+            error = _errors is not null && _errors.Count > 0 ? _errors[0] : Error.Empty;
         }
 
         return _isSuccess;
@@ -426,7 +426,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
         if (_isSuccess)
             return StringHelper.GetResultValueString(_valueOrDefault);
 
-        if (_errors is not null && _errors[0].Message.Length > 0)
+        if (_errors is not null && _errors.Count > 0 && _errors[0].Message.Length > 0)
             return StringHelper.GetResultErrorString(_errors[0].Message);
 
         return $"{nameof(Result)} {{ IsSuccess = False }}";
