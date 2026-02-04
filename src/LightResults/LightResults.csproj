@@ -27,9 +27,9 @@
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>10.0.2</Version>
-        <AssemblyVersion>10.0.2.0</AssemblyVersion>
-        <FileVersion>10.0.2.0</FileVersion>
+        <Version>10.0.3</Version>
+        <AssemblyVersion>10.0.3.0</AssemblyVersion>
+        <FileVersion>10.0.3.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Optimize>true</Optimize>
         <IsAotCompatible>true</IsAotCompatible>
@@ -56,6 +56,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
