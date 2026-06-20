@@ -17,11 +17,11 @@
 
     <!-- References -->
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.17.0.131074">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.27.0.140913">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
     </ItemGroup>
 
     <!-- Output -->
