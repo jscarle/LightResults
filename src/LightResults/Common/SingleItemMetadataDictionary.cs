@@ -18,6 +18,10 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
 
     public int Count => 1;
 
+    internal string Key => _key;
+
+    internal object? Value => _value;
+
     public object? this[string key] => string.Equals(key, _key, StringComparison.Ordinal) ? _value : throw new KeyNotFoundException();
 
     IEnumerable<string> IReadOnlyDictionary<string, object?>.Keys => new KeyEnumerable(_key);
@@ -41,6 +45,18 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
 
         value = null;
         return false;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal bool HasSameItem(IReadOnlyDictionary<string, object?> other)
+    {
+        if (other.Count != 1)
+            return false;
+
+        if (!other.TryGetValue(_key, out var otherValue))
+            return false;
+
+        return Equals(_value, otherValue);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

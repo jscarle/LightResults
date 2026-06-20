@@ -134,21 +134,22 @@ Iterations=10
 
 | Method                                              |       Mean | Allocated |
 |-----------------------------------------------------|-----------:|----------:|
-| Develop_Result_Ok                                   |   2.647 ns |         - |
-| Develop_Result_Ok_ToString                          |   2.732 ns |         - |
-| Develop_Result_Fail                                 |   2.377 ns |         - |
-| Develop_Result_Fail_ToString                        |   5.485 ns |         - |
-| Develop_Result_Fail_WithErrorMessage                |  25.435 ns |     320 B |
-| Develop_Result_Fail_WithErrorMessage_ToString       |  90.408 ns |    1520 B |
-| Develop_Result_OkTValue                             |   2.489 ns |         - |
-| Develop_Result_OkTValue_ToString                    |  91.808 ns |    1040 B |
-| Develop_Result_FailTValue                           |   2.500 ns |         - |
-| Develop_Result_FailTValue_ToString                  |   5.450 ns |         - |
-| Develop_Result_FailTValue_WithErrorMessage          |  22.273 ns |     320 B |
-| Develop_Result_FailTValue_WithErrorMessage_ToString |  90.424 ns |    1520 B |
-| Develop_Result_HasError                             |   9.708 ns |         - |
-| Develop_Result_Error                                |   2.616 ns |         - |
-| Develop_Error_New                                   |  31.918 ns |     320 B |
-| Develop_Error_New_ToString                          |  42.013 ns |         - |
-| Develop_Error_New_WithErrorMessage                  |  32.300 ns |     320 B |
-| Develop_Error_New_WithErrorMessage_ToString         | 140.613 ns |    1200 B |
+| Develop_Result_Ok                                   |   2.532 ns |         - |
+| Develop_Result_Ok_ToString                          |   2.645 ns |         - |
+| Develop_Result_Fail                                 |   2.532 ns |         - |
+| Develop_Result_Fail_ToString                        |   4.615 ns |         - |
+| Develop_Result_Fail_WithErrorMessage                |  22.796 ns |     240 B |
+| Develop_Result_Fail_WithErrorMessage_ToString       | 103.255 ns |    1600 B |
+| Develop_Result_OkTValue                             |   2.448 ns |         - |
+| Develop_Result_OkTValue_ToString                    |  94.276 ns |    1040 B |
+| Develop_Result_FailTValue                           |   2.389 ns |         - |
+| Develop_Result_FailTValue_ToString                  |   4.718 ns |         - |
+| Develop_Result_FailTValue_WithErrorMessage          |  23.757 ns |     240 B |
+| Develop_Result_FailTValue_WithErrorMessage_ToString | 106.682 ns |    1600 B |
+| Develop_Result_HasError                             |   2.227 ns |         - |
+| Develop_Result_HasError_Out                         |   9.280 ns |         - |
+| Develop_Result_Error                                |   4.178 ns |         - |
+| Develop_Error_New                                   |  23.778 ns |     320 B |
+| Develop_Error_New_ToString                          |  11.922 ns |         - |
+| Develop_Error_New_WithErrorMessage                  |  27.449 ns |     320 B |
+| Develop_Error_New_WithErrorMessage_ToString         | 105.413 ns |    1200 B |

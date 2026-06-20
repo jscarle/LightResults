@@ -24,7 +24,7 @@ public readonly struct Result : IEquatable<Result>,
     }
 
     private static readonly Result SuccessResult = new(true);
-    internal static readonly Result FailureResult = new(Error.Empty);
+    internal static readonly Result FailureResult = new(Error.DefaultErrorList);
     private readonly bool _isSuccess = false;
     private readonly IReadOnlyList<IError>? _errors;
 
@@ -346,18 +346,22 @@ public readonly struct Result : IEquatable<Result>,
         if (_isSuccess)
             return false;
 
-        if (_errors is not null)
+        if (typeof(TError) == typeof(Error))
+            return true;
+
+        var errors = _errors;
+        if (errors is not null)
             // ReSharper disable once ForCanBeConvertedToForeach
             // ReSharper disable once LoopCanBeConvertedToQuery
             // Do not convert to LINQ, this creates unnecessary heap allocations.
             // For is the most efficient way to loop. It is the fastest and does not allocate.
-            for (var index = 0; index < _errors.Count; index++)
+            for (var index = 0; index < errors.Count; index++)
             {
-                if (_errors[index] is TError)
+                if (errors[index] is TError)
                     return true;
             }
 
-        return typeof(TError) == typeof(Error);
+        return false;
     }
 
     /// <inheritdoc/>
@@ -371,25 +375,49 @@ public readonly struct Result : IEquatable<Result>,
             return false;
         }
 
-        if (_errors is not null)
+        var errors = _errors;
+        if (typeof(TError) == typeof(Error))
+        {
+            if (errors is not null)
+            {
+                var errorCount = errors.Count;
+                if (errorCount > 0)
+                {
+                    var firstError = errors[0];
+                    if (firstError is Error firstTError)
+                    {
+                        error = (TError)(IError)firstTError;
+                        return true;
+                    }
+
+                    for (var index = 1; index < errorCount; index++)
+                    {
+                        if (errors[index] is not Error tError)
+                            continue;
+
+                        error = (TError)(IError)tError;
+                        return true;
+                    }
+                }
+            }
+
+            error = (TError)Error.Empty;
+            return true;
+        }
+
+        if (errors is not null)
             // ReSharper disable once ForCanBeConvertedToForeach
             // ReSharper disable once LoopCanBeConvertedToQuery
             // Do not convert to LINQ, this creates unnecessary heap allocations.
             // For is the most efficient way to loop. It is the fastest and does not allocate.
-            for (var index = 0; index < _errors.Count; index++)
+            for (var index = 0; index < errors.Count; index++)
             {
-                if (_errors[index] is not TError tError)
+                if (errors[index] is not TError tError)
                     continue;
 
                 error = tError;
                 return true;
             }
-
-        if (typeof(TError) == typeof(Error))
-        {
-            error = (TError)Error.Empty;
-            return true;
-        }
 
         error = default;
         return false;
@@ -485,11 +513,19 @@ public readonly struct Result : IEquatable<Result>,
     public override string ToString()
     {
         if (_isSuccess)
-            return $"{nameof(Result)} {{ IsSuccess = True }}";
+            return StringHelper.ResultSuccessString;
 
-        if (_errors is not null && _errors.Count > 0 && _errors[0].Message.Length > 0)
-            return StringHelper.GetResultErrorString(_errors[0].Message);
+        var errors = _errors;
+        if (errors is null || ReferenceEquals(errors, Error.DefaultErrorList))
+            return StringHelper.ResultFailureString;
 
-        return $"{nameof(Result)} {{ IsSuccess = False }}";
+        if (errors.Count > 0)
+        {
+            var errorMessage = errors[0].Message;
+            if (errorMessage.Length > 0)
+                return StringHelper.GetResultErrorString(errorMessage);
+        }
+
+        return StringHelper.ResultFailureString;
     }
 }

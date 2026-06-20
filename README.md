@@ -1,4 +1,4 @@
-[![Banner](https://raw.githubusercontent.com/jscarle/LightResults/main/Banner.png)](https://github.com/jscarle/LightResults)
+[![Banner](https://raw.githubusercontent.com/jscarle/LightResults/develop/Banner.png)](https://github.com/jscarle/LightResults)
 
 # LightResults - Operation Result Patterns for .NET
 

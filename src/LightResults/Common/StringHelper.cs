@@ -5,6 +5,9 @@ namespace LightResults.Common;
 
 internal static class StringHelper
 {
+    internal const string ResultSuccessString = "Result { IsSuccess = True }";
+    internal const string ResultFailureString = "Result { IsSuccess = False }";
+
     private const string PreResultStr = "Result { IsSuccess = ";
     private const string SuccessResultStr = "True";
     private const string FailureResultStr = "False";
@@ -23,7 +26,7 @@ internal static class StringHelper
         switch (value)
         {
             case bool booleanValue:
-                return GetResultValueValueString(booleanValue.ToString());
+                return GetResultValueValueString(booleanValue ? SuccessResultStr : FailureResultStr);
             case sbyte sbyteValue:
                 return GetResultValueValueString(sbyteValue.ToString(CultureInfo.InvariantCulture));
             case byte byteValue:
@@ -59,13 +62,13 @@ internal static class StringHelper
             case TimeOnly timeOnlyValue:
                 return GetResultStringValueString(timeOnlyValue.ToString("HH':'mm':'ss", CultureInfo.InvariantCulture));
             case char charValue:
-                return GetResultCharValueString(charValue.ToString());
+                return GetResultCharValueString(charValue);
             case string stringValue:
                 return GetResultStringValueString(stringValue);
             case IFormattable formattableValue:
                 return GetResultValueString(formattableValue);
             default:
-                return "Result { IsSuccess = True }";
+                return ResultSuccessString;
         }
     }
 
@@ -76,16 +79,16 @@ internal static class StringHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string GetResultCharValueString(string valueString)
+    private static string GetResultCharValueString(char value)
     {
         var stringLength = PreResultStrLength
                            + SuccessResultStrLength
                            + PreValueStrLength
                            + CharStrLength
-                           + valueString.Length
+                           + 1
                            + CharStrLength
                            + PostResultStrLength;
-        return string.Create(stringLength, valueString, GetResultValueCharSpan);
+        return string.Create(stringLength, value, GetResultValueCharSpan);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -154,7 +157,7 @@ internal static class StringHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void GetResultValueCharSpan(Span<char> span, string state)
+    private static void GetResultValueCharSpan(Span<char> span, char state)
     {
         PreResultStr.AsSpan()
             .CopyTo(span);
@@ -168,9 +171,8 @@ internal static class StringHelper
         CharStr.AsSpan()
             .CopyTo(span);
         span = span[CharStrLength..];
-        state.AsSpan()
-            .CopyTo(span);
-        span = span[state.Length..];
+        span[0] = state;
+        span = span[1..];
         CharStr.AsSpan()
             .CopyTo(span);
         span = span[CharStrLength..];

@@ -27,10 +27,19 @@ public class Error : IError, IEquatable<Error>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            if (Metadata.Count == 0)
+            var metadata = Metadata;
+            if (metadata.Count == 0)
                 return null;
 
-            if (Metadata.TryGetValue(ExceptionKey, out var value) && value is Exception ex)
+            if (metadata is SingleItemMetadataDictionary singleItemMetadata)
+            {
+                if (string.Equals(singleItemMetadata.Key, ExceptionKey, StringComparison.Ordinal) && singleItemMetadata.Value is Exception singleException)
+                    return singleException;
+
+                return null;
+            }
+
+            if (metadata.TryGetValue(ExceptionKey, out var value) && value is Exception ex)
                 return ex;
 
             return null;
@@ -154,19 +163,24 @@ public class Error : IError, IEquatable<Error>
         if (!Message.Equals(other.Message, StringComparison.Ordinal))
             return false;
 
-        if (ReferenceEquals(Metadata, other.Metadata))
+        var metadata = Metadata;
+        var otherMetadata = other.Metadata;
+        if (ReferenceEquals(metadata, otherMetadata))
             return true;
 
-        var metadataCount = Metadata.Count;
-        if (metadataCount == 0 && other.Metadata.Count == 0)
+        var metadataCount = metadata.Count;
+        if (metadataCount == 0 && otherMetadata.Count == 0)
             return true;
 
-        if (metadataCount != other.Metadata.Count)
+        if (metadataCount != otherMetadata.Count)
             return false;
 
-        foreach (var kvp in Metadata)
+        if (metadata is SingleItemMetadataDictionary singleItemMetadata)
+            return singleItemMetadata.HasSameItem(otherMetadata);
+
+        foreach (var kvp in metadata)
         {
-            if (!other.Metadata.TryGetValue(kvp.Key, out var otherValue))
+            if (!otherMetadata.TryGetValue(kvp.Key, out var otherValue))
                 return false;
 
             if (!Equals(kvp.Value, otherValue))
@@ -190,7 +204,15 @@ public class Error : IError, IEquatable<Error>
         var hash = new HashCode();
         hash.Add(Message, StringComparer.Ordinal);
 
-        foreach (var kvp in Metadata)
+        var metadata = Metadata;
+        if (metadata is SingleItemMetadataDictionary singleItemMetadata)
+        {
+            hash.Add(singleItemMetadata.Key, StringComparer.Ordinal);
+            hash.Add(singleItemMetadata.Value);
+            return hash.ToHashCode();
+        }
+
+        foreach (var kvp in metadata)
         {
             hash.Add(kvp.Key, StringComparer.Ordinal);
             hash.Add(kvp.Value);
