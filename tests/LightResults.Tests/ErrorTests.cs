@@ -17,6 +17,19 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void DefaultConstructor_Metadata_ShouldNotAllowSharedStateMutation()
+    {
+        // Arrange
+        var error = new Error();
+        var metadata = (IDictionary<string, object?>)error.Metadata;
+
+        // Act & Assert
+        metadata.IsReadOnly.ShouldBeTrue();
+        Should.Throw<NotSupportedException>(() => metadata.Add("Key", "Value"));
+        new Error().Metadata.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void ConstructorWithMessage_ShouldCreateErrorWithMessage()
     {
         // Arrange
@@ -284,6 +297,46 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void Equals_Error_ShouldUseOrdinalMetadataKeysRegardlessOfDictionaryComparer()
+    {
+        // Arrange
+        var ordinalMetadata = new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            { "Key", 1 },
+        };
+        var caseInsensitiveMetadata = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "key", 1 },
+        };
+        var error1 = new Error("error", ordinalMetadata);
+        var error2 = new Error("error", caseInsensitiveMetadata);
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeFalse();
+        error2.Equals(error1)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ErrorWithSingleItemMetadata_ShouldUseOrdinalMetadataKeysRegardlessOfDictionaryComparer()
+    {
+        // Arrange
+        var caseInsensitiveMetadata = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "key", 1 },
+        };
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", caseInsensitiveMetadata);
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeFalse();
+        error2.Equals(error1)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
     public void Equals_Object_ShouldReturnTrueForEqualErrors()
     {
         // Arrange
@@ -315,6 +368,30 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 1));
 
         // Assert
+        error1.GetHashCode()
+            .ShouldBe(error2.GetHashCode());
+    }
+
+    [Fact]
+    public void GetHashCode_ShouldIgnoreMetadataOrderingForEqualErrors()
+    {
+        // Arrange
+        var metadata1 = new Dictionary<string, object?>
+        {
+            { "Key1", 1 },
+            { "Key2", "two" },
+        };
+        var metadata2 = new Dictionary<string, object?>
+        {
+            { "Key2", "two" },
+            { "Key1", 1 },
+        };
+        var error1 = new Error("error", metadata1);
+        var error2 = new Error("error", metadata2);
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeTrue();
         error1.GetHashCode()
             .ShouldBe(error2.GetHashCode());
     }

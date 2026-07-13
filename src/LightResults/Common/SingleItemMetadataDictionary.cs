@@ -53,10 +53,30 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
         if (other.Count != 1)
             return false;
 
-        if (!other.TryGetValue(_key, out var otherValue))
+        if (other is SingleItemMetadataDictionary singleItemMetadata)
+        {
+            return string.Equals(_key, singleItemMetadata._key, StringComparison.Ordinal)
+                && Equals(_value, singleItemMetadata._value);
+        }
+
+        var usesOrdinalComparer = other is Dictionary<string, object?> dictionary
+            && (ReferenceEquals(dictionary.Comparer, EqualityComparer<string>.Default)
+                || ReferenceEquals(dictionary.Comparer, StringComparer.Ordinal));
+        if (usesOrdinalComparer)
+        {
+            if (!other.TryGetValue(_key, out var otherValue))
+                return false;
+
+            return Equals(_value, otherValue);
+        }
+
+        using var enumerator = other.GetEnumerator();
+        if (!enumerator.MoveNext())
             return false;
 
-        return Equals(_value, otherValue);
+        var kvp = enumerator.Current;
+        return string.Equals(_key, kvp.Key, StringComparison.Ordinal)
+            && Equals(_value, kvp.Value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

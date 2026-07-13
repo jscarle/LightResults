@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using LightResults.Common;
@@ -10,13 +11,13 @@ namespace LightResults;
 )]
 public class Error : IError, IEquatable<Error>
 {
-    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = new Dictionary<string, object?>();
+    private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = ReadOnlyDictionary<string, object?>.Empty;
 
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
     public static IError Empty { get; } = new Error("", EmptyMetaData);
 
-    internal static IReadOnlyList<IError> EmptyErrorList { get; } = [];
-    internal static IReadOnlyList<IError> DefaultErrorList { get; } = [Empty];
+    internal static IReadOnlyList<IError> EmptyErrorList { get; } = ReadOnlyCollection<IError>.Empty;
+    internal static IReadOnlyList<IError> DefaultErrorList { get; } = Array.AsReadOnly<IError>([Empty]);
 
     /// <inheritdoc/>
     public string Message { get; init; }
@@ -178,12 +179,42 @@ public class Error : IError, IEquatable<Error>
         if (metadata is SingleItemMetadataDictionary singleItemMetadata)
             return singleItemMetadata.HasSameItem(otherMetadata);
 
+        if (otherMetadata is SingleItemMetadataDictionary otherSingleItemMetadata)
+            return otherSingleItemMetadata.HasSameItem(metadata);
+
+        var otherUsesOrdinalComparer = otherMetadata is Dictionary<string, object?> otherDictionary
+            && (ReferenceEquals(otherDictionary.Comparer, EqualityComparer<string>.Default)
+                || ReferenceEquals(otherDictionary.Comparer, StringComparer.Ordinal));
+        if (otherUsesOrdinalComparer)
+        {
+            foreach (var kvp in metadata)
+            {
+                if (!otherMetadata.TryGetValue(kvp.Key, out var otherValue))
+                    return false;
+
+                if (!Equals(kvp.Value, otherValue))
+                    return false;
+            }
+
+            return true;
+        }
+
         foreach (var kvp in metadata)
         {
-            if (!otherMetadata.TryGetValue(kvp.Key, out var otherValue))
-                return false;
+            var found = false;
+            foreach (var otherKvp in otherMetadata)
+            {
+                if (!string.Equals(kvp.Key, otherKvp.Key, StringComparison.Ordinal))
+                    continue;
 
-            if (!Equals(kvp.Value, otherValue))
+                if (!Equals(kvp.Value, otherKvp.Value))
+                    return false;
+
+                found = true;
+                break;
+            }
+
+            if (!found)
                 return false;
         }
 
@@ -212,12 +243,31 @@ public class Error : IError, IEquatable<Error>
             return hash.ToHashCode();
         }
 
-        foreach (var kvp in metadata)
+        var metadataCount = metadata.Count;
+        if (metadataCount == 0)
+            return hash.ToHashCode();
+
+        if (metadataCount == 1)
         {
-            hash.Add(kvp.Key, StringComparer.Ordinal);
-            hash.Add(kvp.Value);
+            foreach (var kvp in metadata)
+            {
+                hash.Add(kvp.Key, StringComparer.Ordinal);
+                hash.Add(kvp.Value);
+            }
+
+            return hash.ToHashCode();
         }
 
+        var combinedMetadataHashCode = 0;
+        foreach (var kvp in metadata)
+        {
+            var keyHashCode = StringComparer.Ordinal.GetHashCode(kvp.Key);
+            var metadataHashCode = HashCode.Combine(keyHashCode, kvp.Value);
+            combinedMetadataHashCode = unchecked(combinedMetadataHashCode + metadataHashCode);
+        }
+
+        hash.Add(metadataCount);
+        hash.Add(combinedMetadataHashCode);
         return hash.ToHashCode();
     }
 

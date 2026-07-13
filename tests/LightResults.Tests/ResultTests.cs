@@ -170,6 +170,19 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_DefaultErrors_ShouldNotAllowSharedStateMutation()
+    {
+        // Arrange
+        var result = Result.Failure();
+        var errors = (IList<IError>)result.Errors;
+
+        // Act & Assert
+        errors.IsReadOnly.ShouldBeTrue();
+        Should.Throw<NotSupportedException>(() => errors[0] = new Error("Replacement"));
+        Result.Failure().Errors.ShouldHaveSingleItem().ShouldBeSameAs(Error.Empty);
+    }
+
+    [Fact]
     public void Failure_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
