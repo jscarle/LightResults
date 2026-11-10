@@ -12,6 +12,7 @@ namespace LightResults;
 public class Error : IError, IEquatable<Error>
 {
     private static readonly IReadOnlyDictionary<string, object?> EmptyMetaData = ReadOnlyDictionary<string, object?>.Empty;
+    private readonly IReadOnlyDictionary<string, object?> _metadata;
 
     /// <summary>Gets an empty <see cref="Error"/> instance.</summary>
     public static IError Empty { get; } = new Error("", EmptyMetaData);
@@ -48,7 +49,12 @@ public class Error : IError, IEquatable<Error>
     }
 
     /// <inheritdoc/>
-    public IReadOnlyDictionary<string, object?> Metadata { get; init; }
+    public IReadOnlyDictionary<string, object?> Metadata
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _metadata;
+        init => _metadata = CreateMetadataSnapshot(value);
+    }
 
     private const string ErrorTypeName = nameof(Error);
     private const string ExceptionKey = "Exception";
@@ -57,7 +63,7 @@ public class Error : IError, IEquatable<Error>
     public Error()
     {
         Message = "";
-        Metadata = EmptyMetaData;
+        _metadata = EmptyMetaData;
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message.</summary>
@@ -65,7 +71,7 @@ public class Error : IError, IEquatable<Error>
     public Error(string message)
     {
         Message = message;
-        Metadata = EmptyMetaData;
+        _metadata = EmptyMetaData;
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified exception.</summary>
@@ -76,7 +82,7 @@ public class Error : IError, IEquatable<Error>
         if (exception is null)
         {
             Message = "";
-            Metadata = EmptyMetaData;
+            _metadata = EmptyMetaData;
             return;
         }
 
@@ -87,7 +93,7 @@ public class Error : IError, IEquatable<Error>
         };
 
         Message = errorMessage;
-        Metadata = new SingleItemMetadataDictionary(ExceptionKey, exception);
+        _metadata = new SingleItemMetadataDictionary(ExceptionKey, exception);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and exception.</summary>
@@ -99,12 +105,12 @@ public class Error : IError, IEquatable<Error>
         if (exception is null)
         {
             Message = message;
-            Metadata = EmptyMetaData;
+            _metadata = EmptyMetaData;
             return;
         }
 
         Message = message;
-        Metadata = new SingleItemMetadataDictionary(ExceptionKey, exception);
+        _metadata = new SingleItemMetadataDictionary(ExceptionKey, exception);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -113,7 +119,7 @@ public class Error : IError, IEquatable<Error>
     public Error(string message, (string Key, object? Value) metadata)
     {
         Message = message;
-        Metadata = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
+        _metadata = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -122,7 +128,7 @@ public class Error : IError, IEquatable<Error>
     public Error(string message, KeyValuePair<string, object?> metadata)
     {
         Message = message;
-        Metadata = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
+        _metadata = new SingleItemMetadataDictionary(metadata.Key, metadata.Value);
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -133,11 +139,27 @@ public class Error : IError, IEquatable<Error>
         Message = message;
         if (metadata is IReadOnlyDictionary<string, object?> readOnlyDictionary)
         {
-            Metadata = readOnlyDictionary;
+            _metadata = CreateMetadataSnapshot(readOnlyDictionary);
             return;
         }
 
-        Metadata = new Dictionary<string, object?>(metadata).AsReadOnly();
+        var dictionary = new Dictionary<string, object?>(metadata, StringComparer.Ordinal);
+        if (dictionary.Count == 0)
+        {
+            _metadata = EmptyMetaData;
+            return;
+        }
+
+        if (dictionary.Count == 1)
+        {
+            using var enumerator = dictionary.GetEnumerator();
+            enumerator.MoveNext();
+            var singleMetadata = enumerator.Current;
+            _metadata = new SingleItemMetadataDictionary(singleMetadata.Key, singleMetadata.Value);
+            return;
+        }
+
+        _metadata = dictionary.AsReadOnly();
     }
 
     /// <summary>Initializes a new instance of the <see cref="Error"/> class with the specified error message and metadata.</summary>
@@ -146,7 +168,40 @@ public class Error : IError, IEquatable<Error>
     public Error(string message, IReadOnlyDictionary<string, object?> metadata)
     {
         Message = message;
-        Metadata = metadata;
+        _metadata = CreateMetadataSnapshot(metadata);
+    }
+
+    private static IReadOnlyDictionary<string, object?> CreateMetadataSnapshot(IReadOnlyDictionary<string, object?> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        if (ReferenceEquals(metadata, EmptyMetaData) || metadata is SingleItemMetadataDictionary)
+            return metadata;
+
+        var metadataCount = metadata.Count;
+        if (metadataCount == 0)
+            return EmptyMetaData;
+
+        if (metadataCount == 1)
+        {
+            if (metadata is Dictionary<string, object?> dictionary)
+            {
+                using var dictionaryEnumerator = dictionary.GetEnumerator();
+                dictionaryEnumerator.MoveNext();
+                var dictionaryMetadata = dictionaryEnumerator.Current;
+
+                return new SingleItemMetadataDictionary(dictionaryMetadata.Key, dictionaryMetadata.Value);
+            }
+
+            using var enumerator = metadata.GetEnumerator();
+            enumerator.MoveNext();
+            var singleMetadata = enumerator.Current;
+
+            return new SingleItemMetadataDictionary(singleMetadata.Key, singleMetadata.Value);
+        }
+
+        var copiedMetadata = new Dictionary<string, object?>(metadata, StringComparer.Ordinal);
+        return copiedMetadata.AsReadOnly();
     }
 
     /// <summary>Determines whether the specified <see cref="Error"/> is equal to this instance.</summary>
@@ -182,39 +237,12 @@ public class Error : IError, IEquatable<Error>
         if (otherMetadata is SingleItemMetadataDictionary otherSingleItemMetadata)
             return otherSingleItemMetadata.HasSameItem(metadata);
 
-        var otherUsesOrdinalComparer = otherMetadata is Dictionary<string, object?> otherDictionary
-            && (ReferenceEquals(otherDictionary.Comparer, EqualityComparer<string>.Default)
-                || ReferenceEquals(otherDictionary.Comparer, StringComparer.Ordinal));
-        if (otherUsesOrdinalComparer)
-        {
-            foreach (var kvp in metadata)
-            {
-                if (!otherMetadata.TryGetValue(kvp.Key, out var otherValue))
-                    return false;
-
-                if (!Equals(kvp.Value, otherValue))
-                    return false;
-            }
-
-            return true;
-        }
-
         foreach (var kvp in metadata)
         {
-            var found = false;
-            foreach (var otherKvp in otherMetadata)
-            {
-                if (!string.Equals(kvp.Key, otherKvp.Key, StringComparison.Ordinal))
-                    continue;
+            if (!otherMetadata.TryGetValue(kvp.Key, out var otherValue))
+                return false;
 
-                if (!Equals(kvp.Value, otherKvp.Value))
-                    return false;
-
-                found = true;
-                break;
-            }
-
-            if (!found)
+            if (!Equals(kvp.Value, otherValue))
                 return false;
         }
 

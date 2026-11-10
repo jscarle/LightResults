@@ -151,4 +151,4 @@ Implements `IEquatable<Error>` with equality operators, `Equals(...)`, `GetHashC
 6. Prefer returning `Result` or `Result<TValue>` from methods instead of throwing exceptions.
 
 ## Target Frameworks
-This library targets `net8.0`, `net9.0`, and `net10.0` and is AOT-compatible.
+This library targets `net8.0`, `net9.0`, `net10.0`, and `net11.0` and is AOT-compatible.

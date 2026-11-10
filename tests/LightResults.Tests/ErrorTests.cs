@@ -1,5 +1,4 @@
 using Shouldly;
-using System.Diagnostics.CodeAnalysis;
 
 namespace LightResults.Tests;
 
@@ -80,24 +79,26 @@ public sealed class ErrorTests
     }
 
     [Fact]
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public void ConstructorWithMessageAndMetadataIEnumerable_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object?>
+        var metadataDictionary = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
-        }.AsEnumerable();
+        };
+        var metadata = metadataDictionary.Where(static _ => true);
 
         // Act
         var error = new Error(errorMessage, metadata);
+        metadataDictionary.Clear();
 
         // Assert
         error.Message.ShouldBe(errorMessage);
         error.Metadata.Count.ShouldBe(2);
-        error.Metadata.ShouldBe(metadata);
+        error.Metadata["Key1"].ShouldBe("Value1");
+        error.Metadata["Key2"].ShouldBe(42);
     }
 
     [Fact]
@@ -113,11 +114,13 @@ public sealed class ErrorTests
 
         // Act
         var error = new Error(errorMessage, metadata);
+        metadata.Clear();
 
         // Assert
         error.Message.ShouldBe(errorMessage);
         error.Metadata.Count.ShouldBe(2);
-        error.Metadata.ShouldBe(metadata);
+        error.Metadata["Key1"].ShouldBe("Value1");
+        error.Metadata["Key2"].ShouldBe(42);
     }
 
     [Fact]
@@ -148,11 +151,31 @@ public sealed class ErrorTests
         {
             Metadata = metadata,
         };
+        metadata.Clear();
 
         // Assert
         error.Message.ShouldBeEmpty();
         error.Metadata.Count.ShouldBe(2);
-        error.Metadata.ShouldBe(metadata);
+        error.Metadata["Key1"].ShouldBe("Value1");
+        error.Metadata["Key2"].ShouldBe(42);
+    }
+
+    [Fact]
+    public void ConstructorWithMessageAndSingleMetadataDictionary_ShouldSnapshotMetadata()
+    {
+        // Arrange
+        var metadata = new Dictionary<string, object?>
+        {
+            { "Key", "Value" },
+        };
+
+        // Act
+        var error = new Error("error", metadata);
+        metadata["Key"] = "Changed";
+
+        // Assert
+        error.Metadata.ShouldHaveSingleItem();
+        error.Metadata["Key"].ShouldBe("Value");
     }
 
     [Fact]

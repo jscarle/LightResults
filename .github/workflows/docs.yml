@@ -28,10 +28,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
-      - name: Setup .NET 10.0
-        uses: actions/setup-dotnet@v5
+      - name: Setup .NET 11.0
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.x
+          global-json-file: global.json
 
       - name: Setup docfx
         run: dotnet tool update -g docfx

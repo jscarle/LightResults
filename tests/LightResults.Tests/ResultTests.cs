@@ -183,6 +183,23 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithMultipleErrors_ShouldExposeImmutableSnapshot()
+    {
+        // Arrange
+        IReadOnlyList<IError> sourceErrors =
+        [
+            new Error("Error 1"),
+            new Error("Error 2"),
+        ];
+        var result = Result.Failure(sourceErrors);
+        var errors = (IList<IError>)result.Errors;
+
+        // Act & Assert
+        errors.IsReadOnly.ShouldBeTrue();
+        Should.Throw<NotSupportedException>(() => errors[0] = new Error("Replacement"));
+    }
+
+    [Fact]
     public void Failure_WithErrorMessage_ShouldCreateFailureResultWithSingleError()
     {
         // Arrange
@@ -527,7 +544,7 @@ public sealed class ResultTests
     }
 
     [Fact]
-    public void Failure_WithErrorsEnumerable_ShouldReuseListInstance()
+    public void Failure_WithErrorsEnumerable_ShouldSnapshotList()
     {
         // Arrange
         var errors = new List<IError>
@@ -538,9 +555,12 @@ public sealed class ResultTests
 
         // Act
         var result = Result.Failure(errors.AsEnumerable());
+        var expectedErrors = errors.ToArray();
+        errors.Clear();
 
         // Assert
-        result.Errors.ShouldBeSameAs(errors);
+        result.Errors.ShouldNotBeSameAs(errors);
+        result.Errors.ShouldBe(expectedErrors);
     }
 
     [Fact]
@@ -555,6 +575,8 @@ public sealed class ResultTests
 
         // Act
         var result = Result.Failure(errors);
+        var expectedErrors = errors.ToArray();
+        errors.Clear();
 
         // Assert
         result.IsSuccess()
@@ -564,7 +586,8 @@ public sealed class ResultTests
         result.IsFailure(out _)
             .ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBe(errors);
+        result.Errors.ShouldNotBeSameAs(errors);
+        result.Errors.ShouldBe(expectedErrors);
     }
 
     [Fact]
@@ -964,6 +987,7 @@ public sealed class ResultTests
         nonGenericResult.IsFailure()
             .ShouldBeTrue();
         nonGenericResult.Errors.Count.ShouldBe(2);
+        nonGenericResult.Errors.ShouldBeSameAs(result.Errors);
         nonGenericResult.Errors.ShouldBe(errors);
     }
 
@@ -1007,6 +1031,7 @@ public sealed class ResultTests
         genericResult.IsFailure()
             .ShouldBeTrue();
         genericResult.Errors.Count.ShouldBe(2);
+        genericResult.Errors.ShouldBeSameAs(result.Errors);
         genericResult.Errors.ShouldBe(errors);
     }
 
@@ -1439,6 +1464,8 @@ public sealed class ResultTests
 
         // Act
         var (result, errors) = Fail<Result>();
+        var expectedErrors = errors.ToArray();
+        errors.Clear();
 
         // Assert
         result.IsSuccess()
@@ -1449,7 +1476,8 @@ public sealed class ResultTests
             .ShouldBeTrue();
 
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBeSameAs(errors);
+        result.Errors.ShouldNotBeSameAs(errors);
+        result.Errors.ShouldBe(expectedErrors);
     }
 
     [Fact]
@@ -1479,12 +1507,10 @@ public sealed class ResultTests
             .ShouldBeTrue();
 
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBeEquivalentTo(new List<IError>
-            {
-                new Error("Error 1"),
-                new Error("Error 2"),
-            }
-        );
+        result.Errors.ShouldBe([
+            new Error("Error 1"),
+            new Error("Error 2"),
+        ]);
     }
 
     private sealed class CopyTrackingCollection : ICollection<IError>

@@ -283,7 +283,7 @@ public sealed class ResultTValueTests
         var result = Result.Failure<int>(errors);
 
         // Assert
-        result.Errors.ShouldBeEquivalentTo(new IError[] { firstError, secondError });
+        result.Errors.ShouldBe([firstError, secondError]);
         errors.CopyToCallCount.ShouldBe(1);
     }
 
@@ -543,7 +543,7 @@ public sealed class ResultTValueTests
     }
 
     [Fact]
-    public void Failure_WithErrorsEnumerable_ShouldReuseListInstance()
+    public void Failure_WithErrorsEnumerable_ShouldSnapshotList()
     {
         // Arrange
         var errors = new List<IError>
@@ -554,9 +554,12 @@ public sealed class ResultTValueTests
 
         // Act
         var result = Result.Failure<int>(errors.AsEnumerable());
+        var expectedErrors = errors.ToArray();
+        errors.Clear();
 
         // Assert
-        result.Errors.ShouldBeSameAs(errors);
+        result.Errors.ShouldNotBeSameAs(errors);
+        result.Errors.ShouldBe(expectedErrors);
     }
 
     [Fact]
@@ -597,6 +600,8 @@ public sealed class ResultTValueTests
 
         // Act
         var result = Result.Failure<int>(errors);
+        var expectedErrors = errors.ToArray();
+        errors.Clear();
 
         // Assert
         result.IsSuccess().ShouldBeFalse();
@@ -604,7 +609,8 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeTrue();
         result.IsFailure(out _).ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBe(errors);
+        result.Errors.ShouldNotBeSameAs(errors);
+        result.Errors.ShouldBe(expectedErrors);
     }
 
     [Fact]
@@ -721,6 +727,7 @@ public sealed class ResultTValueTests
         nonGenericResult.IsSuccess().ShouldBeFalse();
         nonGenericResult.IsFailure().ShouldBeTrue();
         nonGenericResult.Errors.Count.ShouldBe(2);
+        nonGenericResult.Errors.ShouldBeSameAs(result.Errors);
         nonGenericResult.Errors.ShouldBe(errors);
     }
 
@@ -758,6 +765,7 @@ public sealed class ResultTValueTests
         genericResult.IsSuccess().ShouldBeFalse();
         genericResult.IsFailure().ShouldBeTrue();
         genericResult.Errors.Count.ShouldBe(2);
+        genericResult.Errors.ShouldBeSameAs(result.Errors);
         genericResult.Errors.ShouldBe(errors);
     }
 
@@ -1562,6 +1570,8 @@ public sealed class ResultTValueTests
 
         // Act
         var (result, errors) = Fail<int, Result<int>>();
+        var expectedErrors = errors.ToArray();
+        errors.Clear();
 
         // Assert
         result.IsSuccess().ShouldBeFalse();
@@ -1569,7 +1579,8 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeTrue();
         result.IsFailure(out _).ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBeSameAs(errors);
+        result.Errors.ShouldNotBeSameAs(errors);
+        result.Errors.ShouldBe(expectedErrors);
     }
 
     [Fact]
@@ -1596,11 +1607,10 @@ public sealed class ResultTValueTests
         result.IsFailure().ShouldBeTrue();
         result.IsFailure(out _).ShouldBeTrue();
         result.Errors.Count.ShouldBe(2);
-        result.Errors.ShouldBeEquivalentTo(new List<IError>
-        {
+        result.Errors.ShouldBe([
             new Error("Error 1"),
             new Error("Error 2"),
-        });
+        ]);
     }
 
     [Theory]

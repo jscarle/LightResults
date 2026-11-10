@@ -16,6 +16,7 @@ public interface IError
     /// <remarks>
     /// The metadata is represented as a read-only dictionary of key-value pairs, where the keys are <see cref="string"/> and the values are
     /// <see cref="object"/> which may be <see langword="null"/>.
+    /// Caller-provided dictionaries are snapshotted. Metadata values are not cloned.
     /// </remarks>
     IReadOnlyDictionary<string, object?> Metadata { get; }
 }

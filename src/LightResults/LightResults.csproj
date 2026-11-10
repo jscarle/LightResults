@@ -3,10 +3,9 @@
     <!-- Compilation -->
     <PropertyGroup>
         <RootNamespace>LightResults</RootNamespace>
-        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <!-- Analysis -->
@@ -17,19 +16,18 @@
 
     <!-- References -->
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.29.0.143774">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.35.0.4138">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All"/>
     </ItemGroup>
 
     <!-- Output -->
     <PropertyGroup>
         <AssemblyName>LightResults</AssemblyName>
-        <Version>10.0.4</Version>
-        <AssemblyVersion>10.0.4.0</AssemblyVersion>
-        <FileVersion>10.0.4.0</FileVersion>
+        <Version>11.0.0</Version>
+        <AssemblyVersion>11.0.0.0</AssemblyVersion>
+        <FileVersion>11.0.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <Optimize>true</Optimize>
         <IsAotCompatible>true</IsAotCompatible>
