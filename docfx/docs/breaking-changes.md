@@ -1,6 +1,19 @@
-# What's new in v9.0
+# What's new in v11.0
 
-LightResults 10.0 builds on the redesigned API introduced in v9.0. If you're upgrading from v8.0, the following notes still apply and outline the breaking
+LightResults 11.0 adds .NET 11 support and continues to target .NET 8.0, .NET 9.0, and .NET 10.0.
+
+### Collection immutability
+
+- Failure results snapshot caller-provided error collections. Changing the original collection no longer changes an existing result.
+- `Error` snapshots caller-provided metadata dictionaries, including dictionaries assigned through the `Metadata` initializer.
+  Metadata values and individual error objects are not cloned.
+- Error metadata equality uses ordinal key comparisons and ignores entry order.
+
+Applications that previously changed a result by modifying its original collections should create a new result instead.
+
+## What's new in v9.0
+
+LightResults builds on the redesigned API introduced in v9.0. If you're upgrading from v8.0, the following notes still apply and outline the breaking
 changes between those versions.
 
 The API for LightResults was completely redesigned for v9.0 to improve performance and remove any potential pits of failure caused by the prior version's use

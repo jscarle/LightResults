@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using LightResults.Common;
 
 namespace LightResults;
@@ -38,28 +39,84 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
 
     internal Result(IError error)
     {
-        _errors = [error];
+        _errors = new SingleItemErrorList(error);
     }
 
     internal Result(IEnumerable<IError> errors)
     {
         if (errors is IReadOnlyList<IError> list)
         {
-            _errors = list;
+            var errorCount = list.Count;
+            if (errorCount == 0)
+            {
+                _errors = Error.EmptyErrorList;
+                return;
+            }
+
+            if (errorCount == 1)
+            {
+                _errors = new SingleItemErrorList(list[0]);
+                return;
+            }
+
+            var array = new IError[errorCount];
+            if (list is ICollection<IError> listCollection)
+            {
+                listCollection.CopyTo(array, 0);
+            }
+            else
+            {
+                for (var index = 0; index < errorCount; index++)
+                {
+                    array[index] = list[index];
+                }
+            }
+
+            _errors = ImmutableCollectionsMarshal.AsImmutableArray(array);
             return;
         }
 
         if (errors is ICollection<IError> collection)
         {
-            var array = new IError[collection.Count];
+            var errorCount = collection.Count;
+            if (errorCount == 0)
+            {
+                _errors = Error.EmptyErrorList;
+                return;
+            }
+
+            if (errorCount == 1)
+            {
+                using var enumerator = collection.GetEnumerator();
+                enumerator.MoveNext();
+                _errors = new SingleItemErrorList(enumerator.Current);
+                return;
+            }
+
+            var array = new IError[errorCount];
             collection.CopyTo(array, 0);
-            _errors = array;
+            _errors = ImmutableCollectionsMarshal.AsImmutableArray(array);
             return;
         }
 
         if (errors is IReadOnlyCollection<IError> readOnlyCollection)
         {
-            var array = new IError[readOnlyCollection.Count];
+            var errorCount = readOnlyCollection.Count;
+            if (errorCount == 0)
+            {
+                _errors = Error.EmptyErrorList;
+                return;
+            }
+
+            if (errorCount == 1)
+            {
+                using var enumerator = readOnlyCollection.GetEnumerator();
+                enumerator.MoveNext();
+                _errors = new SingleItemErrorList(enumerator.Current);
+                return;
+            }
+
+            var array = new IError[errorCount];
             var index = 0;
 
             foreach (var error in readOnlyCollection)
@@ -67,16 +124,22 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
                 array[index++] = error;
             }
 
-            _errors = array;
+            _errors = ImmutableCollectionsMarshal.AsImmutableArray(array);
             return;
         }
 
-        _errors = errors.ToArray();
+        var materializedErrors = errors.ToArray();
+        if (materializedErrors.Length == 0)
+            _errors = Error.EmptyErrorList;
+        else if (materializedErrors.Length == 1)
+            _errors = new SingleItemErrorList(materializedErrors[0]);
+        else
+            _errors = ImmutableCollectionsMarshal.AsImmutableArray(materializedErrors);
     }
 
-    private Result(IReadOnlyList<IError> errors)
+    internal Result(IReadOnlyList<IError> ownedErrors)
     {
-        _errors = errors;
+        _errors = ownedErrors;
     }
 
     /// <inheritdoc/>
@@ -263,7 +326,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static Result<TValue> IActionableResult<TValue, Result<TValue>>.Failure(IReadOnlyList<IError> errors)
     {
-        return new Result<TValue>(errors);
+        return new Result<TValue>((IEnumerable<IError>)errors);
     }
 
     /// <inheritdoc/>

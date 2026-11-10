@@ -12,7 +12,7 @@
       "outputFormat": "apiPage",
       "dest": "api",
       "properties": {
-        "TargetFramework": "net9.0"
+        "TargetFramework": "net11.0"
       }
     }
   ],

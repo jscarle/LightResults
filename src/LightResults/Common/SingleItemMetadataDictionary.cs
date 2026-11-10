@@ -53,6 +53,12 @@ internal sealed class SingleItemMetadataDictionary : IReadOnlyDictionary<string,
         if (other.Count != 1)
             return false;
 
+        if (other is SingleItemMetadataDictionary singleItemMetadata)
+        {
+            return string.Equals(_key, singleItemMetadata._key, StringComparison.Ordinal)
+                && Equals(_value, singleItemMetadata._value);
+        }
+
         if (!other.TryGetValue(_key, out var otherValue))
             return false;
 

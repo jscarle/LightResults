@@ -14,7 +14,7 @@ excellent work with [FluentResults](https://github.com/altmann/FluentResults).
 
 ## References
 
-This library currently targets .NET 8.0, .NET 9.0, and .NET 10.0 with no external runtime dependencies.
+This library currently targets .NET 8.0, .NET 9.0, .NET 10.0, and .NET 11.0 with no external runtime dependencies.
 
 ## Installation
 

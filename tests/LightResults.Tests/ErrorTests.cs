@@ -1,5 +1,4 @@
 using Shouldly;
-using System.Diagnostics.CodeAnalysis;
 
 namespace LightResults.Tests;
 
@@ -14,6 +13,19 @@ public sealed class ErrorTests
         // Assert
         error.Message.ShouldBeEmpty();
         error.Metadata.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void DefaultConstructor_Metadata_ShouldNotAllowSharedStateMutation()
+    {
+        // Arrange
+        var error = new Error();
+        var metadata = (IDictionary<string, object?>)error.Metadata;
+
+        // Act & Assert
+        metadata.IsReadOnly.ShouldBeTrue();
+        Should.Throw<NotSupportedException>(() => metadata.Add("Key", "Value"));
+        new Error().Metadata.ShouldBeEmpty();
     }
 
     [Fact]
@@ -67,24 +79,26 @@ public sealed class ErrorTests
     }
 
     [Fact]
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public void ConstructorWithMessageAndMetadataIEnumerable_ShouldCreateErrorWithMessageAndMetadata()
     {
         // Arrange
         const string errorMessage = "Sample error message";
-        var metadata = new Dictionary<string, object?>
+        var metadataDictionary = new Dictionary<string, object?>
         {
             { "Key1", "Value1" },
             { "Key2", 42 },
-        }.AsEnumerable();
+        };
+        var metadata = metadataDictionary.Where(static _ => true);
 
         // Act
         var error = new Error(errorMessage, metadata);
+        metadataDictionary.Clear();
 
         // Assert
         error.Message.ShouldBe(errorMessage);
         error.Metadata.Count.ShouldBe(2);
-        error.Metadata.ShouldBe(metadata);
+        error.Metadata["Key1"].ShouldBe("Value1");
+        error.Metadata["Key2"].ShouldBe(42);
     }
 
     [Fact]
@@ -100,11 +114,13 @@ public sealed class ErrorTests
 
         // Act
         var error = new Error(errorMessage, metadata);
+        metadata.Clear();
 
         // Assert
         error.Message.ShouldBe(errorMessage);
         error.Metadata.Count.ShouldBe(2);
-        error.Metadata.ShouldBe(metadata);
+        error.Metadata["Key1"].ShouldBe("Value1");
+        error.Metadata["Key2"].ShouldBe(42);
     }
 
     [Fact]
@@ -135,11 +151,31 @@ public sealed class ErrorTests
         {
             Metadata = metadata,
         };
+        metadata.Clear();
 
         // Assert
         error.Message.ShouldBeEmpty();
         error.Metadata.Count.ShouldBe(2);
-        error.Metadata.ShouldBe(metadata);
+        error.Metadata["Key1"].ShouldBe("Value1");
+        error.Metadata["Key2"].ShouldBe(42);
+    }
+
+    [Fact]
+    public void ConstructorWithMessageAndSingleMetadataDictionary_ShouldSnapshotMetadata()
+    {
+        // Arrange
+        var metadata = new Dictionary<string, object?>
+        {
+            { "Key", "Value" },
+        };
+
+        // Act
+        var error = new Error("error", metadata);
+        metadata["Key"] = "Changed";
+
+        // Assert
+        error.Metadata.ShouldHaveSingleItem();
+        error.Metadata["Key"].ShouldBe("Value");
     }
 
     [Fact]
@@ -284,6 +320,46 @@ public sealed class ErrorTests
     }
 
     [Fact]
+    public void Equals_Error_ShouldUseOrdinalMetadataKeysRegardlessOfDictionaryComparer()
+    {
+        // Arrange
+        var ordinalMetadata = new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            { "Key", 1 },
+        };
+        var caseInsensitiveMetadata = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "key", 1 },
+        };
+        var error1 = new Error("error", ordinalMetadata);
+        var error2 = new Error("error", caseInsensitiveMetadata);
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeFalse();
+        error2.Equals(error1)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Equals_ErrorWithSingleItemMetadata_ShouldUseOrdinalMetadataKeysRegardlessOfDictionaryComparer()
+    {
+        // Arrange
+        var caseInsensitiveMetadata = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "key", 1 },
+        };
+        var error1 = new Error("error", ("Key", 1));
+        var error2 = new Error("error", caseInsensitiveMetadata);
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeFalse();
+        error2.Equals(error1)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
     public void Equals_Object_ShouldReturnTrueForEqualErrors()
     {
         // Arrange
@@ -315,6 +391,30 @@ public sealed class ErrorTests
         var error2 = new Error("error", ("Key", 1));
 
         // Assert
+        error1.GetHashCode()
+            .ShouldBe(error2.GetHashCode());
+    }
+
+    [Fact]
+    public void GetHashCode_ShouldIgnoreMetadataOrderingForEqualErrors()
+    {
+        // Arrange
+        var metadata1 = new Dictionary<string, object?>
+        {
+            { "Key1", 1 },
+            { "Key2", "two" },
+        };
+        var metadata2 = new Dictionary<string, object?>
+        {
+            { "Key2", "two" },
+            { "Key1", 1 },
+        };
+        var error1 = new Error("error", metadata1);
+        var error2 = new Error("error", metadata2);
+
+        // Assert
+        error1.Equals(error2)
+            .ShouldBeTrue();
         error1.GetHashCode()
             .ShouldBe(error2.GetHashCode());
     }

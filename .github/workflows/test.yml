@@ -18,26 +18,30 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: 'csharp'
 
-      - name: Setup .NET 10.0
-        uses: actions/setup-dotnet@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.x
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+            11.0.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./tests/LightResults.Tests/LightResults.Tests.csproj
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ./tests/LightResults.Tests/LightResults.Tests.csproj --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --configuration Release --no-build --verbosity normal --framework net10.0
+        run: dotnet test ./tests/LightResults.Tests/LightResults.Tests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4
