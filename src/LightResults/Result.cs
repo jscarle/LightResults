@@ -134,6 +134,24 @@ public readonly struct Result : IEquatable<Result>,
             _errors = ImmutableCollectionsMarshal.AsImmutableArray(materializedErrors);
     }
 
+    internal Result(ReadOnlySpan<IError> errors)
+    {
+        if (errors.Length == 0)
+        {
+            _errors = Error.EmptyErrorList;
+            return;
+        }
+
+        if (errors.Length == 1)
+        {
+            _errors = new SingleItemErrorList(errors[0]);
+            return;
+        }
+
+        var array = errors.ToArray();
+        _errors = ImmutableCollectionsMarshal.AsImmutableArray(array);
+    }
+
     internal Result(IReadOnlyList<IError> ownedErrors)
     {
         _errors = ownedErrors;
@@ -217,6 +235,17 @@ public readonly struct Result : IEquatable<Result>,
         return new Result(error);
     }
 
+    /// <summary>Creates a failure result with the specified message and a snapshot of the metadata span.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata entries to snapshot.</param>
+    /// <returns>A failure result containing an error with the specified metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Result Failure(string errorMessage, ReadOnlySpan<KeyValuePair<string, object?>> metadata)
+    {
+        var error = new Error(errorMessage, metadata);
+        return new Result(error);
+    }
+
     /// <summary>Creates a failure result with the given exception.</summary>
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result"/> representing a failure result with the specified exception.</returns>
@@ -265,6 +294,15 @@ public readonly struct Result : IEquatable<Result>,
     public static Result Failure(IReadOnlyList<IError> errors)
     {
         return new Result((IEnumerable<IError>)errors);
+    }
+
+    /// <summary>Creates a failure result from a snapshot of the error span.</summary>
+    /// <param name="errors">The errors to snapshot.</param>
+    /// <returns>A failure result containing the specified errors in their original order.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Result Failure(ReadOnlySpan<IError> errors)
+    {
+        return new Result(errors);
     }
 
     /// <summary>Creates a failure result.</summary>
@@ -325,6 +363,18 @@ public readonly struct Result : IEquatable<Result>,
         return new Result<TValue>(error);
     }
 
+    /// <summary>Creates a failure result with the specified message and a snapshot of the metadata span.</summary>
+    /// <param name="errorMessage">The error message associated with the failure.</param>
+    /// <param name="metadata">The metadata entries to snapshot.</param>
+    /// <typeparam name="TValue">The type of the value of the result.</typeparam>
+    /// <returns>A failure result containing an error with the specified metadata.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Result<TValue> Failure<TValue>(string errorMessage, ReadOnlySpan<KeyValuePair<string, object?>> metadata)
+    {
+        var error = new Error(errorMessage, metadata);
+        return new Result<TValue>(error);
+    }
+
     /// <summary>Creates a failure result with the given exception.</summary>
     /// <param name="ex">The <see cref="Exception"/> associated with the failure, if any.</param>
     /// <returns>A new instance of <see cref="Result{TValue}"/> representing a failure result with the specified exception.</returns>
@@ -376,6 +426,16 @@ public readonly struct Result : IEquatable<Result>,
     public static Result<TValue> Failure<TValue>(IReadOnlyList<IError> errors)
     {
         return new Result<TValue>((IEnumerable<IError>)errors);
+    }
+
+    /// <summary>Creates a failure result from a snapshot of the error span.</summary>
+    /// <param name="errors">The errors to snapshot.</param>
+    /// <typeparam name="TValue">The type of the value of the result.</typeparam>
+    /// <returns>A failure result containing the specified errors in their original order.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Result<TValue> Failure<TValue>(ReadOnlySpan<IError> errors)
+    {
+        return new Result<TValue>(errors);
     }
 
     /// <inheritdoc/>

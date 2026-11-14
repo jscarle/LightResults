@@ -137,6 +137,24 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>,
             _errors = ImmutableCollectionsMarshal.AsImmutableArray(materializedErrors);
     }
 
+    internal Result(ReadOnlySpan<IError> errors)
+    {
+        if (errors.Length == 0)
+        {
+            _errors = Error.EmptyErrorList;
+            return;
+        }
+
+        if (errors.Length == 1)
+        {
+            _errors = new SingleItemErrorList(errors[0]);
+            return;
+        }
+
+        var array = errors.ToArray();
+        _errors = ImmutableCollectionsMarshal.AsImmutableArray(array);
+    }
+
     internal Result(IReadOnlyList<IError> ownedErrors)
     {
         _errors = ownedErrors;

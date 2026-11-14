@@ -1,6 +1,8 @@
 # Build results
 bin/
 obj/
+.bdn/
+BenchmarkDotNet.Artifacts/
 
 # Visual Studio files
 .vs

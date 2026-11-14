@@ -54,7 +54,7 @@ LightResults centers on three primary types `Result`, `Result<TValue>`, and `Err
 
 - The `Result` struct represents a generic result indicating success or failure.
 - The `Result<TValue>` struct represents a success or failure result with a value.
-- The `Error` struct represents an error with a message, optional metadata, and an optional exception.
+- The `Error` class represents an error with a message, optional metadata, and an optional exception.
 
 ### Creating a successful result
 
@@ -79,6 +79,28 @@ var failureResultWithMessageAndMetadata = Result.Failure("Operation failure!", (
 
 var failureResultWithMessageAndException = Result.Failure("Operation failure!", ex);
 ```
+
+### Creating failures from spans and collection expressions
+
+The span overloads accept error sequences or metadata entries and snapshot their contents. Collection expressions can use these overloads without creating a temporary input collection:
+
+```csharp
+var validationResult = Result.Failure([
+    new Error("Name is required."),
+    new Error("Email is required.")
+]);
+
+var failedValue = Result.Failure<int>([
+    new Error("The value is invalid.")
+]);
+
+var failureWithMetadata = Result.Failure("Validation failed.", [
+    new KeyValuePair<string, object?>("Field", "Email"),
+    new KeyValuePair<string, object?>("Code", "Required")
+]);
+```
+
+Existing buffers can be passed as `ReadOnlySpan<IError>` or `ReadOnlySpan<KeyValuePair<string, object?>>`. Error constructors accept metadata spans as well. Entries are copied into owned storage; referenced error instances and metadata values are not cloned.
 
 ### Checking the state of a result
 

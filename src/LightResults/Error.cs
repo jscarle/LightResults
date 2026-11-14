@@ -1,6 +1,9 @@
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using LightResults.Common;
 
 namespace LightResults;
@@ -143,6 +146,45 @@ public class Error : IError, IEquatable<Error>
             return;
         }
 
+        if (metadata is KeyValuePair<string, object?>[] array)
+        {
+            _metadata = CreateMetadataSnapshot(array.AsSpan());
+            return;
+        }
+
+        if (metadata is List<KeyValuePair<string, object?>> list)
+        {
+            _metadata = CreateMetadataSnapshot(CollectionsMarshal.AsSpan(list));
+            return;
+        }
+
+        if (metadata is IReadOnlyList<KeyValuePair<string, object?>> readOnlyList)
+        {
+            var metadataCount = readOnlyList.Count;
+            if (metadataCount == 0)
+            {
+                _metadata = EmptyMetaData;
+                return;
+            }
+
+            if (metadataCount == 1)
+            {
+                var item = readOnlyList[0];
+                _metadata = CreateMetadataSnapshot([item]);
+                return;
+            }
+
+            var copiedMetadata = new Dictionary<string, object?>(metadataCount, StringComparer.Ordinal);
+            for (var index = 0; index < metadataCount; index++)
+            {
+                var item = readOnlyList[index];
+                copiedMetadata.Add(item.Key, item.Value);
+            }
+
+            _metadata = copiedMetadata.AsReadOnly();
+            return;
+        }
+
         var dictionary = new Dictionary<string, object?>(metadata, StringComparer.Ordinal);
         if (dictionary.Count == 0)
         {
@@ -169,6 +211,53 @@ public class Error : IError, IEquatable<Error>
     {
         Message = message;
         _metadata = CreateMetadataSnapshot(metadata);
+    }
+
+    // Keep array calls unambiguous for C# 12 and C# 13 consumers.
+    /// <summary>Initializes an error with the specified message and a snapshot of the metadata array.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="metadata">The metadata entries to snapshot.</param>
+    /// <remarks>Referenced metadata values are not cloned.</remarks>
+    public Error(string message, KeyValuePair<string, object?>[] metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        Message = message;
+        _metadata = CreateMetadataSnapshot(metadata.AsSpan());
+    }
+
+    /// <summary>Initializes an error with the specified message and a snapshot of the metadata span.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="metadata">The metadata entries to snapshot.</param>
+    /// <remarks>Referenced metadata values are not cloned.</remarks>
+    public Error(string message, ReadOnlySpan<KeyValuePair<string, object?>> metadata)
+    {
+        Message = message;
+        _metadata = CreateMetadataSnapshot(metadata);
+    }
+
+    [SuppressMessage("Major Code Smell", "S3236:Caller information arguments should not be provided explicitly",
+        Justification = "Preserve the Dictionary constructor's parameter name when rejecting a null metadata key.")]
+    private static IReadOnlyDictionary<string, object?> CreateMetadataSnapshot(ReadOnlySpan<KeyValuePair<string, object?>> metadata)
+    {
+        if (metadata.Length == 0)
+            return EmptyMetaData;
+
+        if (metadata.Length == 1)
+        {
+            var item = metadata[0];
+            // ReSharper disable once NotResolvedInText
+            ArgumentNullException.ThrowIfNull(item.Key, "key");
+            return new SingleItemMetadataDictionary(item.Key, item.Value);
+        }
+
+        var dictionary = new Dictionary<string, object?>(metadata.Length, StringComparer.Ordinal);
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var item = metadata[index];
+            dictionary.Add(item.Key, item.Value);
+        }
+
+        return dictionary.AsReadOnly();
     }
 
     private static IReadOnlyDictionary<string, object?> CreateMetadataSnapshot(IReadOnlyDictionary<string, object?> metadata)
@@ -199,6 +288,16 @@ public class Error : IError, IEquatable<Error>
 
             return new SingleItemMetadataDictionary(singleMetadata.Key, singleMetadata.Value);
         }
+
+        if (metadata is ImmutableDictionary<string, object?> immutableMetadata
+            && (ReferenceEquals(immutableMetadata.KeyComparer, StringComparer.Ordinal)
+                || ReferenceEquals(immutableMetadata.KeyComparer, EqualityComparer<string>.Default)))
+            return immutableMetadata;
+
+        if (metadata is FrozenDictionary<string, object?> frozenMetadata
+            && (ReferenceEquals(frozenMetadata.Comparer, StringComparer.Ordinal)
+                || ReferenceEquals(frozenMetadata.Comparer, EqualityComparer<string>.Default)))
+            return frozenMetadata;
 
         var copiedMetadata = new Dictionary<string, object?>(metadata, StringComparer.Ordinal);
         return copiedMetadata.AsReadOnly();

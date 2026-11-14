@@ -14,8 +14,6 @@ internal static class StringHelper
     private const string PreValueStr = ", Value = ";
     private const string CharStr = "'";
     private const string StringStr = "\"";
-    private const string PreErrorStr = ", Error = \"";
-    private const string PostErrorStr = "\"";
     private const string PostResultStr = " }";
     private const string PreMessageStr = " { Message = \"";
     private const string PostMessageStr = "\" }";
@@ -44,23 +42,23 @@ internal static class StringHelper
             case ulong ulongValue:
                 return GetResultValueValueString(ulongValue.ToString(CultureInfo.InvariantCulture));
             case Int128 int128Value:
-                return GetResultValueValueString(int128Value.ToString(CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(int128Value);
             case UInt128 uint128Value:
-                return GetResultValueValueString(uint128Value.ToString(CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(uint128Value);
             case decimal decimalValue:
-                return GetResultValueValueString(decimalValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(decimalValue);
             case float floatValue:
-                return GetResultValueValueString(floatValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(floatValue);
             case double doubleValue:
-                return GetResultValueValueString(doubleValue.ToString(CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(doubleValue);
             case DateTime dateTimeValue:
-                return GetResultStringValueString(dateTimeValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(dateTimeValue, "yyyy'-'MM'-'dd'T'HH':'mm':'ssK", true);
             case DateTimeOffset dateTimeOffsetValue:
-                return GetResultStringValueString(dateTimeOffsetValue.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssK", CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(dateTimeOffsetValue, "yyyy'-'MM'-'dd'T'HH':'mm':'ssK", true);
             case DateOnly dateOnlyValue:
-                return GetResultStringValueString(dateOnlyValue.ToString("yyyy'-'MM'-'dd", CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(dateOnlyValue, "yyyy'-'MM'-'dd", true);
             case TimeOnly timeOnlyValue:
-                return GetResultStringValueString(timeOnlyValue.ToString("HH':'mm':'ss", CultureInfo.InvariantCulture));
+                return GetResultFormattableValueString(timeOnlyValue, "HH':'mm':'ss", true);
             case char charValue:
                 return GetResultCharValueString(charValue);
             case string stringValue:
@@ -70,6 +68,22 @@ internal static class StringHelper
             default:
                 return ResultSuccessString;
         }
+    }
+
+    private static string GetResultFormattableValueString<TValue>(TValue value, ReadOnlySpan<char> format = default, bool quoted = false)
+        where TValue : ISpanFormattable
+    {
+        // Primitive numeric values and the fixed date/time formats above fit in 64 characters.
+        Span<char> buffer = stackalloc char[64];
+        if (!value.TryFormat(buffer, out var charsWritten, format, CultureInfo.InvariantCulture))
+        {
+            var valueString = value.ToString(format.IsEmpty ? null : new string(format), CultureInfo.InvariantCulture);
+            return quoted ? GetResultStringValueString(valueString) : GetResultValueValueString(valueString);
+        }
+
+        var prefix = quoted ? "Result { IsSuccess = True, Value = \"" : "Result { IsSuccess = True, Value = ";
+        var suffix = quoted ? "\" }" : PostResultStr;
+        return string.Concat(prefix.AsSpan(), buffer[..charsWritten], suffix.AsSpan());
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -114,8 +128,7 @@ internal static class StringHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetResultErrorString(string errorMessage)
     {
-        var stringLength = PreResultStrLength + FailureResultStrLength + PreErrorStrLength + errorMessage.Length + PostErrorStrLength + PostResultStrLength;
-        return string.Create(stringLength, errorMessage, GetResultErrorSpan);
+        return string.Concat("Result { IsSuccess = False, Error = \"", errorMessage, "\" }");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -127,12 +140,9 @@ internal static class StringHelper
 
     private const int PreResultStrLength = 21;
     private const int SuccessResultStrLength = 4;
-    private const int FailureResultStrLength = 5;
     private const int PreValueStrLength = 10;
     private const int CharStrLength = 1;
     private const int StringStrLength = 1;
-    private const int PreErrorStrLength = 11;
-    private const int PostErrorStrLength = 1;
     private const int PostResultStrLength = 2;
     private const int PreMessageStrLength = 14;
     private const int PostMessageStrLength = 3;
@@ -201,28 +211,6 @@ internal static class StringHelper
         StringStr.AsSpan()
             .CopyTo(span);
         span = span[StringStrLength..];
-        PostResultStr.AsSpan()
-            .CopyTo(span);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void GetResultErrorSpan(Span<char> span, string state)
-    {
-        PreResultStr.AsSpan()
-            .CopyTo(span);
-        span = span[PreResultStrLength..];
-        FailureResultStr.AsSpan()
-            .CopyTo(span);
-        span = span[FailureResultStrLength..];
-        PreErrorStr.AsSpan()
-            .CopyTo(span);
-        span = span[PreErrorStrLength..];
-        state.AsSpan()
-            .CopyTo(span);
-        span = span[state.Length..];
-        PostErrorStr.AsSpan()
-            .CopyTo(span);
-        span = span[PostErrorStrLength..];
         PostResultStr.AsSpan()
             .CopyTo(span);
     }
